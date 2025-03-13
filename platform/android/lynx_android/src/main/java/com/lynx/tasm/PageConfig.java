@@ -9,6 +9,8 @@ import androidx.annotation.RestrictTo;
 import com.lynx.react.bridge.ReadableMap;
 import com.lynx.tasm.LynxEnv;
 import com.lynx.tasm.base.LLog;
+import com.lynx.tasm.behavior.ILynxUIRenderer;
+import com.lynx.tasm.behavior.LynxContext;
 import com.lynx.tasm.behavior.TouchEventDispatcher;
 
 /**
@@ -570,5 +572,38 @@ public class PageConfig {
   public String toString() {
     return "PageConfig{"
         + "autoExpose=" + autoExpose + ", pageVersion='" + pageVersion + '}';
+  }
+
+  /**
+   * @brief attach config to lynx context and ui renderer when config decoded or template bundle
+   * loaded.
+   * @param config
+   * @param lynxContext
+   * @param genericInfo
+   * @param uiRenderer
+   */
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public static void attachPageConfig(PageConfig config, LynxContext lynxContext,
+      LynxGenericInfo genericInfo, ILynxUIRenderer uiRenderer) {
+    if (config == null) {
+      LLog.e(TAG, "PageConfig is null when exec onPageConfigDecoded from TemplateBundle.");
+      return;
+    }
+
+    if (lynxContext != null) {
+      lynxContext.onPageConfigDecoded(config);
+      lynxContext.getFluencyTraceHelper().setPageConfigProbability(
+          config.getEnableLynxScrollFluency());
+    } else {
+      LLog.e(
+          TAG, "lynx context free in used: LynxUI configs may be not valid from TemplateBundle.");
+    }
+    if (genericInfo != null) {
+      genericInfo.updatePageConfigInfo(config);
+    }
+
+    if (uiRenderer != null) {
+      uiRenderer.onPageConfigDecoded(config);
+    }
   }
 }

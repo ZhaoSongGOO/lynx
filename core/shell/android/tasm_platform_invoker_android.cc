@@ -120,7 +120,7 @@ constexpr const char* kEnableTextLayoutCache = "enableTextLayoutCache";
 
 }  // namespace
 
-void TasmPlatformInvokerAndroid::OnPageConfigDecoded(
+base::android::JavaOnlyMap TasmPlatformInvokerAndroid::ConvertToJavaOnlyMap(
     const std::shared_ptr<tasm::PageConfig>& config) {
   base::android::JavaOnlyMap java_config;
   // put config that platform needed.
@@ -229,10 +229,17 @@ void TasmPlatformInvokerAndroid::OnPageConfigDecoded(
         kEnableTextLayoutCache,
         config->GetEnableTextLayoutCache() == tasm::TernaryBool::TRUE_VALUE);
   }
+  return java_config;
+}
 
-  Java_TasmPlatformInvoker_onPageConfigDecoded(
-      base::android::AttachCurrentThread(), jni_object_.Get(),
-      java_config.jni_object());
+void TasmPlatformInvokerAndroid::OnPageConfigDecoded(
+    const std::shared_ptr<tasm::PageConfig>& config) {
+  if (config->NeedPostToPlatform()) {
+    base::android::JavaOnlyMap java_config = ConvertToJavaOnlyMap(config);
+    Java_TasmPlatformInvoker_onPageConfigDecoded(
+        base::android::AttachCurrentThread(), jni_object_.Get(),
+        java_config.jni_object());
+  }
 }
 
 std::string TasmPlatformInvokerAndroid::TranslateResourceForTheme(

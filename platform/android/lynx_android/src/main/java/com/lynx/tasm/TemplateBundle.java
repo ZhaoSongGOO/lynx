@@ -6,6 +6,7 @@ package com.lynx.tasm;
 
 import android.text.TextUtils;
 import androidx.annotation.RestrictTo;
+import com.lynx.react.bridge.ReadableMap;
 import com.lynx.tasm.LynxEnv;
 import com.lynx.tasm.TemplateBundleOption;
 import com.lynx.tasm.base.CalledByNative;
@@ -29,11 +30,15 @@ public final class TemplateBundle {
   private String errorMsg = null;
   private final int templateSize;
 
-  private TemplateBundle(long ptr, int templateSize, String url, String errMsg) {
+  private final PageConfig pageConfig;
+
+  private TemplateBundle(
+      long ptr, int templateSize, String url, String errMsg, ReadableMap pageConfigMap) {
     this.nativePtr = ptr;
     this.templateSize = templateSize;
     this.url = url;
     this.errorMsg = errMsg;
+    this.pageConfig = new PageConfig(pageConfigMap);
   }
 
   private static TemplateBundle internalBuildTemplate(byte[] template, String url) {
@@ -49,15 +54,18 @@ public final class TemplateBundle {
               null, template, url, ILynxSecurityService.LynxTasmType.TYPE_TEMPLATE);
           if (!securityResult.isVerified()) {
             result = new TemplateBundle(0, template.length, url,
-                "template verify failed, error message: " + securityResult.getErrorMsg());
+                "template verify failed, error message: " + securityResult.getErrorMsg(), null);
             return result;
           }
         }
-        String[] buffer = new String[1];
+        // 0: string, error message
+        // 1: ReadableMap, pageConfig
+        Object[] buffer = new Object[2];
         long ptr = nativeParseTemplate(template, buffer);
-        result = new TemplateBundle(ptr, template.length, url, buffer[0]);
+        result = new TemplateBundle(
+            ptr, template.length, url, (String) buffer[0], (ReadableMap) buffer[1]);
       } else {
-        result = new TemplateBundle(0, template.length, url, "Lynx Env is not prepared");
+        result = new TemplateBundle(0, template.length, url, "Lynx Env is not prepared", null);
       }
       TraceEvent.endSection(TraceEventDef.TEMPLATE_BUNDLE_FROM_TEMPLATE);
     }
@@ -75,10 +83,10 @@ public final class TemplateBundle {
   }
 
   @CalledByNative
-  private static TemplateBundle fromNative(long nativePtr) {
+  private static TemplateBundle fromNative(long nativePtr, ReadableMap pageConfigMap) {
     // TODO(nihao.royal) add template size & template url for recycled TemplateBundle.
     String errMsg = nativePtr == 0 ? "native TemplateBundle doesn't exist" : null;
-    return new TemplateBundle(nativePtr, 0, null, errMsg);
+    return new TemplateBundle(nativePtr, 0, null, errMsg, pageConfigMap);
   }
 
   private void initWithOption(TemplateBundleOption option) {
@@ -201,6 +209,15 @@ public final class TemplateBundle {
   }
 
   /**
+   * Get PageConfig from TemplateBundle
+   * @return PageConfig
+   */
+  @RestrictTo({RestrictTo.Scope.LIBRARY})
+  public PageConfig getPageConfig() {
+    return pageConfig;
+  }
+
+  /**
    * Deprecated now, please use TemplateBundleOption
    */
   @Deprecated
@@ -211,7 +228,7 @@ public final class TemplateBundle {
   private static native void nativePostJsCacheGenerationTask(
       long bundle, String bytecodeSourceUrl, boolean useV8);
 
-  private static native long nativeParseTemplate(byte[] temp, String[] buffer);
+  private static native long nativeParseTemplate(byte[] temp, Object[] buffer);
   private static native void nativeReleaseBundle(long ptr);
   private static native Object nativeGetExtraInfo(long ptr);
   private static native boolean nativeGetContainsElementTree(long ptr);

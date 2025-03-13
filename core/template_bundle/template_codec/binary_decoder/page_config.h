@@ -122,6 +122,7 @@ class PageConfig final : public EntryConfig {
             if ((this->*(getter))() == TernaryBool::UNDEFINE_VALUE) {
               (this->*(setter))(it->value.GetBool() ? TernaryBool::TRUE_VALUE
                                                     : TernaryBool::FALSE_VALUE);
+              need_post_to_platform_ = true;
             }
           }
         }
@@ -133,6 +134,7 @@ class PageConfig final : public EntryConfig {
             const auto [setter, getter] = uint64_pair->second;
             if ((this->*(getter))() == 0) {
               (this->*(setter))(it->value.GetUint64());
+              need_post_to_platform_ = true;
             }
           }
         }
@@ -1173,6 +1175,12 @@ class PageConfig final : public EntryConfig {
     return output.str();
   }
 
+  bool NeedPostToPlatform() const { return need_post_to_platform_; }
+
+  // TODO(zhoupeng.z): remove this method after pre-postings applied on all
+  // platforms.
+  void MarkPostToPlatform() { need_post_to_platform_ = false; }
+
  private:
   std::string page_version;
   bool page_flatten;
@@ -1445,6 +1453,16 @@ class PageConfig final : public EntryConfig {
   TernaryBool enable_signal_api_{TernaryBool::UNDEFINE_VALUE};
 
   TernaryBool enable_text_layout_cache_{TernaryBool::UNDEFINE_VALUE};
+
+  /**
+   * Not a config but a marker to indicate whether the page config needs to be
+   * posted to platform layer. In PreDecode, PageConfig will be set to platform
+   * layer before `LoadBundle`, so that it does not need to be posted to
+   * platform layer again, which can reduce the overhead of posting. This
+   * optimization is only valid for Android now.
+   * TODO(zhoupeng.z): Apply this optimization to all platforms.
+   */
+  bool need_post_to_platform_{true};
 
   template <typename T>
   using PageConfigSetter = void (PageConfig::*)(T);

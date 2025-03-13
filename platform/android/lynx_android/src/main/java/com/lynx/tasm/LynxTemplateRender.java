@@ -2565,24 +2565,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
 
     @Override
     public void onPageConfigDecoded(PageConfig config) {
-      if (config == null) {
-        LLog.e(TAG, "PageConfig is null when exec onPageConfigDecoded.");
-        return;
-      }
-
-      if (mLynxContext != null) {
-        mLynxContext.onPageConfigDecoded(config);
-      } else {
-        LLog.e(TAG, "lynx context free in used: LynxUI configs may be not valid");
-      }
-      if (mGenericInfo != null) {
-        mGenericInfo.updatePageConfigInfo(config);
-      }
-
-      ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
-      if (lynxUIRenderer != null) {
-        lynxUIRenderer.onPageConfigDecoded(config);
-      }
+      PageConfig.attachPageConfig(config, mLynxContext, mGenericInfo, lynxUIRenderer());
     }
 
     @Override
@@ -2962,6 +2945,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     if (mDevTool != null) {
       mDevTool.attachToDebugBridge(url);
     }
+    PageConfig.attachPageConfig(
+        bundle.getPageConfig(), mLynxContext, mGenericInfo, lynxUIRenderer());
     timingOption.setTiming(TimingCollector.FFI_START, System.currentTimeMillis());
     nativeLoadTemplateBundleByPreParsedData(mNativePtr, mNativeLifecycle, url,
         bundle.getNativePtr(), isPrePainting ? 1 : 0, nativePtr, read_only, processorName, initData,

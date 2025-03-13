@@ -6745,6 +6745,7 @@ public class com::lynx::tasm::PageConfig :  {
   public boolean com.lynx.tasm.PageConfig.getEnableMultiTouch();
   public double com.lynx.tasm.PageConfig.getEnableLynxScrollFluency();
   public String com.lynx.tasm.PageConfig.toString();
+  public static void com.lynx.tasm.PageConfig.attachPageConfig(PageConfig config, LynxContext lynxContext, LynxGenericInfo genericInfo, ILynxUIRenderer uiRenderer);
 }
 
 public class com::lynx::tasm::base::PageReloadHelper :  {
@@ -8116,6 +8117,7 @@ public class com::lynx::tasm::TemplateBundle :  {
   public String com.lynx.tasm.TemplateBundle.getErrorMessage();
   public String com.lynx.tasm.TemplateBundle.getUrl();
   public boolean com.lynx.tasm.TemplateBundle.constructContext(int count);
+  public PageConfig com.lynx.tasm.TemplateBundle.getPageConfig();
   public boolean com.lynx.tasm.TemplateBundle.constructContext();
 }
 

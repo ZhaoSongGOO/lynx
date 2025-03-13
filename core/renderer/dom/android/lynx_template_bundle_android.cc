@@ -9,9 +9,11 @@
 #include <utility>
 #include <vector>
 
+#include "core/base/android/java_only_map.h"
 #include "core/base/android/jni_helper.h"
 #include "core/renderer/dom/android/lepus_message_consumer.h"
 #include "core/runtime/jscache/js_cache_manager_facade.h"
+#include "core/shell/android/tasm_platform_invoker_android.h"
 #include "core/template_bundle/template_codec/binary_decoder/lynx_binary_reader.h"
 #include "platform/android/lynx_android/src/main/jni/gen/TemplateBundle_jni.h"
 #include "platform/android/lynx_android/src/main/jni/gen/TemplateBundle_register_jni.h"
@@ -24,6 +26,26 @@ bool RegisterJNIForTemplateBundle(JNIEnv* env) {
 }  // namespace jni
 }  // namespace lynx
 
+namespace {
+/**
+ * Convert native PageConfig to java map
+ */
+std::optional<lynx::base::android::JavaOnlyMap> GetPageConfigMap(
+    JNIEnv* env, lynx::tasm::LynxTemplateBundle* bundle) {
+  if (!bundle->IsCard()) {
+    return std::nullopt;
+  }
+  const std::shared_ptr<lynx::tasm::PageConfig>& page_config =
+      bundle->GetPageConfig();
+  if (!page_config) {
+    return std::nullopt;
+  }
+  page_config->MarkPostToPlatform();
+  return lynx::shell::TasmPlatformInvokerAndroid::ConvertToJavaOnlyMap(
+      page_config);
+}
+}  // namespace
+
 jlong ParseTemplate(JNIEnv* env, jclass jcaller, jbyteArray j_binary,
                     jobjectArray j_buffer) {
   auto binary =
@@ -35,6 +57,9 @@ jlong ParseTemplate(JNIEnv* env, jclass jcaller, jbyteArray j_binary,
     lynx::tasm::LynxTemplateBundle* bundle =
         new lynx::tasm::LynxTemplateBundle(reader.GetTemplateBundle());
     bundle->PrepareVMByConfigs();
+    auto page_config = GetPageConfigMap(env, bundle);
+    env->SetObjectArrayElement(
+        j_buffer, 1, page_config ? page_config->jni_object() : nullptr);
     return reinterpret_cast<int64_t>(bundle);
   } else {
     // decode failed.
@@ -111,8 +136,10 @@ lynx::base::android::ScopedLocalJavaRef<jobject>
 ConstructJTemplateBundleFromNative(LynxTemplateBundle bundle) {
   JNIEnv* env = base::android::AttachCurrentThread();
   auto* native_bundle_ptr = new tasm::LynxTemplateBundle(std::move(bundle));
+  auto page_config = GetPageConfigMap(env, native_bundle_ptr);
   return Java_TemplateBundle_fromNative(
-      env, reinterpret_cast<int64_t>(native_bundle_ptr));
+      env, reinterpret_cast<int64_t>(native_bundle_ptr),
+      page_config ? page_config->jni_object() : nullptr);
 }
 }  // namespace tasm
 }  // namespace lynx

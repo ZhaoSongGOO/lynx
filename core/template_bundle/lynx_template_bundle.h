@@ -130,6 +130,10 @@ class LynxTemplateBundle final {
 
   std::optional<Elements> TryGetElements(const std::string &key);
 
+  const std::shared_ptr<lynx::tasm::PageConfig> &GetPageConfig() {
+    return page_configs_;
+  };
+
  private:
   void EnsureParseTaskScheduler();
 

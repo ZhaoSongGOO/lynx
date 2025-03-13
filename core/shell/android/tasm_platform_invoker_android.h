@@ -9,6 +9,7 @@
 #include <string>
 
 #include "base/include/platform/android/scoped_java_ref.h"
+#include "core/base/android/java_only_map.h"
 #include "core/shell/tasm_platform_invoker.h"
 
 namespace lynx {
@@ -19,6 +20,9 @@ class TasmPlatformInvokerAndroid : public TasmPlatformInvoker {
   TasmPlatformInvokerAndroid(JNIEnv* env, jobject jni_object)
       : jni_object_(env, jni_object) {}
   ~TasmPlatformInvokerAndroid() override = default;
+
+  static base::android::JavaOnlyMap ConvertToJavaOnlyMap(
+      const std::shared_ptr<tasm::PageConfig>& config);
 
   void OnPageConfigDecoded(
       const std::shared_ptr<tasm::PageConfig>& config) override;
