@@ -905,8 +905,15 @@ void ElementManager::PauseAllAnimations() {
 
 void ElementManager::ResumeAllAnimations() {
   LOGI("Call ElementManager::ResumeAllAnimations.");
+  if (animations_paused_ == false) {
+    return;
+  }
   animations_paused_ = false;
-  // TODO(wangyifei.20010605): Can't pause running animations, fix later.
+  // Resume running Animations.
+  if (element_vsync_proxy_) {
+    element_vsync_proxy_->RequestNextFrame();
+  }
+  // Resume waiting animations.
   for (const auto &ele : paused_animation_element_set_) {
     ele->SetDataToNativeKeyframeAnimator(true);
   }

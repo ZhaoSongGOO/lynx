@@ -51,6 +51,9 @@ void ElementVsyncProxy::SetPreferredFps(const std::string &preferred_fps) {
 
 // The first animation starts an infinite loop.
 void ElementVsyncProxy::RequestNextFrame() {
+  if (element_manager_->IsPause()) {
+    return;
+  }
   if (!has_requested_next_frame_ && vsync_monitor_) {
     std::weak_ptr<ElementVsyncProxy> weak_ptr{shared_from_this()};
     vsync_monitor_->ScheduleVSyncSecondaryCallback(
