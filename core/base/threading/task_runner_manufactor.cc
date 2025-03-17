@@ -355,13 +355,17 @@ fml::RefPtr<fml::MessageLoopImpl> TaskRunnerManufactor::GetTASMLoop() {
 void TaskRunnerManufactor::StartLayoutThread(bool enable_multi_layout_thread) {
   static constexpr const char* layout_thread_name = "Lynx_Layout";
   if (enable_multi_layout_thread) {
-    layout_task_runner_ =
-        GetLayoutThreadCache(layout_thread_name).GetTaskRunner(label_);
+    layout_task_runner_ = fml::MakeRefCounted<fml::TaskRunner>(
+        GetLayoutThreadCache(layout_thread_name)
+            .GetTaskRunner(label_)
+            ->GetLoop());
   } else {
     static base::NoDestructor<fml::Thread> layout_thread(
         fml::Thread::ThreadConfig(layout_thread_name,
                                   fml::Thread::ThreadPriority::HIGH));
-    layout_task_runner_ = layout_thread->GetTaskRunner();
+
+    layout_task_runner_ = fml::MakeRefCounted<fml::TaskRunner>(
+        layout_thread->GetTaskRunner()->GetLoop());
   }
 }
 
