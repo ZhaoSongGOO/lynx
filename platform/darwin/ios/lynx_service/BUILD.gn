@@ -38,8 +38,8 @@ podspec_target("LynxService_podspec") {
         "ENABLE_TRACE_PERFETTO=#{\$enable_trace}",
       ]
       CLANG_CXX_LANGUAGE_STANDARD = "gnu++17"
-      OTHER_CPLUSPLUSFLAGS = "-fno-aligned-allocation"
-      CLANG_ENABLE_CPP_STATIC_DESTRUCTORS = "NO"
+      OTHER_CPLUSPLUSFLAGS =
+          "-fno-aligned-allocation -fno-c++-static-destructors"
     }
     ios = {
       deployment_target = "10.0"

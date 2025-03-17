@@ -35,8 +35,8 @@ podspec_target("BaseDevtool_podspec") {
         "LYNX_ENABLE_E2E_TEST=#{\$enable_e2e_test}",
       ]
       CLANG_CXX_LANGUAGE_STANDARD = "gnu++17"
-      OTHER_CPLUSPLUSFLAGS = "-fno-aligned-allocation"
-      CLANG_ENABLE_CPP_STATIC_DESTRUCTORS = "NO"
+      OTHER_CPLUSPLUSFLAGS =
+          "-fno-aligned-allocation -fno-c++-static-destructors"
     }
     ios = {
       deployment_target = "10.0"
