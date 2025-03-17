@@ -4507,12 +4507,9 @@ RENDERER_FUNCTION_CC(FiberElementFromBinary) {
 
   const auto& self = GET_TASM_POINTER();
   const auto& entry = self->FindEntry(tasm::DEFAULT_ENTRY_NAME);
-  const auto& info = entry->GetElementTemplateInfo(arg0->StdString());
-
-  lepus::Value node_ary = TreeResolver::InitElementTree(
-      TreeResolver::FromTemplateInfo(info), arg1->Int64(),
-      self->page_proxy()->element_manager().get(),
-      self->style_sheet_manager(DEFAULT_ENTRY_NAME));
+  auto node_ary =
+      entry->ElementFromBinary(arg0->StdString(), arg1->Int64(),
+                               self->page_proxy()->element_manager().get());
 
   // Call manager->PrepareNodeForInspector to init inspector attr for the
   // element tree.

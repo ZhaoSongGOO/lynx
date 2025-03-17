@@ -25,6 +25,7 @@ ParallelParseTaskScheduler::~ParallelParseTaskScheduler() {
 
   for (auto& pair : element_template_parse_task_map_) {
     pair.second->Run();
+    pair.second->GetFuture().get();
   }
   element_template_parse_task_map_.clear();
 }
@@ -51,30 +52,27 @@ bool ParallelParseTaskScheduler::ParallelParseElementTemplate(
               "TemplateParallelReader::GenerateElementTemplateParseTask");
           auto start = router->descriptor_offset_ + pair.second;
           auto sub_reader = reader->DeriveElementBinaryReader();
-          std::promise<
-              std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>>
-              promise;
-          std::future<std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>>
-              future = promise.get_future();
-          auto task_info_ptr = fml::MakeRefCounted<base::OnceTask<
-              std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>>>(
-              [sub_reader = std::move(sub_reader), start, key = pair.first,
-               promise = std::move(promise)]() mutable {
-                TRACE_EVENT(
-                    LYNX_TRACE_CATEGORY,
-                    "ElementBinaryReader::RunParseElementTemplateUnitTask",
-                    [key = key](lynx::perfetto::EventContext ctx) {
-                      auto* tagInfo = ctx.event()->add_debug_annotations();
-                      tagInfo->set_name("key");
-                      tagInfo->set_string_value(key.c_str());
-                    });
-                sub_reader->Seek(start);
-                auto info = sub_reader->DecodeTemplatesInfoWithKey(key);
-                auto result = TreeResolver::FromTemplateInfo(*info);
-                promise.set_value({std::move(info), result});
-                return;
-              },
-              std::move(future));
+          std::promise<ElementTemplateResult> promise;
+          std::future<ElementTemplateResult> future = promise.get_future();
+          auto task_info_ptr =
+              fml::MakeRefCounted<base::OnceTask<ElementTemplateResult>>(
+                  [sub_reader = std::move(sub_reader), start, key = pair.first,
+                   promise = std::move(promise)]() mutable {
+                    TRACE_EVENT(
+                        LYNX_TRACE_CATEGORY,
+                        "ElementBinaryReader::RunParseElementTemplateUnitTask",
+                        [key = key](lynx::perfetto::EventContext ctx) {
+                          auto* tagInfo = ctx.event()->add_debug_annotations();
+                          tagInfo->set_name("key");
+                          tagInfo->set_string_value(key.c_str());
+                        });
+                    sub_reader->Seek(start);
+                    auto info = sub_reader->DecodeTemplatesInfoWithKey(key);
+                    auto result = TreeResolver::FromTemplateInfo(*info);
+                    promise.set_value({std::move(info), result});
+                    return;
+                  },
+                  std::move(future));
           element_template_parse_task_map_[pair.first] = task_info_ptr;
           base::TaskRunnerManufactor::PostTaskToConcurrentLoop(
               [task_info_ptr]() { task_info_ptr->Run(); },
@@ -89,7 +87,7 @@ bool ParallelParseTaskScheduler::ParallelParseElementTemplate(
   return true;
 }
 
-std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>
+ElementTemplateResult
 ParallelParseTaskScheduler::TryGetElementTemplateParseResult(
     const std::string& key) {
   if (generate_element_template_parse_task_.get() != nullptr) {

@@ -234,6 +234,12 @@ bool TemplateBinaryReader::ParallelDecodeElementTemplate() {
       &element_templates_router_, this);
 }
 
+ElementTemplateResult TemplateBinaryReader::GetElementTemplateParseResult(
+    const std::string& key) {
+  EnsureParallelParseTaskScheduler();
+  return task_schedular_->TryGetElementTemplateParseResult(key);
+}
+
 bool TemplateBinaryReader::DecodeLepusChunk() {
   TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeLepusChunk");
   ERROR_UNLESS(DecodeLepusChunkRoute());

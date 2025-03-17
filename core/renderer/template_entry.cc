@@ -6,6 +6,7 @@
 
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/renderer/dom/fiber/tree_resolver.h"
 #include "core/renderer/lynx_global_pool.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/tasm/i18n/i18n.h"
@@ -323,6 +324,27 @@ void TemplateEntry::RegisterBuiltin(TemplateAssembler* assembler) {
       lepus::Value(static_cast<lepus::Context::Delegate*>(assembler)));
   vm_context_->RegisterCtxBuiltin(compile_options().arch_option_);
   return;
+}
+
+lepus::Value TemplateEntry::ElementFromBinary(const std::string& key,
+                                              int64_t pid,
+                                              ElementManager* manager) {
+  if (reader_) {
+    auto result = reader_->GetElementTemplateParseResult(key);
+    if (result.first != nullptr && result.first->exist_) {
+      template_bundle_.element_template_infos_[key] = result.first;
+      return TreeResolver::InitElementTree(std::move(result.second), pid,
+                                           manager, GetStyleSheetManager());
+    }
+  }
+
+  // TODO(songshourui.null): It may be worth posting another async task to fix
+  // the issue where the subsequent `Element Template` cannot asynchronously
+  // create the `Element Tree` when the `Element Template` is reused.
+
+  auto& info = GetElementTemplateInfo(key);
+  return TreeResolver::InitElementTree(TreeResolver::FromTemplateInfo(info),
+                                       pid, manager, GetStyleSheetManager());
 }
 
 const ElementTemplateInfo& TemplateEntry::GetElementTemplateInfo(

@@ -22,6 +22,8 @@ class FiberElement;
 class ElementBinaryReader;
 struct ElementTemplateInfo;
 using Elements = base::Vector<fml::RefPtr<FiberElement>>;
+using ElementTemplateResult =
+    std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>;
 
 class ParallelParseTaskScheduler {
  public:
@@ -31,8 +33,8 @@ class ParallelParseTaskScheduler {
   bool ParallelParseElementTemplate(OrderedStringKeyRouter* router,
                                     ElementBinaryReader* reader);
 
-  std::pair<std::shared_ptr<ElementTemplateInfo>, Elements>
-  TryGetElementTemplateParseResult(const std::string& key);
+  ElementTemplateResult TryGetElementTemplateParseResult(
+      const std::string& key);
 
  private:
   base::OnceTaskRefptr<int32_t> generate_element_template_parse_task_;
