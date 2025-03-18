@@ -11,6 +11,7 @@
 #include "base/include/string/string_number_convert.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/computed_css_style.h"
 #include "core/renderer/template_assembler.h"
 #include "core/renderer/utils/base/base_def.h"
@@ -114,13 +115,14 @@ void RadonPage::UpdateComponentData(const std::string &id,
       timing->task_info_ = ConcatenateTableKeys(table);
     }
 
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "UpdateComponentData",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_DIFF_UPDATE_COMPONENT_DARA,
                 [&](lynx::perfetto::EventContext ctx) {
-                  std::string info = ConcatUpdateDataInfo(component, table);
-                  LOGI(info);
-                  auto *debug = ctx.event()->add_debug_annotations();
-                  debug->set_name("Info");
-                  debug->set_string_value(info);
+                  ctx.event()->add_debug_annotations(
+                      "componentName", component->IsRadonPage()
+                                           ? "RootComponent"
+                                           : component->path().c_str());
+                  ctx.event()->add_debug_annotations(
+                      "Keys", ConcatenateTableKeys(table));
                 });
     DispatchOption dispatch_option(page_proxy_);
     component->UpdateRadonComponent(
@@ -220,18 +222,14 @@ RadonComponent *RadonPage::GetComponent(const std::string &comp_id) {
 bool RadonPage::UpdatePage(const lepus::Value &table,
                            const UpdatePageOption &update_page_option,
                            PipelineOptions &pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxUpdateData",
-              [&](lynx::perfetto::EventContext ctx) {
-                std::string info = ConcatUpdateDataInfo(this, table);
-                LOGI(info);
-                auto *debug = ctx.event()->add_debug_annotations();
-                debug->set_name("Info");
-                debug->set_string_value(info);
-                std::string defaultInfo = ConcatUpdateDataInfo(this, data_);
-                auto *debug_default_data = ctx.event()->add_debug_annotations();
-                debug_default_data->set_name("defaultData");
-                debug_default_data->set_string_value(defaultInfo);
-              });
+  TRACE_EVENT(
+      LYNX_TRACE_CATEGORY, LYNX_UPDATE_DATA,
+      [&](lynx::perfetto::EventContext ctx) {
+        ctx.event()->add_debug_annotations("componentName", "RootComponent");
+        ctx.event()->add_debug_annotations("Keys", ConcatenateTableKeys(table));
+        ctx.event()->add_debug_annotations("defaultData",
+                                           ConcatenateTableKeys(data_));
+      });
   auto *timing = tasm::timing::LongTaskMonitor::Instance()->GetTopTimingPtr();
   if (timing != nullptr) {
     timing->task_name_ = "root";

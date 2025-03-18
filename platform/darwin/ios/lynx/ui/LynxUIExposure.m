@@ -4,6 +4,7 @@
 
 #import <Lynx/LynxEnv.h>
 #import <Lynx/LynxTraceEvent.h>
+#import <Lynx/LynxTraceEventDef.h>
 #import <Lynx/LynxTraceEventWrapper.h>
 #import <Lynx/LynxUI+Internal.h>
 #import <Lynx/LynxUIExposure.h>
@@ -388,8 +389,7 @@
     return;
   }
 
-  [LynxTraceEvent beginSection:LYNX_TRACE_CATEGORY_WRAPPER
-                      withName:@"LynxUIExposure.exposureHandler"];
+  LYNX_TRACE_SECTION(LYNX_TRACE_CATEGORY_WRAPPER, UI_EXPOSURE_HANDLER);
 
   // There is no need to detect exposure when UI and LynxView haven't changed.
   if (_enableCheckExposureOptimize && !_flag && ![self isLynxViewChanged]) {
@@ -458,7 +458,7 @@
   [_disappearSet removeAllObjects];
   [_appearSet removeAllObjects];
 
-  [LynxTraceEvent endSection:LYNX_TRACE_CATEGORY_WRAPPER];
+  LYNX_TRACE_END_SECTION(LYNX_TRACE_CATEGORY_WRAPPER);
 }
 
 - (void)stopExposure:(NSDictionary *)options {

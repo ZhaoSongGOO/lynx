@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/list_component_info.h"
 #include "core/renderer/dom/vdom/radon/radon_list_base.h"
 #include "core/renderer/template_assembler.h"
@@ -140,7 +141,7 @@ void ListElement::ParallelFlushAsRoot() {
 
 int32_t ListElement::ComponentAtIndex(uint32_t index, int64_t operationId,
                                       bool enable_reuse_notification) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::ComponentAtIndex",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ELEMENT_RENDER_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

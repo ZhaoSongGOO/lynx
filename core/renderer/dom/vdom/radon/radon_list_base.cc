@@ -11,6 +11,7 @@
 
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/component_attributes.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_lazy_component.h"
@@ -198,7 +199,7 @@ void RadonListBase::SyncComponentExtraInfo(RadonComponent* comp, uint32_t index,
 
 void RadonListBase::RenderComponentAtIndex(uint32_t index,
                                            int64_t operation_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "List::RenderComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_RENDER_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

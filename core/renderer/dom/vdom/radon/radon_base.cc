@@ -10,6 +10,7 @@
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/select_element_token.h"
 #include "core/renderer/dom/element.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
@@ -131,7 +132,7 @@ void RadonBase::DispatchForDiff(const DispatchOption& option) {
 }
 
 void RadonBase::DispatchChildrenForDiff(const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DispatchChildrenForDiff",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_DIFF_DISPATCH_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -332,7 +333,7 @@ bool RadonBase::SetLynxKey(const base::String& key, const lepus::Value& value) {
 
 void RadonBase::RadonMyersDiff(RadonBaseVector& old_radon_children,
                                const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonBase::RadonMyersDiff",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_MYERS_DIFF,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

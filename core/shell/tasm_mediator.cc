@@ -9,6 +9,7 @@
 #include "base/include/value/base_string.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/threading/vsync_monitor.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/lynx_get_ui_result.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 #include "core/runtime/bindings/common/event/context_proxy.h"
@@ -142,7 +143,7 @@ void TasmMediator::OnPipelineStart(
     const tasm::PipelineOrigin& pipeline_origin,
     tasm::timing::TimestampUs pipeline_start_timestamp) {
   TRACE_EVENT_INSTANT(
-      LYNX_TRACE_CATEGORY, "Timing::OnPipelineStart",
+      LYNX_TRACE_CATEGORY, TIMING_PIPELINE_START,
       [&pipeline_id, &pipeline_origin,
        pipeline_start_timestamp](lynx::perfetto::EventContext ctx) {
         ctx.event()->add_debug_annotations("pipeline_id", pipeline_id);

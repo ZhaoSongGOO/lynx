@@ -13,6 +13,7 @@
 #import <Lynx/LynxTextShadowNode.h>
 #import <Lynx/LynxTextUtils.h>
 #import <Lynx/LynxTraceEvent.h>
+#import <Lynx/LynxTraceEventDef.h>
 #import <Lynx/LynxTraceEventWrapper.h>
 
 // This is an adaptaion for one of the bug of line spacing in TextKit that
@@ -361,7 +362,7 @@ LYNX_REGISTER_SHADOW_NODE("text")
   // The average word in the English language is approximately 5 characters.
   // 10 words may be enough to distinguish text.
   LYNX_TRACE_SECTION_WITH_INFO(
-      LYNX_TRACE_CATEGORY_WRAPPER, @"text.TextShadowNode.measure",
+      LYNX_TRACE_CATEGORY_WRAPPER, TEXT_SHADOW_NODE_MEASURE,
       textValue.length > 50
           ? @{@"first_fifty_characters" : [textValue substringWithRange:NSMakeRange(0, 50)]}
           : @{@"characters" : textValue == nil ? @"" : textValue})

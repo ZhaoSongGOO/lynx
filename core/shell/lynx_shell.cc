@@ -8,6 +8,7 @@
 
 #include "base/include/no_destructor.h"
 #include "core/base/threading/thread_merger.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/public/jsb/native_module_factory.h"
 #include "core/renderer/dom/lynx_get_ui_result.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
@@ -1166,7 +1167,7 @@ void LynxShell::OnPipelineStart(
     const tasm::PipelineOrigin& pipeline_origin,
     tasm::timing::TimestampUs pipeline_start_timestamp) {
   TRACE_EVENT_INSTANT(
-      LYNX_TRACE_CATEGORY, "Timing::OnPipelineStart",
+      LYNX_TRACE_CATEGORY, TIMING_PIPELINE_START,
       [&pipeline_id, &pipeline_origin,
        pipeline_start_timestamp](lynx::perfetto::EventContext ctx) {
         ctx.event()->add_debug_annotations("pipeline_id", pipeline_id);

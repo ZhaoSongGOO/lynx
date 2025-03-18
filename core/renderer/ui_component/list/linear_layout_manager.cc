@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "base/include/float_comparison.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
 namespace lynx {
@@ -303,7 +304,7 @@ void LinearLayoutManager::FillWithAnchor(
  * or end.
  */
 bool LinearLayoutManager::Preload(LayoutState& layout_state) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Preload",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_PRELOAD,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -359,7 +360,7 @@ bool LinearLayoutManager::Preload(LayoutState& layout_state) {
       TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
       // Fill to start for preload
       TRACE_EVENT(
-          LYNX_TRACE_CATEGORY, "LinearLayoutManager::PreloadToStart", "info",
+          LYNX_TRACE_CATEGORY, LIST_PRE_RENDER_OFF_SCREEN_UPPER_ELEMENT, "info",
           base::FormatString("[%d -> %d]", start_index, target_start_index));
       NLIST_LOGD(
           "LinearLayoutManager::Preload: preload to start, "
@@ -504,7 +505,8 @@ void LinearLayoutManager::ScrollByInternal(float content_offset,
   FillWithAnchor(layout_state, anchor_info);
 
   // step 3. Update content size and offset
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "FlushContentSizeAndOffsetToPlatform");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    FLUSH_CONTENT_SIZE_AND_OFFSET_TO_PLATFORM);
   LayoutInvalidItemHolder(
       layout_state.min_layout_chunk_index_ -
       static_cast<int32_t>(list::LayoutDirection::kLayoutToStart));

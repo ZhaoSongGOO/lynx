@@ -20,6 +20,7 @@ import android.text.style.MetricAffectingSpan;
 import androidx.annotation.Nullable;
 import com.lynx.react.bridge.ReadableArray;
 import com.lynx.tasm.base.TraceEvent;
+import com.lynx.tasm.base.trace.TraceEventDef;
 import com.lynx.tasm.behavior.LynxProp;
 import com.lynx.tasm.behavior.PropsConstants;
 import com.lynx.tasm.behavior.StyleConstants;
@@ -330,19 +331,19 @@ public class TextShadowNode extends BaseTextShadowNode implements CustomMeasureF
       } else {
         args.put("characters", string);
       }
-      TraceEvent.beginSection("text.TextShadowNode.measure", args);
+      TraceEvent.beginSection(TraceEventDef.TEXT_SHADOW_NODE_MEASURE, args);
     }
     mRenderer = null;
     mTruncatedSpannableString = null;
     // Check if it is worth to measure
     if (widthMode != MeasureMode.UNDEFINED && heightMode != MeasureMode.UNDEFINED && width == 0
         && height == 0) {
-      TraceEvent.endSection("text.TextShadowNode.measure");
+      TraceEvent.endSection(TraceEventDef.TEXT_SHADOW_NODE_MEASURE);
       return MeasureOutput.make(0, 0);
     }
     CharSequence span = mSpannableString;
     if (span == null) {
-      TraceEvent.endSection("text.TextShadowNode.measure");
+      TraceEvent.endSection(TraceEventDef.TEXT_SHADOW_NODE_MEASURE);
       return MeasureOutput.make(0, 0);
     }
     // inline view measure
@@ -363,7 +364,7 @@ public class TextShadowNode extends BaseTextShadowNode implements CustomMeasureF
     float measuredWidth = mRenderer.getLayoutWidth();
     mBaseline = mRenderer.getTextLayout().getLineBaseline(0);
 
-    TraceEvent.endSection("text.TextShadowNode.measure");
+    TraceEvent.endSection(TraceEventDef.TEXT_SHADOW_NODE_MEASURE);
     return MeasureOutput.make(measuredWidth, measuredHeight);
   }
 

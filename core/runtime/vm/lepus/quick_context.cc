@@ -10,6 +10,7 @@
 #include "base/include/string/string_number_convert.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/renderer/utils/value_utils.h"
@@ -475,7 +476,7 @@ Value QuickContext::CallArgs(const base::String& name, const Value* args[],
     return CallArgs(name, args, args_count, false);
   }
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "QuickContext::Call",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, QUICK_CONTEXT_CALL,
               [&](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("name", name.str());
               });
@@ -690,7 +691,8 @@ void QuickContext::SetGCThreshold(int64_t threshold) {
 
 LEPUSValue QuickContext::GetAndCall(const std::string& name, LEPUSValue* args,
                                     size_t size) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "QuickContext::GetAndCall");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, QUICK_CONTEXT_GET_AND_CALL, "name",
+              name);
   LEPUSContext* ctx = context();
   HandleScope func_scope(ctx);
   LEPUSValue ret;

@@ -17,6 +17,7 @@
 #include "base/include/value/base_string.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/css_color.h"
 #include "core/renderer/css/css_keyframes_token.h"
 #include "core/renderer/css/css_property.h"
@@ -1423,7 +1424,7 @@ void FiberElement::FlushSelf() {
 
 // need parent's option
 void FiberElement::FlushActions() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::FlushActions",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_FLUSH_ACTIONS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

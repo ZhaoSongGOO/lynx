@@ -17,6 +17,7 @@
 #include "base/include/no_destructor.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/public/layout_node_value.h"
 #include "core/renderer/dom/attribute_holder.h"
@@ -729,7 +730,7 @@ void LayoutContext::Layout(const PipelineOptions& options) {
       " for viewport, size: %.1f, %.1f; mode: %d, %d", viewport_.width,
       viewport_.height, viewport_.width_mode, viewport_.height_mode);
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LayoutContext.Layout",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LAYOUT_CONTEXT_LAYOUT,
               [&options](lynx::perfetto::EventContext ctx) {
                 options.UpdateTraceDebugInfo(ctx.event());
               });
@@ -1100,7 +1101,7 @@ void LayoutContext::UpdateLynxEnvForLayoutThread(LynxEnvConfig env) {
 }
 
 void LayoutContext::RequestLayout(const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LayoutContext.RequestLayout",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_REQUEST_LAYOUT,
               [&options](lynx::perfetto::EventContext ctx) {
                 options.UpdateTraceDebugInfo(ctx.event());
               });

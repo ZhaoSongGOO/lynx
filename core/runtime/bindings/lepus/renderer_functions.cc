@@ -20,6 +20,7 @@
 #include "base/include/string/string_utils.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/css/css_style_sheet_manager.h"
 #include "core/renderer/css/css_utils.h"
@@ -1253,7 +1254,7 @@ RENDERER_FUNCTION_CC(CreateVirtualComponent) {
     CONVERT_ARG_AND_CHECK(arg2, 2, String, CreateVirtualComponent);
     component_name = arg2->StdString();
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CreateVirtualComponent", "componentName",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CREATE_VIRTUAL_COMPONENT, "componentName",
               component_name);
   int tid = static_cast<int>(arg0->Number());
   int component_instance_id = 0;
@@ -1729,7 +1730,7 @@ RENDERER_FUNCTION_CC(SetId) {
 }
 
 RENDERER_FUNCTION_CC(UpdateComponentInfo) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UpdateComponentInfo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_DIFF_UPDATE_COMPONENT_INFO);
   CHECK_ARGC_EQ(UpdateComponentInfo, 4);
   CONVERT_ARG_AND_CHECK(arg0, 0, CPointer, UpdateComponentInfo);
   CONVERT_ARG_AND_CHECK(arg1, 1, String, UpdateComponentInfo);
@@ -2713,7 +2714,7 @@ RENDERER_FUNCTION_CC(FiberCreateNonElement) {
 }
 
 RENDERER_FUNCTION_CC(FiberCreateWrapperElement) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberCreateWrapperElement");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CREATE_WRAPPER_ELEMENT);
   // parameter size >= 1
   // [0] Number -> parent component/page's unique id
   // [1] Object|Undefined -> optional info, not used now

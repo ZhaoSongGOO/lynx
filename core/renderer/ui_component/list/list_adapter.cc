@@ -7,6 +7,7 @@
 #include <unordered_set>
 
 #include "base/include/log/logging.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 #include "core/renderer/utils/value_utils.h"
@@ -36,7 +37,7 @@ void ListAdapter::OnErrorOccurred(lynx::base::LynxError error) {
 
 // Update data source for radon diff arch.
 bool ListAdapter::UpdateDataSource(const lepus::Value& data_source) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::UpdateDataSource");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_UPDATE_DATA_SOURCE);
   bool has_updated = false;
   if (data_source.IsObject() && adapter_helper_) {
     // Parse diff result.
@@ -101,7 +102,7 @@ bool ListAdapter::UpdateDataSource(const lepus::Value& data_source) {
 
 // Update data source for fiber arch.
 bool ListAdapter::UpdateFiberDataSource(const lepus::Value& data) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::UpdateFiberDataSource");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_UPDATE_FIVER_DATA_SOURCE);
   if (!data.IsTable()) {
     return false;
   }

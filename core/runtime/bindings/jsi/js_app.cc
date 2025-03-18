@@ -19,6 +19,7 @@
 #include "base/include/value/base_string.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/data/lynx_view_data_manager.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
@@ -1844,7 +1845,7 @@ void App::loadApp(tasm::TasmRuntimeBundle bundle,
                   tasm::PackageInstanceDSL dsl,
                   tasm::PackageInstanceBundleModuleMode bundle_module_mode,
                   const std::string& url) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LoadJSApp", "url", url);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LOAD_JS_APP, "url", url);
   card_bundle_ = std::move(bundle);
   init_global_props_ = global_props;
   app_dsl_ = dsl;
@@ -1979,7 +1980,7 @@ void App::loadApp(tasm::TasmRuntimeBundle bundle,
   const Value args[3] = {std::move(pageValue), std::move(paramValue),
                          std::move(lynxValue)};
   size_t count = 3;
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "RunningInJS");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, RUNNING_IN_JS, "name", "loadCard");
   auto ret = load_app_func->call(*rt, args, count);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
   if (!ret || !ret->isBool() || !ret->getBool()) {
@@ -2157,7 +2158,8 @@ std::optional<Value> App::SendPageEvent(const std::string& page_name,
     const Value args[3] = {std::move(jsName), std::move(*data), std::move(id)};
     size_t count = 3;
     const piper::Object& thisObj = js_app;
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "RunningInJS");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, RUNNING_IN_JS, "name", "publishEvent",
+                "event", handler);
     auto res = publishEvent->callWithThis(*rt, thisObj, args, count);
     // get js function return value
     return res;
@@ -2441,7 +2443,7 @@ void App::NotifyUpdatePageData() {
       const Value args[2] = {std::move(*jsValue), std::move(options)};
       size_t count = 2;
       const piper::Object& thisObj = js_app;
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "RunningInJS");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, RUNNING_IN_JS, "name", "updateCardData");
       publishEvent->callWithThis(*rt, thisObj, args, count);
     }  // end for
   }
@@ -2472,7 +2474,8 @@ void App::NotifyUpdateCardConfigData() {
     const Value args[1] = {std::move(*jsValue)};
     size_t count = 1;
     const piper::Object& thisObj = js_app;
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "RunningInJS");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, RUNNING_IN_JS, "name",
+                "processCardConfig");
     publishEvent->callWithThis(*rt, thisObj, args, count);
   }
 }
@@ -2549,7 +2552,7 @@ std::optional<JSINativeException> App::batchedUpdateData(
         "runtime is destroy or batchedUpdateData's args isn't an object."));
   }
   uint64_t update_task_id = TRACE_FLOW_ID();
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "batchedUpdateData",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, BATCHED_UPDATE_DATA,
               [&](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_flow_ids(update_task_id);
               });
@@ -2690,7 +2693,7 @@ std::optional<JSINativeException> App::batchedUpdateData(
 
 base::expected<Value, JSINativeException> App::loadScript(
     const std::string entry_name, const std::string& url, long timeout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "App::loadScript", "url", url, "entry",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, APP_LOAD_SCRIPT, "url", url, "entry",
               entry_name);
 
   LOGI("loadscript:" << url);
@@ -2911,10 +2914,11 @@ void App::getContextDataAsync(const std::string& component_id,
 
 void App::QueryComponent(const std::string& url, ApiCallBack callback,
                          const std::vector<std::string>& ids) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "App::QueryComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, APP_QUERY_COMPONENT,
               [&url](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("url", url);
               });
+
   auto holder = weak_js_bundle_holder_.lock();
   if (holder) {
     auto js_bundle = holder->GetJSBundleFromBT(url);
@@ -3000,7 +3004,8 @@ std::optional<Value> App::PublishComponentEvent(const std::string& component_id,
                            std::move(*data)};
     size_t count = 3;
     const piper::Object& thisObj = js_app;
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "RunningInJS");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, RUNNING_IN_JS, "name",
+                "publicComponentEvent", "component_id", component_id);
     auto res = publish_component_event->callWithThis(*rt, thisObj, args, count);
     return res;
   }

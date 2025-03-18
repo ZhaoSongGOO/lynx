@@ -5,6 +5,7 @@
 #include "core/runtime/bindings/jsi/event/js_event_listener.h"
 
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/runtime/bindings/common/event/message_event.h"
 #include "core/runtime/bindings/common/event/runtime_constants.h"
 #include "core/runtime/common/utils.h"
@@ -26,7 +27,7 @@ JSClosureEventListener::JSClosureEventListener(std::shared_ptr<Runtime> rt,
 }
 
 void JSClosureEventListener::Invoke(event::Event* event) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CallJSClosureEvent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CALL_JS_CLOSURE_EVENT,
               [event](lynx::perfetto::EventContext ctx) {
                 auto type = event ? event->type() : "null";
                 ctx.event()->add_debug_annotations("type", type);

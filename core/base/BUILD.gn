@@ -8,6 +8,8 @@ import("//lynx/testing/test.gni")
 # base_shared_sources
 base_shared_sources = [
   "js_constants.h",
+
+  # TODO(suguannan.906): copy lynx_trace_categories.h content to trace/trace_event_def.h, then delete lynx_trace_categories.h
   "lynx_trace_categories.h",
   "thread/once_task.h",
   "thread/thread_utils.cc",
@@ -19,6 +21,7 @@ base_shared_sources = [
   "threading/thread_merger.h",
   "threading/vsync_monitor.cc",
   "threading/vsync_monitor.h",
+  "trace/trace_event_def.h",
   "utils/any.h",
   "utils/file_utils.cc",
   "utils/file_utils.h",

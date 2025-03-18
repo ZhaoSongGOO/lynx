@@ -8,6 +8,7 @@
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
 #include "core/base/threading/task_runner_manufactor.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/services/long_task_timing/long_task_monitor.h"
 namespace lynx {
 
@@ -119,8 +120,7 @@ void LynxUIOperationAsyncQueue::FlushOnTASMThread() {
 }
 
 void LynxUIOperationAsyncQueue::FlushInterval() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              tasm::timing::kTaskNameLynxUIOperationAsyncQueueFlush,
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_ASYNC_QUEUE_FLUSH,
               [instance_id = instance_id_](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("instance_id",
                                                    std::to_string(instance_id));

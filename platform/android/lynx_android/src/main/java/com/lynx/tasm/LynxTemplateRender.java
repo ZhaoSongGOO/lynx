@@ -46,6 +46,7 @@ import com.lynx.tasm.base.CleanupReference;
 import com.lynx.tasm.base.LLog;
 import com.lynx.tasm.base.LynxPageLoadListener;
 import com.lynx.tasm.base.TraceEvent;
+import com.lynx.tasm.base.trace.TraceEventDef;
 import com.lynx.tasm.behavior.ILynxUIRenderer;
 import com.lynx.tasm.behavior.ImageInterceptor;
 import com.lynx.tasm.behavior.LynxContext;
@@ -1654,17 +1655,17 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   }
 
   public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    String eventName = "LynxTemplateRender.Measure";
+    TraceEvent.beginSection(TraceEventDef.LYNX_TEMPLATE_RENDER_MEASURE);
     boolean needLongTaskMonitor = false;
     if (mLynxContext != null) {
-      LynxLongTaskMonitor.willProcessTask(eventName, mLynxContext.getInstanceId());
+      LynxLongTaskMonitor.willProcessTask(
+          "LynxTemplateRender.Measure", mLynxContext.getInstanceId());
       needLongTaskMonitor = true;
     }
     long startTime = 0;
     if (mFirstMeasureTime == -1) {
       startTime = System.currentTimeMillis();
     }
-    onTraceEventBegin(eventName);
 
     if (mForceLayoutOnBackgroundThread && !mAsyncRender) {
       maybeSyncLayoutResultDuringLayoutOnBackgroundThread(widthMeasureSpec, heightMeasureSpec);
@@ -1694,7 +1695,6 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       }
     }
 
-    onTraceEventEnd(eventName);
     if (mFirstMeasureTime == -1) {
       mFirstMeasureTime = System.currentTimeMillis() - startTime;
     }
@@ -1706,6 +1706,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     if (lynxUIRenderer != null) {
       lynxUIRenderer.performInnerMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+    TraceEvent.endSection(TraceEventDef.LYNX_TEMPLATE_RENDER_MEASURE);
   }
 
   private void maybeSyncLayoutResultDuringLayoutOnBackgroundThread(
@@ -1754,13 +1755,12 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   }
 
   public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    String eventName = "LynxTemplateRender.Layout";
-    onTraceEventBegin(eventName);
+    TraceEvent.beginSection(TraceEventDef.LYNX_TEMPLATE_RENDER_LAYOUT);
     ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
     if (lynxUIRenderer != null) {
       lynxUIRenderer.onLayout(changed, left, top, right, bottom);
     }
-    onTraceEventEnd(eventName);
+    TraceEvent.endSection(TraceEventDef.LYNX_TEMPLATE_RENDER_LAYOUT);
   }
 
   private void onTraceEventBegin(String eventName) {

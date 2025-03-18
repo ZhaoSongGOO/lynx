@@ -8,6 +8,7 @@
 #include "base/trace/native/trace_event.h"
 #include "core/base/lynx_trace_categories.h"
 #include "core/base/threading/vsync_monitor.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/element.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/dom/lynx_get_ui_result.h"
@@ -77,8 +78,8 @@ void LynxEngine::LoadTemplate(
     const std::shared_ptr<tasm::TemplateData>& template_data,
     tasm::PipelineOptions pipeline_options, const bool enable_pre_painting,
     bool enable_recycle_template_bundle) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              tasm::timing::kTaskNameLynxEngineLoadTemplate, "url", url);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_ENGINE_LOAD_TEMPLATE, "url", url,
+              "instance_id", instance_id_);
   tasm::TimingCollector::Scope<Delegate> scope(delegate_.get(),
                                                pipeline_options);
   tasm::timing::LongTaskMonitor::Scope longTaskScope(
@@ -93,8 +94,8 @@ void LynxEngine::LoadTemplateBundle(
     const std::shared_ptr<tasm::TemplateData>& template_data,
     tasm::PipelineOptions pipeline_options, const bool enable_pre_painting,
     bool enable_dump_element_tree) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              tasm::timing::kTaskNameLynxEngineLoadTemplateBundle, "url", url);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_ENGINE_LOAD_TEMPLATE_BUNDLE, "url", url,
+              "instance_id", instance_id_);
   tasm::TimingCollector::Scope<Delegate> scope(delegate_.get(),
                                                pipeline_options);
   tasm::timing::LongTaskMonitor::Scope longTaskScope(
@@ -431,7 +432,7 @@ void LynxEngine::UpdateDataByJS(runtime::UpdateDataTask task) {
 
 void LynxEngine::UpdateBatchedDataByJS(
     std::vector<runtime::UpdateDataTask> tasks, uint64_t update_task_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxBatchedUpdateData",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_BATCHED_UPDATE_DATA,
               [=](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_terminating_flow_ids(update_task_id);
               });

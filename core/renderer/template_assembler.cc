@@ -18,6 +18,7 @@
 #include "base/trace/native/trace_event.h"
 #include "core/base/json/json_util.h"
 #include "core/base/lynx_trace_categories.h"
+#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/css/css_fragment.h"
 #include "core/renderer/css/css_style_sheet_manager.h"
@@ -909,7 +910,7 @@ void TemplateAssembler::LoadTemplateInternal(
         entry_initializer) {
   // Trace LoadTemplate
   TRACE_EVENT(
-      LYNX_TRACE_CATEGORY_VITALS, "LynxLoadTemplate",
+      LYNX_TRACE_CATEGORY_VITALS, LYNX_LOAD_TEMPLATE,
       [&url, instance_id = instance_id_](lynx::perfetto::EventContext ctx) {
         ctx.event()->add_debug_annotations("url", url);
         ctx.event()->add_debug_annotations("instance_id",
@@ -1518,7 +1519,7 @@ lepus::Value TemplateAssembler::GetPageDataByKey(
 
 void TemplateAssembler::UpdateComponentData(const runtime::UpdateDataTask& task,
                                             PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxUpdateComponentDataByJS",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_UPDATE_COMPONENT_DATA_BY_JS,
               [update_data_type = static_cast<uint32_t>(task.type_),
                instance_id = instance_id_,
                stacks = task.stacks_](lynx::perfetto::EventContext ctx) {
@@ -2088,7 +2089,7 @@ bool TemplateAssembler::UpdateConfig(const lepus::Value& config,
 
 void TemplateAssembler::UpdateDataByJS(const runtime::UpdateDataTask& task,
                                        PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxUpdateDataByJS",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_UPDATE_DATA_BY_JS,
               [update_data_type = static_cast<uint32_t>(task.type_),
                instance_id = instance_id_, stacks = std::move(task.stacks_)](
                   lynx::perfetto::EventContext ctx) {
@@ -2367,12 +2368,13 @@ std::string TemplateAssembler::GetTargetUrl(const std::string& current,
 std::shared_ptr<TemplateEntry> TemplateAssembler::RequireTemplateEntry(
     RadonLazyComponent* lazy_bundle, const std::string& url,
     const lepus::Value& callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyBundle::RequireTemplateEntry",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_BUNDLE_REQUIRE_TEMPLATE,
               [url](lynx::perfetto::EventContext ctx) {
                 auto* debug = ctx.event()->add_debug_annotations();
                 debug->set_name("url");
                 debug->set_string_value(url);
               });
+
 #if ENABLE_TESTBENCH_RECORDER
   // To record every template require for lazy bundle
   tasm::recorder::RecordRequireTemplateScope scope(this, url, record_id_);

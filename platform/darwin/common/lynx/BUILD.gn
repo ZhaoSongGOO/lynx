@@ -94,6 +94,7 @@ common_lynx_shared_sources = [
   "resource/LynxTemplateResource.m",
   "service/LynxService.m",
   "service/LynxServiceResourceRequestParameters.m",
+  "trace/LynxTraceEventDef.h",
   "utils/LynxColorUtils.mm",
   "utils/LynxConvertUtils.h",
   "utils/LynxConvertUtils.m",
