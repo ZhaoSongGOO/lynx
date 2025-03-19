@@ -41,7 +41,7 @@
   _initWithBundle = NO;
   _bundle = nil;
 
-  _initData = nil;
+  _initData = [[LynxTemplateData alloc] initWithDictionary:@{}];
 
   _textView = nil;
 
@@ -86,6 +86,14 @@
 
   _initData = data;
   _fileUrl = url;
+}
+
+- (void)updateDataWithTemplateData:(LynxTemplateData*)data {
+  [_initData updateWithTemplateData:data];
+}
+
+- (void)resetDataWithTemplateData:(LynxTemplateData*)data {
+  _initData = data;
 }
 
 - (nonnull NSString*)getURL {
