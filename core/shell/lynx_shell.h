@@ -98,6 +98,10 @@ class LynxShell {
 
   void StartJsRuntime();
 
+  static void TriggerDestroyRuntime(
+      const std::shared_ptr<LynxActor<runtime::LynxRuntime>>& runtime_actor,
+      std::string js_group_thread_name);
+
   // TODO(heshan): will be deleted after ios platform ready
   void Destroy();
 

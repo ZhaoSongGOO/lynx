@@ -21,6 +21,7 @@
 #include "core/services/feature_count/global_feature_counter.h"
 #include "core/services/recorder/recorder_controller.h"
 #include "core/services/timing_handler/timing_constants_deprecated.h"
+#include "core/shell/lynx_runtime_actor_holder.h"
 #include "core/shell/runtime_mediator.h"
 #include "core/shell/runtime_standalone_helper.h"
 #include "core/shell/tasm_operation_queue_async.h"
@@ -295,6 +296,26 @@ void LynxShell::StartJsRuntime() {
   if (!is_destroyed_ && start_js_runtime_task_ != nullptr) {
     TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxShell::StartJsRuntime");
     runtime_actor_->ActAsync(std::move(start_js_runtime_task_));
+  }
+}
+
+void LynxShell::TriggerDestroyRuntime(
+    const std::shared_ptr<LynxActor<runtime::LynxRuntime>>& runtime_actor,
+    std::string js_group_thread_name) {
+  auto instance_id = runtime_actor->GetInstanceId();
+  auto runtime = runtime_actor->Impl();
+  if (runtime->TryToDestroy()) {
+    runtime_actor->Act([instance_id](auto& runtime) {
+      runtime = nullptr;
+      tasm::report::FeatureCounter::Instance()->ClearAndReport(instance_id);
+    });
+  } else {
+    // Hold LynxRuntime. It will be released when destroyed callback be
+    // handled in LynxRuntime::CallJSCallback() or the delayed release
+    // task time out.
+    auto holder = LynxRuntimeActorHolder::GetInstance();
+    holder->Hold(runtime_actor, js_group_thread_name);
+    holder->PostDelayedRelease(instance_id, js_group_thread_name);
   }
 }
 

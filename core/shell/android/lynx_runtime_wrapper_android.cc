@@ -266,7 +266,8 @@ void LynxRuntimeWrapperAndroid::DestroyRuntime() {
   runtime_standalone_bundle_.runtime_actor_->ActAsync(
       [runtime_actor = runtime_standalone_bundle_.runtime_actor_,
        js_group_thread_name = group_name_](auto &runtime) {
-        lynx::shell::TriggerDestroyRuntime(runtime_actor, js_group_thread_name);
+        lynx::shell::LynxShell::TriggerDestroyRuntime(runtime_actor,
+                                                      js_group_thread_name);
       });
 }
 

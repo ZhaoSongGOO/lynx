@@ -415,7 +415,7 @@ typedef NS_ENUM(NSInteger, LynxBackgroundRuntimeState) {
   _runtime_standalone_bundle.runtime_actor_->ActAsync(
       [runtime_actor = _runtime_standalone_bundle.runtime_actor_,
        js_group_thread_name = [_options groupThreadName]](auto& runtime) {
-        lynx::shell::TriggerDestroyRuntime(runtime_actor, js_group_thread_name);
+        lynx::shell::LynxShell::TriggerDestroyRuntime(runtime_actor, js_group_thread_name);
       });
 }
 
