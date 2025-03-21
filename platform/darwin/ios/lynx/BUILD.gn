@@ -55,7 +55,7 @@ if (build_lynx_dylib) {
       }
       prepare_command = [
         "if [ -f \"./lynx/tools/js_tools/build.sh\" ]; then",
-        "  lynx/tools/js_tools/build.sh ios lynx/platform/darwin/ios/JSAssets/release/lynx_core.js lynx/platform/darwin/ios/lynx_devtool/assets/lynx_core_dev.js",
+        "  lynx/tools/js_tools/build.sh ios platform/darwin/ios/JSAssets/release/lynx_core.js platform/darwin/ios/lynx_devtool/assets/lynx_core_dev.js",
         "fi",
       ]
     }
