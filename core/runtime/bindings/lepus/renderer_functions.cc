@@ -116,13 +116,13 @@ void RenderWarning(const char* fmt, Args&&... a) {
 
 lepus::Value ElementAPIFatal(lepus::Context* ctx, const std::string& msg) {
   auto err_msg = std::string("\nerror code: ")
-                     .append(std::to_string(error::E_ELEMENT_API_ERROR))
+                     .append(std::to_string(error::E_ELEMENT_API_FATAL))
                      .append("\nerror message: ")
                      .append(msg);
   bool should_abort = tasm::LynxEnv::GetInstance().IsDevToolComponentAttach() &&
                       !tasm::LynxEnv::GetInstance().IsLogBoxEnabled();
   return ctx->ReportFatalError(err_msg, should_abort,
-                               error::E_ELEMENT_API_ERROR);
+                               error::E_ELEMENT_API_FATAL);
 }
 
 template <class... Args>
