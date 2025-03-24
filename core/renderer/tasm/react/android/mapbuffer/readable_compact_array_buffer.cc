@@ -14,22 +14,21 @@ bool JReadableCompactArrayBuffer::RegisterJni(JNIEnv* env) {
   return RegisterNativesImpl(env);
 }
 
-jobject JReadableCompactArrayBuffer::CreateReadableCompactArrayBuffer(
+std::optional<ScopedLocalJavaRef<jobject>>
+JReadableCompactArrayBuffer::CreateReadableCompactArrayBuffer(
     const CompactArrayBuffer& array) {
   JNIEnv* env = base::android::AttachCurrentThread();
   int count = array.count();
   if (count == 0) {
-    return nullptr;
+    return std::nullopt;
   }
 
   size_t length = array.bytes_.size();
-  jbyteArray ret = env->NewByteArray(length);  // NOLINT
-  env->SetByteArrayRegion(ret, 0, length,
+  ScopedLocalJavaRef<jbyteArray> ret(env, env->NewByteArray(length));  // NOLINT
+  env->SetByteArrayRegion(ret.Get(), 0, length,
                           reinterpret_cast<const jbyte*>(array.bytes_.data()));
-  auto scoped_array_buffer =
-      Java_ReadableCompactArrayBuffer_fromByteBufferWithCount(env, ret, count);
-
-  return env->NewLocalRef(scoped_array_buffer.Get());  // NOLINT
+  return Java_ReadableCompactArrayBuffer_fromByteBufferWithCount(env, ret.Get(),
+                                                                 count);
 }
 
 }  // namespace android

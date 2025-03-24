@@ -1177,19 +1177,21 @@ void PaintingContextAndroid::BeforeFlush() {
 
   Enqueue([impl = impl_, ui_operation_batch = std::move(ui_operation_batch)]() {
     TRACE_EVENT(LYNX_TRACE_CATEGORY, "FlushUIOperationBatch");
+    if (!ui_operation_batch) {
+      return;
+    }
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
       return;
     }
     JNIEnv* env = base::android::AttachCurrentThread();
     // try to flush ui operation batch before finishing tasm operation
-    auto j_ui_operation_batch =
-        ui_operation_batch
-            ? base::android::JReadableCompactArrayBuffer::
-                  CreateReadableCompactArrayBuffer(*ui_operation_batch)
-            : nullptr;
-    Java_PaintingContext_flushUIOperationBatch(env, local_ref.Get(),
-                                               j_ui_operation_batch);
+    auto j_ui_operation_batch = base::android::JReadableCompactArrayBuffer::
+        CreateReadableCompactArrayBuffer(*ui_operation_batch);
+    if (j_ui_operation_batch && !j_ui_operation_batch->IsNull()) {
+      Java_PaintingContext_flushUIOperationBatch(env, local_ref.Get(),
+                                                 j_ui_operation_batch->Get());
+    }
   });
 }
 

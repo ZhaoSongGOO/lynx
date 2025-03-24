@@ -32,10 +32,10 @@ JReadableMapBuffer::CreateReadableMapBuffer(const MapBuffer& map) {
   }
 
   size_t length = map.bytes_.size();
-  jbyteArray ret = env->NewByteArray(length);  // NOLINT
-  env->SetByteArrayRegion(ret, 0, length,
+  ScopedLocalJavaRef<jbyteArray> ret(env, env->NewByteArray(length));  // NOLINT
+  env->SetByteArrayRegion(ret.Get(), 0, length,
                           reinterpret_cast<const jbyte*>(map.bytes_.data()));
-  return Java_ReadableMapBuffer_fromByteBufferWithCount(env, ret, count);
+  return Java_ReadableMapBuffer_fromByteBufferWithCount(env, ret.Get(), count);
 }
 
 }  // namespace android

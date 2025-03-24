@@ -5,6 +5,8 @@
 #ifndef CORE_RENDERER_TASM_REACT_ANDROID_MAPBUFFER_READABLE_COMPACT_ARRAY_BUFFER_H_
 #define CORE_RENDERER_TASM_REACT_ANDROID_MAPBUFFER_READABLE_COMPACT_ARRAY_BUFFER_H_
 
+#include <optional>
+
 #include "core/base/android/android_jni.h"
 #include "core/renderer/tasm/react/android/mapbuffer/compact_array_buffer.h"
 
@@ -17,12 +19,12 @@ class JReadableCompactArrayBuffer {
   static bool RegisterJni(JNIEnv* env);
 
   /**
-   * Create a NewLocalRef of ReadableCompactArrayBuffer
+   * Create a ScopedLocalRef of ReadableCompactArrayBuffer
    * @param array a C++ CompactArrayBuffer
    * @return a java object which should be consumed and freed by JVM.
    */
-  static jobject CreateReadableCompactArrayBuffer(
-      const CompactArrayBuffer& array);
+  static std::optional<ScopedLocalJavaRef<jobject>>
+  CreateReadableCompactArrayBuffer(const CompactArrayBuffer& array);
 };
 
 }  // namespace android
