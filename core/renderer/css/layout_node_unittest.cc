@@ -8,7 +8,6 @@
 #include <unordered_map>
 
 #include "core/renderer/lynx_env_config.h"
-#include "core/style/css_property_id.h"
 #include "third_party/googletest/googletest/include/gtest/gtest.h"
 
 namespace lynx {
