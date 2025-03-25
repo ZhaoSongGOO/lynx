@@ -73,8 +73,8 @@ public class VSyncMonitor {
   @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
   public static void setCurrentDisplayManager(DisplayManager dm) {
     if (dm != null) {
-      updateFreshRate();
       mDisplayManager = dm;
+      updateFreshRate();
       if (mDisplayListener == null) {
         mDisplayListener = new DisplayListener();
       }
