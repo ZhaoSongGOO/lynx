@@ -60,6 +60,8 @@ public abstract class LynxObserverManager {
   // isLayoutRequested. Otherwise, do not execute exposure check.
   protected boolean mEnableExposureWhenLayout = false;
 
+  protected boolean mDelayedTaskPosted = false;
+
   final private String TAG;
 
   public LynxObserverManager(String tag) {
@@ -283,9 +285,21 @@ public abstract class LynxObserverManager {
   }
 
   public void requestCheckUI() {
-    if (mHandler != null && System.currentTimeMillis() - mLastCheckTime > mInterval) {
+    if (mHandler == null) {
+      LLog.e(TAG, "LynxObserver requestCheckUI failed since mHandler is null");
+      return;
+    }
+
+    if (System.currentTimeMillis() - mLastCheckTime > mInterval) {
       mLastCheckTime = System.currentTimeMillis();
       mHandler.post(mIntervalRunnable);
+      mDelayedTaskPosted = false;
+    } else {
+      if (mDelayedTaskPosted) {
+        return;
+      }
+      mHandler.postDelayed(mIntervalRunnable, mInterval);
+      mDelayedTaskPosted = true;
     }
   }
 
