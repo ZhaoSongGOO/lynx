@@ -48,6 +48,12 @@ void TimingHandlerNg::SetFrameworkTiming(const TimestampKey& timing_key,
   timing_info_.SetFrameworkTiming(timing_key, us_timestamp, pipeline_id);
 }
 
+void TimingHandlerNg::SetFrameworkExtraTimingInfo(const PipelineID& pipeline_id,
+                                                  const std::string& key,
+                                                  const std::string& value) {
+  timing_info_.SetFrameworkExtraTimingInfo(pipeline_id, key, value);
+}
+
 void TimingHandlerNg::SetTiming(const TimestampKey& timing_key,
                                 const TimestampUs us_timestamp,
                                 const PipelineID& pipeline_id) {

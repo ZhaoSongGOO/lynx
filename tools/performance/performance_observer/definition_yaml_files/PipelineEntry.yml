@@ -1,5 +1,30 @@
 FrameworkRenderingTiming:
   type: object
+  description: describe the framework performance timing provided by lynxsdk
+  x-ts-only: true
+  properties:
+    vmExecuteStart:
+      type: number
+      required: false
+    vmExecuteEnd:
+      type: number
+      required: false
+    dataProcessorStart:
+      type: number
+      required: false
+    dataProcessorEnd:
+      type: number
+      required: false
+    setInitDataStart:
+      type: number
+      required: false
+    setInitDataEnd:
+      type: number
+      required: false
+
+FrameworkRenderingTimings:
+  type: object
+  description: framework override this to provide timing typing
   x-ts-only: true
 
 PipelineEntry:

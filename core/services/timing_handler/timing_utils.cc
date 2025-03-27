@@ -14,6 +14,24 @@
 namespace lynx {
 namespace tasm {
 namespace timing {
+
+namespace {
+std::string camelToSnake(const std::string& camelStr) {
+  std::string snakeStr;
+  snakeStr.reserve(camelStr.length() * 2);
+  for (char ch : camelStr) {
+    if (isupper(ch)) {
+      if (!snakeStr.empty()) {
+        snakeStr += '_';
+      }
+      snakeStr += tolower(ch);
+    } else {
+      snakeStr += ch;
+    }
+  }
+  return snakeStr;
+}
+}  // namespace
 /**
  * Converts a given timing key to its corresponding polyfill timing key.
  *
@@ -82,7 +100,7 @@ TimestampKey GetPolyfillTimingKey(const TimestampKey& timing_key) {
   if (it != keyMap->end()) {
     return it->second;
   }
-  return timing_key;
+  return camelToSnake(timing_key);
 }
 }  // namespace timing
 }  // namespace tasm

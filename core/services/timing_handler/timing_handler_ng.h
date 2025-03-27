@@ -50,6 +50,11 @@ class TimingHandlerNg {
                                const std::string &timestamp_key,
                                const tasm::timing::TimestampUs timestamp);
 
+  // for framework to store the extra info like dsl, stage, etc.
+  void SetFrameworkExtraTimingInfo(const PipelineID &pipeline_id,
+                                   const std::string &key,
+                                   const std::string &value);
+
   void OnPipelineStart(const PipelineID &pipeline_id,
                        const PipelineOrigin &pipeline_origin,
                        const TimestampUs pipeline_start_timestamp);

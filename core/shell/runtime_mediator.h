@@ -143,6 +143,9 @@ class RuntimeMediator : public runtime::TemplateDelegate {
   void SetTimingWithTimingFlag(const tasm::timing::TimingFlag& timing_flag,
                                const std::string& timestamp_key,
                                tasm::timing::TimestampUs timestamp) override;
+  void SetFrameworkExtraTimingInfo(const std::string& pipeline_id,
+                                   const std::string& key,
+                                   const std::string& value) override;
   void FlushJSBTiming(piper::NativeModuleInfo timing) override;
 
   void OnPipelineStart(

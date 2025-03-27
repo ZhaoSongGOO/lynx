@@ -85,6 +85,13 @@ class TimingHandler {
                                const std::string& timestamp_key,
                                tasm::timing::TimestampUs timestamp);
 
+  // for framework
+  inline void SetFrameworkExtraTimingInfo(const PipelineID& pipeline_id,
+                                          const std::string& key,
+                                          const std::string& value) {
+    handler_ng_.SetFrameworkExtraTimingInfo(pipeline_id, key, value);
+  }
+
   // TODO(kechenglong): remove this API.
   void ResetTimingBeforeReload();
 

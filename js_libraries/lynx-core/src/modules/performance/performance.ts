@@ -19,13 +19,19 @@ const ListenerKeys = {
 
 export interface PipelineOptions {
   pipelineID: string;
+  pipelineOrigin: string; // The origin of the pipeline
   needTimestamps: boolean;
+  dsl: string;
+  stage: string;
 }
 
 export default class Performance implements IPerformance {
   _emitter: EventEmitter;
   _generatePipelineOptions: () => PipelineOptions;
-  _onPipelineStart: (pipeline_id: string) => void;
+  _onPipelineStart: (
+    pipeline_id: string,
+    pipeline_options?: PipelineOptions
+  ) => void;
   _markTiming: (pipeline_id: string, timing_key: string) => void;
   _profileStart: (traceName: string, option?: TraceOption) => void;
   _profileEnd: (option?: TraceOption) => void;

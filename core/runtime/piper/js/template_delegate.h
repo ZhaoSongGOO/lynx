@@ -141,6 +141,9 @@ class TemplateDelegate : public ContextProxy::Delegate {
       const tasm::timing::TimingFlag& timing_flag,
       const std::string& timestamp_key,
       tasm::timing::TimestampUs timestamp) = 0;
+  virtual void SetFrameworkExtraTimingInfo(const tasm::PipelineID& pipeline_id,
+                                           const std::string& key,
+                                           const std::string& value) = 0;
   virtual void FlushJSBTiming(piper::NativeModuleInfo timing) = 0;
 
   virtual void OnPipelineStart(

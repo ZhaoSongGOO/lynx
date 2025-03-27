@@ -1152,7 +1152,7 @@ Value AppProxy::get(Runtime* rt, const PropNameID& name) {
                size_t count) -> base::expected<Value, JSINativeException> {
           // parameter size == 1 or == 2.
           // [0] pipeline id -> String
-          // [1] pipeline origin -> String
+          // [1] pipeline options -> Object
           LOGI("LYNX PageProxy get -> OnPipelineStart" << this);
           if (count < 1 || count > 2) {
             return base::unexpected(BUILD_JSI_NATIVE_EXCEPTION(
@@ -1168,8 +1168,28 @@ Value AppProxy::get(Runtime* rt, const PropNameID& name) {
             pipeline_id = args[0].getString(rt).utf8(rt);
           }
           std::string pipeline_origin;
-          if (count > 1 && args[1].isString()) {
-            pipeline_origin = args[1].getString(rt).utf8(rt);
+          if (count > 1 && args[1].isObject()) {
+            piper::Object options_obj = args[1].getObject(rt);
+            if (options_obj.hasProperty(rt, tasm::timing::kFrameworkDsl)) {
+              ptr->SetFrameworkExtraTimingInfo(
+                  pipeline_id, tasm::timing::kFrameworkDsl,
+                  options_obj.getProperty(rt, tasm::timing::kFrameworkDsl)
+                      ->asString(rt)
+                      ->utf8(rt));
+            }
+            if (options_obj.hasProperty(rt, tasm::timing::kFrameworkStage)) {
+              ptr->SetFrameworkExtraTimingInfo(
+                  pipeline_id, tasm::timing::kFrameworkStage,
+                  options_obj.getProperty(rt, tasm::timing::kFrameworkStage)
+                      ->asString(rt)
+                      ->utf8(rt));
+            }
+            if (options_obj.hasProperty(rt, tasm::timing::kPipelineOrigin)) {
+              pipeline_origin =
+                  options_obj.getProperty(rt, tasm::timing::kPipelineOrigin)
+                      ->asString(rt)
+                      ->utf8(rt);
+            }
           }
 
           ptr->OnPipelineStart(pipeline_id, pipeline_origin);
@@ -3275,6 +3295,15 @@ void App::CallLepusMethod(const std::string& method_name, lepus::Value args,
   LOGI(" CallLepusMethod: " << method_name << " " << this);
   delegate_->CallLepusMethod(method_name, std::move(args), callback,
                              trace_flow_id);
+}
+
+void App::SetFrameworkExtraTimingInfo(const std::string& pipeline_id,
+                                      const std::string& key,
+                                      const std::string& value) {
+  if (pipeline_id.empty() || key.empty() || value.empty()) {
+    return;
+  }
+  delegate_->SetFrameworkExtraTimingInfo(pipeline_id, key, value);
 }
 
 void App::MarkTimingWithTimingFlag(const std::string& timing_flag,

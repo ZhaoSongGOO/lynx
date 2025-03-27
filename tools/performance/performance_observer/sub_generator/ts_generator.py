@@ -39,13 +39,13 @@ def generate_ts(class_name, definition, definitions, file_imports):
             ref_type = value["$ref"].split('/')[-1]
             if ref_type == 'FrameworkRenderingTiming':
                 # Special handling of inconsistent properties on multiple platforms, and no update of import files
-                prop_type = ref_type + f'[keyof {ref_type}]'
+                prop_type = 'FrameworkRenderingTimings[keyof FrameworkRenderingTimings] & FrameworkRenderingTiming'
             else:
                 prop_type = ref_type
                 # Update import files
                 ref_class_name = value['$ref'].split('#/')[-1].split('/')[-1]
                 import_statement = f'import {{ {ref_class_name} }} from "./{ref_class_name}"'
-                if not import_statement in file_imports:
+                if import_statement not in file_imports:
                     file_imports.append(import_statement)
         else:
             prop_type = value.get("type", "string")  # Default is of type "string".
@@ -55,7 +55,12 @@ def generate_ts(class_name, definition, definitions, file_imports):
                 prop_type = "string"
             elif prop_type == "map":
                 prop_type = "Record<string, number>"
-        ts_code += f'    {prop}: {prop_type};\n'
+
+        required = value.get('required', True)
+        if required:
+            ts_code += f'    {prop}: {prop_type};\n'
+        else:
+            ts_code += f'    {prop}?: {prop_type};\n'
 
     ts_code += '}\n'
     return ts_code

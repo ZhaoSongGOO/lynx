@@ -378,6 +378,14 @@ void RuntimeMediator::SetTiming(tasm::Timing timing) {
       });
 }
 
+void RuntimeMediator::SetFrameworkExtraTimingInfo(
+    const std::string& pipeline_id, const std::string& key,
+    const std::string& value) {
+  timing_actor_->ActAsync([pipeline_id, key, value](auto& timing_handler) {
+    timing_handler->SetFrameworkExtraTimingInfo(pipeline_id, key, value);
+  });
+}
+
 void RuntimeMediator::SetTimingWithTimingFlag(
     const tasm::timing::TimingFlag& timing_flag,
     const std::string& timestamp_key, tasm::timing::TimestampUs timestamp) {

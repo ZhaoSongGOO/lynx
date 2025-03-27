@@ -303,7 +303,10 @@ export interface NativeApp {
 
   // Timing related
   generatePipelineOptions: () => PipelineOptions;
-  onPipelineStart: (pipeline_id: string) => void;
+  onPipelineStart: (
+    pipeline_id: string,
+    pipeline_options?: PipelineOptions
+  ) => void;
   markPipelineTiming: (pipeline_id: string, timing_key: string) => void;
   bindPipelineIdWithTimingFlag: (
     pipeline_id: string,

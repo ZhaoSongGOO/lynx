@@ -87,6 +87,9 @@ class TimingInfoNg {
   bool SetFrameworkTiming(const TimestampKey& timing_key,
                           const TimestampUs us_timestamp,
                           const PipelineID& pipeline_id);
+  bool SetFrameworkExtraTimingInfo(const PipelineID& pipeline_id,
+                                   const std::string& info_key,
+                                   const std::string& info_value);
 
   // Send the time consumption of the Init phase. They will be sent when entry
   // is ready.
@@ -134,11 +137,16 @@ class TimingInfoNg {
   // pipeline_timing_info_ stores all the related data of each pipeline, from
   // loadBundleStart to paintEnd, indexed by pipelineId.
   std::unordered_map<PipelineID, TimingMap> pipeline_timing_info_;
-  // framework_timing_info stores the tracking data from the front-end
+  // framework_timing_info_ stores the tracking data from the front-end
   // framework. Note that TimingHandler does not concern itself with the
   // specific [key, value] pairs within the framework_timing_info_ structure.
   // They will be directly merged when dispatching the pipelineEntry.
   std::unordered_map<PipelineID, TimingMap> framework_timing_info_;
+  // framework_extra_info_ stores the extra information from the front-end
+  // like dsl, stage etc. Same with framework_timing_infos_, they will be
+  // directly merged when dispatching the pipelineEntry.
+  std::unordered_map<PipelineID, std::unordered_map<std::string, std::string>>
+      framework_extra_info_;
   // init_timing_info_ stores the initialization durations for lynxview,
   // container, and backgroundRuntime. These duration data are not related to
   // any specific pipelineId. If there are other data unrelated to pipeline,

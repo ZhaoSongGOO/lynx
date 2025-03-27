@@ -31,6 +31,7 @@ void TimingInfoNg::ClearAllTimingInfo() {
 void TimingInfoNg::ReleaseTiming(const PipelineID& pipeline_id) {
   pipeline_timing_info_.erase(pipeline_id);
   framework_timing_info_.erase(pipeline_id);
+  framework_extra_info_.erase(pipeline_id);
 }
 
 bool TimingInfoNg::SetFrameworkTiming(
@@ -39,6 +40,14 @@ bool TimingInfoNg::SetFrameworkTiming(
     const lynx::tasm::PipelineID& pipeline_id) {
   return framework_timing_info_[pipeline_id].SetTimestamp(timing_key,
                                                           us_timestamp);
+}
+
+bool TimingInfoNg::SetFrameworkExtraTimingInfo(
+    const lynx::tasm::PipelineID& pipeline_id, const std::string& info_key,
+    const std::string& info_value) {
+  return framework_extra_info_[pipeline_id]
+      .emplace(info_key, info_value)
+      .second;
 }
 
 bool TimingInfoNg::SetTimingWithTimingFlag(
@@ -247,15 +256,25 @@ std::unique_ptr<lynx::pub::Value> TimingInfoNg::GetPipelineEntry(
         ConvertUsToDouble(flag_iter->second.GetTimestamp(kUpdateSetStateTrigger)
                               .value_or(0)));
   }
-  // merge framework
-  it = framework_timing_info_.find(pipeline_id);
-  if (it != framework_timing_info_.end()) {
-    // framework-pipeline may don't have item.
-    const auto& framework_infos = it->second;
-    auto framework_value = framework_infos.ToPubMap(false, value_factory_);
-    (*entry).PushValueToMap(kFrameworkRenderingTiming,
-                            std::move(framework_value));
+  // merge framework, framework-pipeline may don't have item.
+  TimingMap framework_info_map;
+  auto framework_info_it = framework_timing_info_.find(pipeline_id);
+  if (framework_info_it != framework_timing_info_.end()) {
+    framework_info_map.Merge(framework_info_it->second);
   }
+  // merge framework extra info, like dsl, stage, etc.
+  std::unique_ptr<lynx::pub::Value> framework_info_value =
+      framework_info_map.ToPubMap(false, value_factory_);
+  auto extra_info_iter = framework_extra_info_.find(pipeline_id);
+  if (extra_info_iter != framework_extra_info_.end()) {
+    const auto& framework_extra_info = extra_info_iter->second;
+    for (const auto& [info_key, info_value] : framework_extra_info) {
+      framework_info_value->PushStringToMap(info_key, info_value);
+    }
+  }
+  entry->PushValueToMap(kFrameworkRenderingTiming,
+                        std::move(framework_info_value));
+
   return entry;
 }
 

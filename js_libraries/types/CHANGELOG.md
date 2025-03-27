@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.2.4
+
+### Patch Changes
+
+- Add default properties for PipelineEntry.frameworkRenderingTiming
+
 ## 3.2.3
 
 ### Patch Changes

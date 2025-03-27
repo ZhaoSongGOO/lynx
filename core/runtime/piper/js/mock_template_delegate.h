@@ -100,6 +100,10 @@ class MockTemplateDelegate : public runtime::TemplateDelegate {
       const tasm::PipelineID& pipeline_id,
       const tasm::timing::TimingFlag& timing_flag) override{};
 
+  void SetFrameworkExtraTimingInfo(const tasm::PipelineID& pipeline_id,
+                                   const std::string& key,
+                                   const std::string& value) override {}
+
   // for lepus event
   void InvokeLepusComponentCallback(const int64_t callback_id,
                                     const std::string& entry_name,

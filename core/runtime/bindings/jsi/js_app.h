@@ -242,6 +242,9 @@ class App : public std::enable_shared_from_this<App> {
   void BindPipelineIDWithTimingFlag(
       const tasm::PipelineID& pipeline_id,
       const tasm::timing::TimingFlag& timing_flag);
+  void SetFrameworkExtraTimingInfo(const tasm::PipelineID& pipeline_id,
+                                   const std::string& extra_info_key,
+                                   const std::string& extra_info_value);
 
   void SetSourceMapRelease(common::JSErrorInfo error_info);
   std::string GetSourceMapRelease(const std::string url);

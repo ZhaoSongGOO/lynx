@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -4281,7 +4282,14 @@ RENDERER_FUNCTION_CC(MarkTiming) {
 
   tasm::TimingCollector::Scope<TemplateAssembler::Delegate> scope(
       &GET_TASM_POINTER()->GetDelegate(), pipeline_id);
-  tasm::TimingCollector::Instance()->MarkFrameworkTiming(timing_key);
+
+  static const base::NoDestructor<std::unordered_set<std::string>> native_keys{
+      {tasm::timing::kMtsRenderStart, tasm::timing::kMtsRenderEnd}};
+  if (native_keys->find(timing_key) != native_keys->end()) {
+    tasm::TimingCollector::Instance()->Mark(timing_key);
+  } else {
+    tasm::TimingCollector::Instance()->MarkFrameworkTiming(timing_key);
+  }
   RETURN_UNDEFINED();
 }
 
