@@ -1,45 +1,15 @@
 # CHANGELOG
 
-## 3.2.7
-
-### Patch Changes
-
-- Add some missing types of built-in element `list-item`
-
-## 3.2.6
-
-### Patch Changes
-
-- Rename PipelineEntry.FrameworkPipelineTiming to PipelineEntry.FrameworkRenderingTiming
-
-## 3.2.5
-
-### Patch Changes
-
-- Supplement the missing `lynx.onError` definition
-
-## 3.2.4
-
-### Patch Changes
-
-- partially support TextEncoder/TextDecoder
-
-## 3.2.3
-
-### Patch Changes
-
-- Support needVisibleItemInfo for native List
-
-## 3.2.2
-
-### Patch Changes
-
-- Add prop 'ios-background-shape-layer' for iOS
-
 ## 3.2.1
 
 ### Patch Changes
 
+- Add some missing types of built-in element `list-item`
+- Rename PipelineEntry.FrameworkPipelineTiming to PipelineEntry.FrameworkRenderingTiming
+- Supplement the missing `lynx.onError` definition
+- partially support TextEncoder/TextDecoder
+- Support needVisibleItemInfo for native List
+- Add prop 'ios-background-shape-layer' for iOS
 - lynx.requireModule support setting timeout time
 
 ## 3.2.0
