@@ -1083,7 +1083,7 @@ public class UIScrollView extends AbsLynxUIScroll<AndroidScrollView>
   @Override
   public void setForbidFlingFocusChange(boolean value) {
     if (mView != null) {
-      mView.forbidFocusChangeAfterFling();
+      mView.setForbidFlingFocusChange(value);
     }
   }
 

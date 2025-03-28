@@ -27,7 +27,7 @@ public class NestedHorizontalScrollView
   public static final boolean DEBUG_GESTURE = false;
 
   private static final int INVALID_POINTER = -1;
-  private boolean mEnableNewNested = false;
+  protected boolean mEnableNewNested = false;
   private boolean mIsBeingDragged = false;
   protected boolean mEnableNewBounce = false;
   private int mActivePointerId = INVALID_POINTER;

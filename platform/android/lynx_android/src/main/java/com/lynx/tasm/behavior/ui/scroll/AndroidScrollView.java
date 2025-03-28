@@ -878,8 +878,8 @@ public class AndroidScrollView extends NestedScrollView implements IDrawChildHoo
     return mHorizontalScrollView;
   }
 
-  public void forbidFocusChangeAfterFling() {
-    mForbidFocusChangeAfterFling = true;
+  public void setForbidFlingFocusChange(boolean value) {
+    mForbidFocusChangeAfterFling = value;
   }
 
   public LinearLayout getLinearLayout() {
@@ -904,7 +904,7 @@ public class AndroidScrollView extends NestedScrollView implements IDrawChildHoo
       // By default HorizontalScrollView will request focus after fling,
       // which will cause focus loss even if ignore-focus is set.
       // Override fling implementation to eliminate this behavior.
-      if (!mForbidFocusChangeAfterFling) {
+      if (!mForbidFocusChangeAfterFling || mEnableNewNested) {
         super.fling(velocityX);
       } else {
         OverScroller mScroller;
