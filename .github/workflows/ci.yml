@@ -113,6 +113,7 @@ jobs:
           set -e
           source tools/envsetup.sh
           tools/rtf/rtf native-ut run --names devtool
+          tools/rtf/rtf coverage-check --type cpp --inputs out/coverage/lcov/lcov_summary.txt --threshold=0.5
 
   ios-unittests-check:
     runs-on: lynx-darwin-14-medium
