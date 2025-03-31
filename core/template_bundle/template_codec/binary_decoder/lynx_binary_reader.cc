@@ -249,7 +249,32 @@ bool LynxBinaryReader::DecodeCustomSectionsByRoute(
   for (const auto& [key, header] : route.custom_section_headers) {
     stream_->Seek(route.descriptor_offset + header.range.start);
     lepus::Value content{};
-    ERROR_UNLESS(DecodeValue(&content, false));
+    CustomSectionEncodingType encoding_type = CustomSectionEncodingType::STRING;
+    if (header.header.IsTable()) {
+      BASE_STATIC_STRING_DECL(kEncodingType, "encoding");
+      auto maybe_encoding_type = header.header.GetProperty(kEncodingType);
+      if (maybe_encoding_type.IsNumber()) {
+        auto type_num = maybe_encoding_type.Number();
+        if (type_num ==
+            static_cast<int>(CustomSectionEncodingType::JS_BYTECODE)) {
+          encoding_type = CustomSectionEncodingType::JS_BYTECODE;
+        }
+      }
+    }
+    switch (encoding_type) {
+      case CustomSectionEncodingType::STRING:
+        ERROR_UNLESS(DecodeValue(&content, false));
+        break;
+      case CustomSectionEncodingType::JS_BYTECODE:
+        ERROR_UNLESS(is_lepusng_binary_);
+        uint64_t code_len;
+        ERROR_UNLESS(ReadCompactU64(&code_len));
+        auto data = std::make_unique<uint8_t[]>(code_len);
+        ERROR_UNLESS(ReadData(data.get(), static_cast<int>(code_len)));
+        content.SetByteArray(
+            lepus::ByteArray::Create(std::move(data), code_len));
+        break;
+    }
     tb.AddCustomSection(key, content);
   }
   return true;
