@@ -309,13 +309,14 @@ public class BaseTextShadowNode extends ShadowNode {
 
   @LynxProp(name = PropsConstants.COLOR)
   public void setColor(Dynamic color) {
-    if (color.getType() == ReadableType.Array) {
+    ReadableType type = color.getType();
+    if (type == ReadableType.Array) {
       mTextAttributes.mFontColor = null;
       setGradientColor(color.asArray());
-    } else if (color.getType() == ReadableType.Int) {
+    } else if (type == ReadableType.Int) {
       mTextAttributes.mFontColor = color.asInt();
       mTextAttributes.mTextGradient = null;
-    } else if (color.getType() == ReadableType.Long) {
+    } else if (type == ReadableType.Long) {
       mTextAttributes.mFontColor = (int) color.asLong();
       mTextAttributes.mTextGradient = null;
     } else {
@@ -407,9 +408,10 @@ public class BaseTextShadowNode extends ShadowNode {
 
   @LynxProp(name = PropsConstants.TEXT_STROKE_COLOR)
   public void setTextStrokeColor(Dynamic color) {
-    if (color.getType() == ReadableType.Int) {
+    ReadableType type = color.getType();
+    if (type == ReadableType.Int) {
       mTextAttributes.setTextStrokeColor(color.asInt());
-    } else if (color.getType() == ReadableType.Long) {
+    } else if (type == ReadableType.Long) {
       mTextAttributes.setTextStrokeColor((int) color.asLong());
     } else {
       mTextAttributes.setTextStrokeColor(0);
