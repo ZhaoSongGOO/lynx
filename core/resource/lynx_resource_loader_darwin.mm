@@ -46,6 +46,37 @@ void ReportError(__weak id<LynxErrorReceiverProtocol> weakErrorReceiver, NSStrin
   });
 }
 
+void VerifyLynxTemplateResource(const std::string& url, lynx::pub::LynxResourceResponse& response,
+                                lynx::pub::LynxResourceType resource_type) {
+  // verify only when data valid;
+  if (response.Success()) {
+    if (response.bundle != nullptr) {
+      return;
+    }
+    if (!response.data.empty()) {
+      auto securityService = LynxService(LynxServiceSecurityProtocol);
+      if (securityService) {
+        NSData* nsData = [NSData dataWithBytesNoCopy:response.data.data()
+                                              length:response.data.size()
+                                        freeWhenDone:NO];
+        // TODO(zhoupeng.z): add a new LynxTASMType for frame
+        LynxTASMType tasmType = resource_type == lynx::pub::LynxResourceType::kFrame
+                                    ? LynxTASMTypeTemplate
+                                    : LynxTASMTypeDynamicComponent;
+        LynxVerificationResult* result =
+            [securityService verifyTASM:nsData
+                                   view:nil
+                                    url:[NSString stringWithUTF8String:url.c_str()]
+                                   type:tasmType];
+        if (!result.verified) {
+          response.err_code = -1;
+          response.err_msg = "tasm verify failed, url: " + url;
+        }
+      }
+    }
+  }
+}
+
 }  // namespace
 
 namespace lynx {
@@ -259,7 +290,7 @@ void LynxResourceLoaderDarwin::LoadResource(
     std::string url_copy = request.url;
     base::MoveOnlyClosure<void, pub::LynxResourceResponse&> callback_wrapper =
         ^(pub::LynxResourceResponse& response) {
-          VerifyLynxTemplateResource(url_copy, response);
+          VerifyLynxTemplateResource(url_copy, response, pub::LynxResourceType::kLazyBundle);
           copyable_callback(response);
         };
     auto copyable_wrapper_callback = fml::MakeCopyable(std::move(callback_wrapper));
@@ -279,14 +310,28 @@ void LynxResourceLoaderDarwin::LoadResource(
     return;
   }
 
-  if (request.type == pub::LynxResourceType::kTemplateLazyBundle) {
+  if (request.type == pub::LynxResourceType::kFrame) {
     auto copyable_callback = fml::MakeCopyable(std::move(callback));
     std::string url_copy = request.url;
     base::MoveOnlyClosure<void, pub::LynxResourceResponse&> callback_wrapper =
         ^(pub::LynxResourceResponse& response) {
-          VerifyLynxTemplateResource(url_copy, response);
+          VerifyLynxTemplateResource(url_copy, response, pub::LynxResourceType::kFrame);
           copyable_callback(response);
         };
+    auto copyable_wrapper_callback = fml::MakeCopyable(std::move(callback_wrapper));
+    // 1. try to use LynxTemplateResourceFetcher
+    FetchTemplateByGenericFetcher(request.url, copyable_wrapper_callback);
+    return;
+  }
+
+  if (request.type == pub::LynxResourceType::kTemplateLazyBundle) {
+    auto copyable_callback = fml::MakeCopyable(std::move(callback));
+    std::string url_copy = request.url;
+    base::MoveOnlyClosure<void, pub::LynxResourceResponse&> callback_wrapper = ^(
+        pub::LynxResourceResponse& response) {
+      VerifyLynxTemplateResource(url_copy, response, pub::LynxResourceType::kTemplateLazyBundle);
+      copyable_callback(response);
+    };
     auto copyable_wrapper_callback = fml::MakeCopyable(std::move(callback_wrapper));
     // 1. try to use LynxTemplateResourceFetcher
     if (FetchTemplateByGenericFetcher(request.url, copyable_wrapper_callback)) {
@@ -425,33 +470,6 @@ NSData* LynxResourceLoaderDarwin::LoadLynxJSAsset(const std::string& name, NSURL
 
   _LogE(@"LoadLynxJSAsset no js file find with %@", str);
   return nil;
-}
-
-void LynxResourceLoaderDarwin::VerifyLynxTemplateResource(const std::string& url,
-                                                          pub::LynxResourceResponse& response) {
-  // verify only when data valid;
-  if (response.Success()) {
-    if (response.bundle != nullptr) {
-      return;
-    }
-    if (!response.data.empty()) {
-      auto securityService = LynxService(LynxServiceSecurityProtocol);
-      if (securityService) {
-        NSData* nsData = [NSData dataWithBytesNoCopy:response.data.data()
-                                              length:response.data.size()
-                                        freeWhenDone:NO];
-        LynxVerificationResult* result =
-            [securityService verifyTASM:nsData
-                                   view:nil
-                                    url:[NSString stringWithUTF8String:url.c_str()]
-                                   type:LynxTASMType::LynxTASMTypeDynamicComponent];
-        if (!result.verified) {
-          response.err_code = -1;
-          response.err_msg = "tasm verify failed, url: " + url;
-        }
-      }
-    }
-  }
 }
 
 }  // namespace shell
