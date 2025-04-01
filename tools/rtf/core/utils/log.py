@@ -3,6 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 import datetime
 import sys
+from core.trace.record import Record
 
 
 def get_format_time_str():
@@ -70,6 +71,7 @@ class Log:
             f"{Log.red_color_code}[{get_format_time_str()}]{print_msg}{Log.reset_color_code}",
             flush=True,
         )
+        Record.flush()
         sys.exit(1)
 
     @staticmethod

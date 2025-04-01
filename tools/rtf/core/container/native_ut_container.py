@@ -12,6 +12,7 @@ from core.target.observer import LogObserver, CrashObserverFactory, OwnersObserv
 from core.target.target import Target
 from core.target.target_factory import TargetFactory
 from core.utils.log import Log
+from core.trace.trace import TRACE_EVENT_BEGIN, TRACE_EVENT_END
 
 
 class NativeUTContainer(Container):
@@ -52,7 +53,9 @@ class NativeUTContainer(Container):
 
     def kill_all_process(self):
         for target in self.parallel_queue:
-            target.kill()
+            if not target.is_end():
+                TRACE_EVENT_END(target.name, {"status":"interrupt"})
+                target.kill()
 
     def __print_running_process(self, names: [str]):
         if len(names) <= 3:
@@ -76,12 +79,14 @@ class NativeUTContainer(Container):
                             target.run()
                             all_processes_stop = False
                         else:
+                            TRACE_EVENT_END(target.name, {"status":"failed"})
                             Log.error(f"{target.name} has error!")
                             for observer in self.observers:
                                 observer.update(target)
                             self.kill_all_process()
                             return target.process.returncode
                     elif target.name not in over_processes_list:
+                        TRACE_EVENT_END(target.name, {"status":"success"})
                         over_processes_list.append(target.name)
                         only_run_process.remove(target.name)
                         current_time = datetime.timestamp(datetime.now())
@@ -102,24 +107,29 @@ class NativeUTContainer(Container):
             time.sleep(2)
         for target in self.parallel_queue:
             if not target.is_end():
+                TRACE_EVENT_END(target.name, {"status":"timeout"})
                 Log.error(f"{target.name} timeout!")
                 target.print_log()
-        self.kill_all_process()
+                target.kill()
         return -1
 
     def test(self):
         for target in self.serial_queue:
+            TRACE_EVENT_BEGIN(target.name)
             target.run().wait()
             if target.has_error():
+                TRACE_EVENT_END(target.name, {"status":"failed"})
                 Log.error(f"{target.name} has error!")
                 for observer in self.observers:
                     observer.update(target)
                 Log.fatal(f"Test Failed with ret-code {target.process.returncode}")
             else:
+                TRACE_EVENT_END(target.name, {"status":"success"})
                 Log.success(f"{target.name} run success!")
 
         for target in self.parallel_queue:
             target.run_pre_actions()
+            TRACE_EVENT_BEGIN(target.name)
             target.run()
 
         ret_code = self.wait_for_execution_finish()

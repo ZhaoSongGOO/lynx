@@ -5,10 +5,13 @@
 from plugin_manager.plugin_manager import PluginManager
 from args_parser.args_parser import ArgsParser
 from core.env.env import RTFEnv
+from core.trace.record import Record
+import os
 
 
 def main():
     RTFEnv.init_project_env()
+    Record.path = os.path.join(RTFEnv.get_project_root_path(), "rtf_trace.txt")
     plugin_manager = PluginManager(RTFEnv.config.plugins)
     args_parser = ArgsParser()
     args_parser.init_subparsers(plugin_manager.plugins)
@@ -18,6 +21,7 @@ def main():
         plugin_manager.dispatch_args(args)
     else:
         args_parser.print_help()
+    Record.flush()
 
 
 if __name__ == "__main__":
