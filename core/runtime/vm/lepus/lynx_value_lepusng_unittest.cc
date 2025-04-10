@@ -38,10 +38,7 @@ class LynxValueLepusNGTest : public ::testing::Test {
   }
 
   lynx_value ToLynxValue(const LEPUSValue& val) {
-    return {
-        .val_ptr = reinterpret_cast<lynx_value_ptr>(LEPUS_VALUE_GET_INT64(val)),
-        .type = lynx_value_extended,
-        .tag = LEPUS_VALUE_GET_TAG(val)};
+    return MAKE_LYNX_VALUE_FROM_LEPUS_VALUE(val);
   }
 
   LEPUSRuntime* rt_;

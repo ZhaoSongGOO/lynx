@@ -141,11 +141,11 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
 
   inline bool IsCDate() const {
     return value_.type == lynx_value_object &&
-           value_.tag == static_cast<int64_t>(CustomRefCountedType::kCDate);
+           value_.tag == static_cast<int32_t>(CustomRefCountedType::kCDate);
   }
   inline bool IsRegExp() const {
     return value_.type == lynx_value_object &&
-           value_.tag == static_cast<int64_t>(CustomRefCountedType::kRegExp);
+           value_.tag == static_cast<int32_t>(CustomRefCountedType::kRegExp);
   }
 
   fml::RefPtr<lepus::Closure> GetClosure() const;
@@ -164,7 +164,7 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
 
   inline bool IsClosure() const {
     return value_.type == lynx_value_object &&
-           value_.tag == static_cast<int64_t>(CustomRefCountedType::kClosure);
+           value_.tag == static_cast<int32_t>(CustomRefCountedType::kClosure);
   }
   inline bool IsCallable() const { return IsClosure() || IsJSFunction(); }
 
@@ -257,7 +257,7 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
   inline bool IsRefCounted() const {
     return value_.type == lynx_value_object &&
            value_.tag ==
-               static_cast<int64_t>(CustomRefCountedType::kRefCounted);
+               static_cast<int32_t>(CustomRefCountedType::kRefCounted);
   }
 
   inline bool IsInt32() const { return value_.type == lynx_value_int32; }
@@ -272,7 +272,7 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
   inline bool IsCFunction() const { return value_.type == lynx_value_function; }
   inline bool IsJSObject() const {
     return value_.type == lynx_value_object &&
-           value_.tag == static_cast<int64_t>(CustomRefCountedType::kJSObject);
+           value_.tag == static_cast<int32_t>(CustomRefCountedType::kJSObject);
   }
   inline bool IsByteArray() const {
     return value_.type == lynx_value_arraybuffer;

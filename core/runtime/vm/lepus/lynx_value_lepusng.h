@@ -25,7 +25,8 @@ void lynx_value_api_detach_lepusng(lynx_api_env env);
 #define MAKE_LYNX_VALUE_FROM_LEPUS_VALUE(val)                                \
   {                                                                          \
     .val_ptr = reinterpret_cast<lynx_value_ptr>(LEPUS_VALUE_GET_INT64(val)), \
-    .type = lynx_value_extended, .tag = LEPUS_VALUE_GET_TAG(val)             \
+    .type = lynx_value_extended,                                             \
+    .tag = static_cast<int32_t>(LEPUS_VALUE_GET_TAG(val))                    \
   }
 
 #ifdef __cplusplus

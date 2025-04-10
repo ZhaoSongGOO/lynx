@@ -465,12 +465,12 @@ lynx_value LEPUSValueHelper::ConstructLepusRefToLynxValue(
     LEPUSContext* ctx, const LEPUSValue& val) {
   ValueType old_type = static_cast<ValueType>(LEPUS_GetLepusRefTag(val));
   lynx_value_type type = lepus::Value::ToLynxValueType(old_type);
-  int64_t tag = 0;
+  int32_t tag = 0;
   if (type == lynx_value_object) {
     if (old_type == Value_RefCounted) {
-      tag = static_cast<int64_t>(CustomRefCountedType::kRefCounted);
+      tag = static_cast<int32_t>(CustomRefCountedType::kRefCounted);
     } else if (old_type == Value_JSObject) {
-      tag = static_cast<int64_t>(CustomRefCountedType::kJSObject);
+      tag = static_cast<int32_t>(CustomRefCountedType::kJSObject);
     }
   }
   auto* ptr = LEPUS_GetLepusRefPoint(val);

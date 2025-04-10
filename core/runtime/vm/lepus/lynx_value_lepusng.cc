@@ -82,7 +82,7 @@ lynx_api_status lynx_value_typeof(lynx_api_env env, lynx_value value,
   if (value.type != lynx_value_extended) {
     return lynx_api_invalid_arg;
   }
-  switch (value.tag) {
+  switch (static_cast<int64_t>(value.tag)) {
     case LEPUS_TAG_INT:
       *result = lynx_value_int32;
       break;
