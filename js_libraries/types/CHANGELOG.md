@@ -6,6 +6,9 @@
 
 - Add some missing types of built-in element `list`
 
+- Add some missing types of built-in element `image`
+
+
 ## 3.2.1
 
 ### Patch Changes

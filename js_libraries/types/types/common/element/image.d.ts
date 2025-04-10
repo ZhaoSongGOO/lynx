@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { BaseEvent, ImageErrorEvent, ImageLoadEvent } from '../events';
+import { BaseEvent, BaseMethod, ImageErrorEvent, ImageLoadEvent } from '../events';
 import { StandardProps } from '../props';
 
 /**
@@ -92,11 +92,57 @@ export interface ImageProps extends StandardProps {
   downsampling?: boolean;
 
   /**
+   * When set to true and the <image> element has no width or height,
+   * the size of the <image> will be automatically adjusted
+   * to match the image's original dimensions after the image is successfully loaded,
+   * ensuring that the aspect ratio is maintained.
+   * @defaultValue false
+   * @since 2.6
+   */
+  'auto-size'?: boolean;
+
+  /**
+   * When set to true, the <image> will only clear the previously displayed image resource after a new image has successfully loaded.
+   * The default behavior is to clear the image resource before starting a new load.
+   * This can resolve flickering issues when the image src is switched and reloaded. It is not recommended to enable this in scenarios where there is node reuse in views like lists.
+   * @defaultValue false
+   * @since 2.7
+   */
+  'defer-src-invalidation'?: boolean;
+
+  /**
+   * Specifies whether the animated image should start playing automatically once it is loaded.
+   * @defaultValue true
+   * @since 2.11
+   */
+  'autoplay'?: boolean;
+
+  /**
+   * Changes the color of all non-transparent pixels to the tint-color specified. The value is a <color>.
+   * @defaultValue ""
+   * @since 2.12
+   */
+  'tint-color'?: string;
+
+  /**
+   * Support outputting image monitoring information in bindload
+   * @defaultValue false
+   * @since 2.12
+   */
+  'extra-load-info'?: boolean;
+
+  /**
    * Disables unexpected iOS built-in animations
    * @defaultValue true
    * @since iOS 2.0
    */
   'implicit-animation'?: boolean;
+
+  /**
+   * Add custom parameters to image
+   * @since 2.17
+   */
+  'additional-custom-info'?: { [key: string]: string };
 
   /**
    * Image load success event
@@ -111,11 +157,65 @@ export interface ImageProps extends StandardProps {
   binderror?: (e: ErrorEvent) => void;
 
   /**
-   * Add custom parameters to image
-   * @since 2.17
+   * The animation will call back when it starts playing.
+   * @since 2.11
    */
-  'additional-custom-info'?: { [key: string]: string };
+  bindstartplay?: (e: BaseEvent) => void;
+
+  /**
+   * Call back after one loop time of the animation is played.
+   * @since 2.11
+   */
+  bindcurrentloopcomplete?: (e: BaseEvent) => void;
+
+  /**
+   * It will be called after the animation has been played for all loop-count times. If the loop-count is not set, it will not be called back.
+   * @since 2.11
+   */
+  bindfinalloopcomplete?: (e: BaseEvent) => void;
 }
 
 export type LoadEvent = BaseEvent<'load', ImageLoadEvent>;
 export type ErrorEvent = BaseEvent<'error', ImageErrorEvent>;
+
+/**
+ * Restart the animation playback method controlled by the front end, and the animation playback progress and loop count will be reset.
+ * @Android
+ * @iOS
+ * @deprecated Deprecated. Some scenarios may not call back the call result. It is recommended to use resumeAnimation instead.
+ */
+export interface ImageStartAnimMethod extends BaseMethod {
+  method: 'startAnimate';
+}
+
+/**
+ * Resumes the animation, without resetting the loop-count.
+ * @Android
+ * @iOS
+ * @since 2.11
+ */
+export interface ImageResumeAnimMethod extends BaseMethod {
+  method: 'resumeAnimation';
+}
+
+/**
+ * Pauses the animation, without resetting the loop-count.
+ * @Android
+ * @iOS
+ * @since 2.11
+ */
+export interface ImagePauseAnimMethod extends BaseMethod {
+  method: 'pauseAnimation';
+}
+
+/**
+ * Stops the animation, and it will reset the loop-count.
+ * @Android
+ * @iOS
+ * @since 2.11
+ */
+export interface ImageStopAnimMethod extends BaseMethod {
+  method: 'stopAnimation';
+}
+
+export type ImageUIMethods = ImageStartAnimMethod | ImageResumeAnimMethod | ImagePauseAnimMethod | ImageStopAnimMethod;

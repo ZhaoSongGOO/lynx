@@ -6,7 +6,7 @@ import { StandardProps } from '../props';
 import { NoProps } from '../props';
 import { ComponentProps } from './component';
 import { FilterImageProps } from './filter-image';
-import { ImageProps } from './image';
+import { ImageProps, ImageUIMethods } from './image';
 import { ListItemProps, ListProps, ListRowProps, ListUIMethods } from './list';
 import { PageProps } from './page';
 import { ScrollViewProps, ScrollViewUIMethods } from './scroll-view';
@@ -16,6 +16,7 @@ import { ViewProps } from './view';
 export interface UIMethods {
   'list': ListUIMethods;
   'scroll-view': ScrollViewUIMethods;
+  'image': ImageUIMethods;
 }
 
 // add also to global.JSX.IntrinsicElements
