@@ -287,7 +287,7 @@ int32_t Function::GetParamsSize() {
   if (params_size_ != -1) {
     return params_size_;
   }
-  int32_t params_size = -1;
+  int32_t params_size = 0;
   if (!const_values_.empty()) {
     const auto& last = const_values_.back();
     if (last.IsTable()) {
