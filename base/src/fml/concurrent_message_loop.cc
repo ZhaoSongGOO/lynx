@@ -9,6 +9,7 @@
 
 #include <thread>
 
+#include "base/include/fml/fml_trace_event_def.h"
 #include "base/include/fml/platform/thread_config_setter.h"
 #include "base/trace/native/trace_event.h"
 #include "build/build_config.h"
@@ -154,7 +155,7 @@ void ConcurrentMessageLoop::WorkerMain(uint32_t index) {
       lock.unlock();
       ++worker_count_;
       sleep_count_down = max_sleep_count;
-      TRACE_EVENT("lynx", "ConcurrentWorker AWoke");
+      TRACE_EVENT("lynx", CONCURRENT_WORKER_AWOKE);
     } else {
       --sleep_count_down;
       std::this_thread::sleep_for(

@@ -123,6 +123,7 @@ source_set("base") {
     "../include/fml/cpu_affinity.h",
     "../include/fml/delayed_task.h",
     "../include/fml/eintr_wrapper.h",
+    "../include/fml/fml_trace_event_def.h",
     "../include/fml/macros.h",
     "../include/fml/make_copyable.h",
     "../include/fml/memory/ref_counted.h",
