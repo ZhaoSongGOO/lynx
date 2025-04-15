@@ -14,8 +14,6 @@
 #include "base/include/debug/lynx_assert.h"
 #include "base/include/value/base_string.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/css_decoder.h"
 #include "core/renderer/css/css_property.h"
 #include "core/renderer/css/css_selector_constants.h"
@@ -23,6 +21,7 @@
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/page_proxy.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/base_def.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/runtime/vm/lepus/array.h"
@@ -64,7 +63,7 @@ RadonNode::RadonNode(const RadonNode& node, PtrLookupMap& map)
 }
 
 bool RadonNode::CreateElementIfNeeded() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::CreateElementIfNeeded",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_CREATE_ELEMENT_IF_NEEDED,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -83,7 +82,7 @@ bool RadonNode::CreateElementIfNeeded() {
     }
 
     EXEC_EXPR_FOR_INSPECTOR({
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "Devtool::CreateElementIfNeeded");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_CREATE_ELEMENT_IF_NEEDED);
       page_proxy_->element_manager()->PrepareNodeForInspector(element());
       CheckAndProcessComponentRemoveViewForInspector(element());
       CheckAndProcessSlotForInspector(element());
@@ -196,7 +195,7 @@ void RadonNode::UpdateIdSelector(const base::String& new_id_selector) {
 }
 
 void RadonNode::DispatchFirstTime() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode:DispatchFirstTime",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_DISPATCH_FIRST_TIME,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -413,7 +412,7 @@ int RadonNode::ImplId() const {
 
 void RadonNode::SwapElement(const std::unique_ptr<RadonBase>& old_radon_base,
                             const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::SwapElement",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SWAP_ELEMENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -456,7 +455,7 @@ void RadonNode::SwapElement(const std::unique_ptr<RadonBase>& old_radon_base,
         // should modify element tree structure if the node's fixed style has
         // been changed
         // In Fixed New Process, don't need to modify element tree structure
-        TRACE_EVENT(LYNX_TRACE_CATEGORY, "HandleFixedElement");
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_HANDLE_FIXED_ELEMENT);
         if (element_->is_fixed() != previous_fixed) {
           if (element_->is_fixed()) {
             auto* parent = element()->parent();
@@ -494,7 +493,7 @@ void RadonNode::SwapElement(const std::unique_ptr<RadonBase>& old_radon_base,
 
 bool RadonNode::ShouldFlush(const std::unique_ptr<RadonBase>& old_radon_base,
                             const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::ShouldFlush",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_FLUSH,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -535,7 +534,7 @@ bool RadonNode::ShouldFlush(const std::unique_ptr<RadonBase>& old_radon_base,
 }
 
 bool RadonNode::ShouldFlushAttr(const RadonNode* old_radon_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::ShouldFlushAttr",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_FLUSH_ATTR,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -582,7 +581,7 @@ bool RadonNode::ShouldFlushAttr(const RadonNode* old_radon_node) {
 }
 
 bool RadonNode::ShouldFlushDataSet(const RadonNode* old_radon_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::ShouldFlushDataSet",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_FLUSH_DATA_SET,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -628,7 +627,7 @@ bool RadonNode::ShouldFlushDataSet(const RadonNode* old_radon_node) {
 }
 
 bool RadonNode::ShouldFlushGestureDetectors(const RadonNode* old_radon_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::ShouldFlushGestureDetectors",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_FLUSH_GESTURE_DETECTORS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -687,8 +686,7 @@ void RadonNode::CollectInvalidationSetsAndInvalidate(
   if (!style_sheet || !style_sheet->enable_css_invalidation()) {
     return;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "RadonNode::CollectInvalidationSetsAndInvalidate",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_COLLECT_INVALID_SETS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -724,7 +722,7 @@ void RadonNode::CollectInvalidationSetsAndInvalidate(
 
 bool RadonNode::OptimizedShouldFlushStyle(RadonNode* old_radon_node,
                                           const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::OptimizedShouldFlushStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_OPTIMIZE_SHOULD_FLUSH_STYLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -784,7 +782,7 @@ void RadonNode::MarkChildStyleDirtyRecursively(bool is_root) {
 
 bool RadonNode::ShouldFlushStyle(RadonNode* old_radon_node,
                                  const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNode::ShouldFlushStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_FLUSH_STYLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -843,8 +841,7 @@ bool RadonNode::ShouldFlushStyle(RadonNode* old_radon_node,
 
 void RadonNode::CollectInvalidationSetsForPseudoAndInvalidate(
     CSSFragment* style_sheet, PseudoState prev, PseudoState curr) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "RadonNode::CollectInvalidationSetsForPseudoAndInvalidate",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_COLLECT_INVALID_SETS_FOR_PSEUDO,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1074,7 +1071,7 @@ bool RadonNode::GetDevToolFlag() {
 void RadonNode::NotifyElementNodeAdded() {
   EXEC_EXPR_FOR_INSPECTOR({
     if (GetDevToolFlag()) {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "Devtool::NotifyElementNodeAdded");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_NOTIFY_ELEMENT_NODE_ADDED);
       if (element() != nullptr) {
         page_proxy_->element_manager()->OnElementNodeAddedForInspector(
             element());
@@ -1086,7 +1083,7 @@ void RadonNode::NotifyElementNodeAdded() {
 void RadonNode::NotifyElementNodeRemoved() {
   EXEC_EXPR_FOR_INSPECTOR({
     if (GetDevToolFlag()) {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "Devtool::NotifyElementNodeRemoved");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_NOTIFY_ELEMENT_NODE_REMOVED);
       if (element() != nullptr) {
         page_proxy_->element_manager()->OnElementNodeRemovedForInspector(
             element());
@@ -1098,7 +1095,7 @@ void RadonNode::NotifyElementNodeRemoved() {
 void RadonNode::NotifyElementNodeSetted() {
   EXEC_EXPR_FOR_INSPECTOR({
     if (GetDevToolFlag()) {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "Devtool::NotifyElementNodeSetted");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_NOTIFY_ELEMENT_NODE_SETTED);
       if (element() != nullptr) {
         page_proxy_->element_manager()->OnElementNodeSetForInspector(element());
       }
@@ -1215,7 +1212,7 @@ void RadonNode::UpdateInlineStylesFromOldModel(
   EXEC_EXPR_FOR_INSPECTOR({
     if (GetDevToolFlag()) {
       TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                  "Devtool::UpdateInlineStylesFromOldModel");
+                  DEVTOOL_UPDATE_INLINE_STYLES_FROM_OLD_MODEL);
       if (element() && element()->is_fiber_element()) {
         // In the Radon-Fiber architecture, new RadonNode nodes only store
         // raw_inline_style, which cannot be consumed by the devtool. The

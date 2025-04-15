@@ -13,6 +13,7 @@
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_list_base.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_types.h"
 #include "core/renderer/ui_wrapper/layout/layout_node.h"
 #include "core/renderer/utils/base/tasm_constants.h"
@@ -191,7 +192,7 @@ bool RadonElement::is_component() const {
 
 void RadonElement::SetNativeProps(const lepus::Value& args,
                                   PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonElement::SetNativeProps");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_SET_NATIVE_PROPS);
   if (!args.IsTable()) {
     LOGE("SetNativeProps's param must be a Table!");
     return;
@@ -451,7 +452,7 @@ void RadonElement::MarkPlatformNodeDestroyedRecursively() {
 void RadonElement::UpdateDynamicElementStyle(uint32_t style,
                                              bool force_update) {
   DCHECK(!parent());
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element.PreparePropsBundleForDynamicCSS");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_UPDATE_DYNAMIC_STYLE);
   ClearDynamicCSSChildrenStatus();
   PreparePropsBundleForDynamicCSS();
   NotifyUnitValuesUpdatedToAnimation(style);
@@ -618,7 +619,7 @@ void RadonElement::FlushPropsFirstTimeWithParentElement(Element* parent) {
 }
 
 void RadonElement::FlushProps() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonElement::FlushProps");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_FLUSH_PROPS);
 
   // Only view and component can be optimized as layout only node
   if (has_layout_only_props_ && !(is_view_ || tag_.IsEquals("component"))) {
@@ -664,7 +665,7 @@ void RadonElement::FlushProps() {
   // Update The root if needed
 
   if (!has_painting_node_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "Catalyzer::FlushProps::NoPaintingNode");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, CATALYZER_NO_PAINTING_NODE);
     PreparePropBundleIfNeed();
     SetComponentIDPropsIfNeeded();
     element_manager_->AttachLayoutNodeType(
@@ -687,7 +688,7 @@ void RadonElement::FlushProps() {
     CreateElementContainer(platform_is_flatten);
     has_painting_node_ = true;
   } else {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "Catalyzer::FlushProps::HasPaintingNode");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, CATALYZER_HAS_PAINTING_NODE);
     PreparePropBundleIfNeed();
     SetComponentIDPropsIfNeeded();
     element_manager_->UpdateLayoutNodeProps(impl_id(), prop_bundle_);
@@ -724,7 +725,7 @@ Element* RadonElement::last_child() const {
 
 void RadonElement::OnPseudoStatusChanged(PseudoState prev_status,
                                          PseudoState current_status) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonElement::OnPseudoStatusChanged");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_ON_PSEUDO_STATUS_CHANGED);
 
   // If data_model() is null or data_model() is not RadonNode, return.
   if (data_model() == nullptr) {
@@ -746,7 +747,7 @@ void RadonElement::OnPseudoStatusChanged(PseudoState prev_status,
 // 3. Check every property to determine whether to intercept this update.
 void RadonElement::ConsumeStyle(const StyleMap& styles,
                                 const StyleMap* inherit_styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonElement::ConsumeStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_CONSUME_STYLE);
   if (styles.empty()) {
     return;
   }
@@ -836,7 +837,7 @@ void RadonElement::OnPatchFinish(PipelineOptions& option) {
 
 void RadonElement::FlushAnimatedStyleInternal(tasm::CSSPropertyID id,
                                               const tasm::CSSValue& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonElement::FlushAnimatedStyleInternal");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_ELEMENT_FLUSH_ANIMATED_STYLE);
   styles_manager_.AdoptStyle(id, value);
 }
 

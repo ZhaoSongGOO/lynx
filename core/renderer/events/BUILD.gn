@@ -20,6 +20,7 @@ lynx_core_source_set("events") {
 
   public_deps = [
     "//lynx/core/base",
+    "//lynx/core/renderer/trace:renderer_trace",
     "//lynx/core/runtime/vm/lepus",
     "//lynx/third_party/rapidjson",
   ]

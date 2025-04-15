@@ -12,7 +12,6 @@
 
 #include "base/include/vector.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/public/painting_ctx_platform_impl.h"
 #include "core/public/pipeline_option.h"
 #include "core/public/platform_extra_bundle.h"
@@ -20,6 +19,7 @@
 #include "core/renderer/css/css_font_face_token.h"
 #include "core/renderer/css/css_fragment.h"
 #include "core/renderer/css/css_keyframes_token.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/services/timing_handler/timing.h"
 #include "core/services/timing_handler/timing_constants.h"
 #include "core/shell/dynamic_ui_operation_queue.h"
@@ -52,7 +52,7 @@ class PaintingContext {
       int id, const std::string& tag,
       const std::shared_ptr<PropBundle>& painting_data, bool flatten,
       bool create_node_async, uint32_t node_index = 0) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "CreatePaintingNode", "tag", tag);
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_CREATE_NODE, "tag", tag);
     platform_impl_->CreatePaintingNode(id, tag, painting_data, flatten,
                                        create_node_async, node_index);
   }
@@ -94,7 +94,7 @@ class PaintingContext {
   }
 
   inline void FinishTasmOperation(const PipelineOptions& options) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FinishTasmOperation");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_FINISH_TASM_OPERATION);
     platform_impl_->FinishTasmOperation(options);
   }
 

@@ -10,7 +10,6 @@
 #include "base/include/log/logging.h"
 #include "base/include/no_destructor.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/css/css_property.h"
 #include "core/renderer/css/parser/animation_direction_handler.h"
@@ -63,6 +62,7 @@
 #include "core/renderer/css/parser/transform_origin_handler.h"
 #include "core/renderer/css/parser/transition_shorthand_handler.h"
 #include "core/renderer/css/parser/vertical_align_handler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -154,7 +154,7 @@ bool UnitHandler::Process(const CSSPropertyID key, const lepus::Value& input,
                    "[UnitHandler] illegal css key:%d", key);
     return false;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UnitHandler::Process",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UNIT_HANDLER_PROCESS,
               [&](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations(
                     "property_name", CSSProperty::GetPropertyName(key).str());

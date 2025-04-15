@@ -14,7 +14,6 @@
 #include "base/include/path_utils.h"
 #include "base/trace/native/trace_event.h"
 #include "core/animation/animation_delegate.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/css_color.h"
 #include "core/renderer/css/css_keyframes_token.h"
 #include "core/renderer/css/css_property.h"
@@ -28,6 +27,7 @@
 #include "core/renderer/page_proxy.h"
 #include "core/renderer/starlight/style/css_type.h"
 #include "core/renderer/starlight/style/default_layout_style.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/renderer/utils/prop_bundle_style_writer.h"
 #include "core/renderer/utils/value_utils.h"
@@ -269,7 +269,7 @@ void Element::UpdateLayout(float left, float top, float width, float height,
                            const std::array<float, 4>& borders,
                            const std::array<float, 4>* sticky_positions,
                            float max_height) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::UpdateLayout");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_UPDATE_LAYOUT);
   // TODO: only leaf node need to update border padding
   frame_changed_ = true;
   top_ = top;
@@ -317,7 +317,7 @@ bool Element::ConsumeTransitionStylesInAdvance(const StyleMap& styles,
 void Element::SetStyleInternal(CSSPropertyID css_id,
                                const tasm::CSSValue& value, bool force_update) {
   TRACE_EVENT(
-      LYNX_TRACE_CATEGORY, "Element::SetStyleInternal",
+      LYNX_TRACE_CATEGORY, ELEMENT_SET_STYLE_INTERNAL,
       [css_id](lynx::perfetto::EventContext ctx) {
         auto* css_info = ctx.event()->add_debug_annotations();
         css_info->set_name("PropertyName");
@@ -522,7 +522,7 @@ void Element::ResetAttribute(const base::String& key) {
 
 void Element::WillConsumeAttribute(const base::String& key,
                                    const lepus::Value& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::WillConsumeAttribute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONSUME_ATTRIBUTE);
 
   // Flatten realted.
   // TODO(songshourui.null): Currently, the Flatten information is only consumed
@@ -559,14 +559,14 @@ void Element::SetDataSet(const tasm::DataMap& data) {
 void Element::SetKeyframesByNames(const lepus::Value& names,
                                   const CSSKeyframesTokenMap& keyframes,
                                   bool force_flush) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::SetKeyframesByNames");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_SET_KEYFRAMES_BY_NAMES);
   auto lepus_keyframes = ResolveCSSKeyframesByNames(
       names, keyframes, computed_css_style()->GetMeasureContext(),
       element_manager()->GetCSSParserConfigs(), force_flush);
   if (!lepus_keyframes.IsTable() || lepus_keyframes.Table()->size() == 0) {
     return;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::PushKeyframesToBundle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_PUSH_KEYFRAMES_TO_BUNDLE);
   auto bundle = element_manager()->GetPropBundleCreator()->CreatePropBundle();
   bundle->SetProps("keyframes", pub::ValueImplLepus(lepus_keyframes));
 
@@ -581,7 +581,7 @@ lepus::Value Element::ResolveCSSKeyframesByNames(
     const lepus::Value& names, const tasm::CSSKeyframesTokenMap& frames,
     const tasm::CssMeasureContext& context,
     const tasm::CSSParserConfigs& configs, bool force_flush) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::ResolveCSSKeyframesByNames");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_RESOLVE_KEYFRAMES_BY_NAMES);
   DCHECK(names.IsString() || names.IsArray());
   auto dict = lepus::Dictionary::Create();
   ForEachLepusValue(
@@ -1322,7 +1322,7 @@ void Element::SetDataToNativeTransitionAnimator() {
 
 bool Element::TickAllAnimation(fml::TimePoint& frame_time,
                                PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::TickAllAnimation");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_TICK_ALL_ANIMATION);
 
   if (css_transition_manager_ != nullptr) {
     css_transition_manager_->TickAllAnimation(frame_time);
@@ -1339,7 +1339,7 @@ bool Element::TickAllAnimation(fml::TimePoint& frame_time,
 }
 
 void Element::UpdateFinalStyleMap(const StyleMap& styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::UpdateFinalStyleMap");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_UPDATE_FINAL_STYLE_MAP);
   final_animator_map_.merge(styles);
 }
 
@@ -1347,7 +1347,7 @@ bool Element::FlushAnimatedStyle() {
   if (final_animator_map_.empty()) {
     return false;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::FlushAnimatedStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_FLUSH_ANIMATED_STYLE);
   bool has_layout_style = false;
   for (const auto& style : final_animator_map_) {
     if (NeedFastFlushPath(style)) {
@@ -1465,7 +1465,7 @@ CSSKeyframesToken* Element::GetCSSKeyframesToken(
 }
 
 void Element::ResolveAndFlushKeyframes() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Element::ResolveAndFlushKeyframes");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_RESOLVE_AND_FLUSH_KEYFRAMES);
   lepus_value animation_names =
       computed_css_style()->GetValue(kPropertyIDAnimationName);
   CSSFragment* css_fragment = GetRelatedCSSFragment();

@@ -10,13 +10,12 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/component_attributes.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_lazy_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/tasm_utils.h"
 #include "core/renderer/utils/diff_algorithm.h"
 #include "core/renderer/utils/value_utils.h"
@@ -57,7 +56,7 @@ RadonListBase::RadonListBase(lepus::Context* context, PageProxy* page_proxy,
 }
 
 RadonComponent* RadonListBase::CreateComponentWithType(uint32_t index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonListBase::CreateComponentWithType",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_CREATE_COMPONENT_WITH_TYPE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -221,7 +220,7 @@ void RadonListBase::RenderComponentAtIndex(uint32_t index,
 }
 
 RadonComponent* RadonListBase::GetComponent(uint32_t sign) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "List::GetComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_LIST_GET_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -240,7 +239,7 @@ RadonComponent* RadonListBase::GetComponent(uint32_t sign) {
 // @param sign is the sign of the __LynxListTableViewCell__
 // use GetParam could get the associated RadonComponent
 void RadonListBase::RemoveComponent(uint32_t sign) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "List::RemoveComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_LIST_REMOVE_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -267,7 +266,7 @@ void RadonListBase::RemoveComponent(uint32_t sign) {
 
 void RadonListBase::UpdateComponent(uint32_t sign, uint32_t row,
                                     int64_t operation_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "List::UpdateComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_LIST_UPDATE_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -340,7 +339,7 @@ bool RadonListBase::HasComponent(const std::string& component_name,
 }
 
 bool RadonListBase::DiffListComponents() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonListBase::DiffListComponents",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_DIFF_COMPONENTS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

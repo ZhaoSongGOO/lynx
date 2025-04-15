@@ -16,6 +16,7 @@
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/dom/vdom/radon/radon_element.h"
 #include "core/renderer/starlight/style/default_layout_style.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_wrapper/layout/layout_node.h"
 
 namespace lynx {
@@ -222,7 +223,7 @@ void DynamicCSSStylesManager::UpdateDirectionStyle(
 
 void DynamicCSSStylesManager::AdoptStyle(CSSPropertyID css_id,
                                          const tasm::CSSValue& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DynamicCSSStylesManager::AdoptStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, DYNAMIC_STYLE_MANAGER_ADOPT_SHEET);
   if (element_->element_manager() && (LayoutNode::IsLayoutOnly(css_id) ||
                                       LayoutNode::IsLayoutWanted(css_id))) {
     element_->element_manager()->SetNeedsLayout();
@@ -407,7 +408,7 @@ bool DynamicCSSStylesManager::UpdateWithResolvingStatus(
   // When a node is forcely applied inheritance, the entire subtree of the node
   // should be forcely applied inheritance as well.
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "DynamicCSSStylesManager::UpdateWithResolvingStatus");
+              DYNAMIC_STYLE_MANAGER_UPDATE_RESOLVING_STATUS);
   LynxFatal(element_, error::E_ELEMENT_UPDATE_NODE_IS_NULL,
             "Element is null when updating resolving status");
   auto current_updates =

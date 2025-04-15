@@ -11,7 +11,7 @@
 
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -42,7 +42,7 @@ const StyleMap& CSSParseToken::GetAttributes() {
 
   // If raw attributes is not empty, process raw attributes.
   if (!raw_attributes_.empty()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSPatching::ProcessRaw");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_PATCH_PROCESS_RAW);
     // Get the total pool capacity of the parsed attributes from raw_attributes.
     total_pool_capacity =
         CSSProperty::GetTotalParsedStyleCountFromMap(raw_attributes_);

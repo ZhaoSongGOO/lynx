@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/element.h"
 #include "core/renderer/starlight/layout/layout_object.h"
 #include "core/renderer/ui_wrapper/painting/painting_context.h"
@@ -40,7 +39,7 @@ Catalyzer::Catalyzer(std::unique_ptr<PaintingContext> painting_context,
 bool Catalyzer::NeedUpdateLayout() { return root_ && root_->need_update(); }
 
 void Catalyzer::UpdateLayoutRecursively() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UpdateLayoutRecursively");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_UPDATE_LAYOUT_RECURSIVE);
   if (root_) {
     root_->element_container()->UpdateLayout(root_->left(), root_->top());
   }
@@ -53,7 +52,7 @@ void Catalyzer::UpdateLayoutRecursively() {
 }
 
 void Catalyzer::UpdateLayoutRecursivelyWithoutChange() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Catalyzer::TriggerOnNodeReady");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CATALYZER_TRIGGER_NODE_READY);
   if (root_ && root_->element_container()) {
     root_->element_container()->UpdateLayoutWithoutChange();
   }
@@ -116,7 +115,7 @@ void Catalyzer::DumpElementTree() {
 
   if (root_) {
     uint64_t flow_id = TRACE_FLOW_ID();
-    TRACE_EVENT("dom", "ConstructElementTree",
+    TRACE_EVENT("dom", DOM_CONSTRUCT_ELEMENT_TREE,
                 [flow_id](lynx::perfetto::EventContext ctx) {
                   ctx.event()->add_flow_ids(flow_id);
                 });
@@ -134,7 +133,7 @@ void Catalyzer::DumpElementTree() {
           rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
           dumped_document.Accept(writer);
           TRACE_EVENT(
-              "dom", "DumpElementTree",
+              "dom", DOM_DUMP_ELEMENT_TREE,
               [this, &buffer, flow_id](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("content",
                                                    buffer.GetString());

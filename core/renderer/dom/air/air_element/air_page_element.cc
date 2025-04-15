@@ -9,6 +9,7 @@
 #include "core/renderer/dom/air/air_element/air_component_element.h"
 #include "core/renderer/dom/air/air_element/air_for_element.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 #include "core/services/timing_handler/timing_constants.h"
 #include "core/services/timing_handler/timing_constants_deprecated.h"
@@ -269,7 +270,7 @@ AirElement *AirPageElement::GetNextElementForAsyncThread() {
 }
 
 void AirPageElement::CalcStyleAsync() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::CalcStyleAsync");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_CALC_STYLE_ASYNC);
   static base::NoDestructor<fml::Thread> worker_thread("Lynx_Air_Async_Calc");
   // When the asynchronous thread is busy, we do not post new tasks.
   if (async_thread_cursor_ == ui_thread_cursor_ - 1) {
@@ -286,7 +287,7 @@ void AirPageElement::CalcStyleAsync() {
 }
 
 void AirPageElement::UpdateFirstScreenListState() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::UpdateFirstScreenListState");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_UPDATE_FIRST_SCREEN_LIST_STATE);
   long index = 0;
   if (last_element_) {
     AppendLastElement();

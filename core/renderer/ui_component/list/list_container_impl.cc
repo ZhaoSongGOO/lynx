@@ -9,6 +9,7 @@
 
 #include "base/trace/native/trace_event.h"
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/batch_list_adapter.h"
 #include "core/renderer/ui_component/list/default_list_adapter.h"
 #include "core/renderer/ui_component/list/grid_layout_manager.h"
@@ -85,7 +86,7 @@ void ListContainerImpl::CheckZIndex(Element* child) const {
 }
 
 void ListContainerImpl::OnNextFrame() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListContainerImpl::OnNextFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CONTAINER_ON_NEXT_FRAME);
   list_layout_manager_->PreloadSection();
 }
 
@@ -165,7 +166,7 @@ ItemHolder* ListContainerImpl::GetItemHolderForIndex(int index) {
 
 // Flush all children's layout info patching to plaform.
 void ListContainerImpl::FlushPatching() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListContainerImpl::FlushPatching");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CONTAINER_FLUSH_PATCHING);
   if (element_) {
     element_->painting_context()->UpdateLayoutPatching();
     element_->painting_context()->OnNodeReady(element_->impl_id());
@@ -255,7 +256,7 @@ void ListContainerImpl::UpdateListLayoutManager(list::LayoutType layout_type) {
 
 bool ListContainerImpl::ResolveAttribute(const base::String& key,
                                          const lepus::Value& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListContainerImpl::ResolveAttribute", "key",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CONTAINER_RESOLVE_ATTRIBUTE, "key",
               key.c_str());
   bool should_set_props = true;
   bool should_mark_layout_dirty = false;

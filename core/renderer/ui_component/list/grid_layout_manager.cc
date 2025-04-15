@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/item_holder.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
@@ -84,7 +85,7 @@ int GridLayoutManager::GetTargetIndexForPreloadBuffer(
 void GridLayoutManager::LayoutChunk(LayoutChunkResult& result,
                                     LayoutState& layout_state,
                                     bool preload_section) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "GridLayoutManager::LayoutChunk", "index",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_LAYOUT_CHUNK, "index",
               base::FormatString("%d", layout_state.next_bind_index_));
   if (!list_container_ || !list_children_helper_ || !list_orientation_helper_) {
     result.consumed_ = 0.f;
@@ -299,7 +300,7 @@ void GridLayoutManager::UpdateLayoutStateToFillEnd(
 }
 
 void GridLayoutManager::LayoutInvalidItemHolder(int first_invalid_index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "GridLayoutManager::LayoutInvalidItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_LAYOUT_INVALID_ITEM,
               "first_invalid_index", std::to_string(first_invalid_index));
   if (!list_container_ || !list_children_helper_ || first_invalid_index < 0 ||
       first_invalid_index >= list_container_->GetDataCount()) {

@@ -53,7 +53,10 @@ if (disable_list_platform_implementation) {
 
 lynx_core_source_set("react_component_list") {
   sources = component_list_shared_sources
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [
+    "//lynx/base/src:base_log_headers",
+    "//lynx/core/renderer/trace:renderer_trace",
+  ]
 }
 
 unittest_set("react_component_list_testset") {

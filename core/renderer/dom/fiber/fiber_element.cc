@@ -16,8 +16,6 @@
 #include "base/include/timer/time_utils.h"
 #include "base/include/value/base_string.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/css_color.h"
 #include "core/renderer/css/css_keyframes_token.h"
 #include "core/renderer/css/css_property.h"
@@ -42,6 +40,7 @@
 #include "core/renderer/starlight/layout/layout_object.h"
 #include "core/renderer/starlight/style/default_layout_style.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_wrapper/layout/layout_node.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/renderer/utils/value_utils.h"
@@ -261,8 +260,7 @@ void FiberElement::SetKeyframesByNamesInner(
 }
 
 void FiberElement::ResolveParentComponentElement() const {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "FiberElement::ResolveParentComponentElement");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_RESOLVE_PARENT_COMPONENT);
   // parent_component_unique_id_ less than page element element id is invalid.
   if (!parent_component_element_ &&
       parent_component_unique_id_ >= kInitialImplId) {
@@ -385,7 +383,7 @@ bool FiberElement::WillResolveStyle(StyleMap &merged_styles) {
 
 void FiberElement::AsyncResolveProperty() {
   if ((dirty_ & ~kDirtyTree) != 0) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::AsyncResolveProperty");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_ASYNC_RESOLVE_PROPERTY);
     UpdateResolveStatus(AsyncResolveStatus::kPrepareRequested);
     if (this->IsAttached()) {
       AsyncPostResolveTaskToThreadPool();
@@ -438,7 +436,7 @@ void FiberElement::InsertNode(const fml::RefPtr<Element> &raw_child) {
 
 void FiberElement::InsertNode(const fml::RefPtr<Element> &raw_child,
                               int32_t index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::InsertNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_INSERT_NODE);
   auto child = fml::static_ref_ptr_cast<FiberElement>(raw_child);
 
   if (index < 0 || index > static_cast<int>(scoped_children_.size())) {
@@ -594,14 +592,14 @@ void FiberElement::DestroyPlatformNode() {
 // achieve better performance. However, this would result in the need to
 // maintain two versions of the code: one for lvalues and one for rvalues.
 void FiberElement::SetClass(const base::String &clazz) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetClass");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_CLASS);
 
   data_model_->SetClass(clazz);
   MarkStyleDirty(NeedForceClassChangeTransmit());
 }
 
 void FiberElement::SetClasses(ClassList &&classes) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetClasses");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_CLASSES);
   data_model_->SetClasses(std::move(classes));
   MarkStyleDirty(NeedForceClassChangeTransmit());
 
@@ -618,7 +616,7 @@ void FiberElement::RemoveAllClass() {
 }
 
 void FiberElement::SetStyle(CSSPropertyID id, const lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_STYLE);
 
   // When the `SetStyle` API is called, the `SetRawInlineStyles` API might
   // already have been invoked. In this case, it is necessary to call
@@ -735,7 +733,7 @@ void FiberElement::SetBuiltinAttribute(ElementBuiltInAttributeEnum key,
 void FiberElement::SetAttribute(const base::String &key,
                                 const lepus::Value &value,
                                 bool need_update_data_model) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetAttribute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_ATTRIBUTE);
 
   CheckClassChangeTransmitAttribute(key, value);
 
@@ -757,7 +755,7 @@ void FiberElement::SetAttribute(const base::String &key,
 }
 
 void FiberElement::SetIdSelector(const base::String &idSelector) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetIdSelector");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_ID_SELECTOR);
   CheckHasInvalidationForId(data_model_->idSelector().str(), idSelector.str());
 
   updated_attr_map_[BASE_STATIC_STRING(AttributeHolder::kIdSelectorAttrName)]
@@ -849,7 +847,7 @@ void FiberElement::ResetDirectionAwareProperty(const CSSPropertyID &id,
 }
 
 void FiberElement::HandleKeyframePropsChange(bool need_animation_props) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleKeyframePropsChange",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_KEYFRAME_PROPS_CHANGE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -882,7 +880,7 @@ void FiberElement::HandleBeforeFlushActionsTask(
 }
 
 ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::PrepareForCreateOrUpdate",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PREPARE_FOR_CRATE_OR_UPDATE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -905,7 +903,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   }
 
   if (dirty_ & kDirtyStyle) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleStyle",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_STYLE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -915,7 +913,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
 
     dirty_ &= ~kDirtyStyle;
   } else if (dirty_ & kDirtyRefreshCSSVariables) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleStyle",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_STYLE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -925,7 +923,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   }
 
   if (!this->parallel_flush_ && IsCSSInheritanceEnabled()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandlePropagateInherited",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_PROPAGATE_INHERITED,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1069,7 +1067,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   // process direction: rtl/lynx-rtl firstly
   // FIXME(linxs): maybe can put setFontSize here ?
   if (IsDirectionChangedEnabled()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleDirectionChanged",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_DIRECTION_CHANGED,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1139,7 +1137,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   // set updated Styles to element in the end
   if (!update_map.empty() || !updated_inherited_styles_.empty() ||
       !styles_from_attributes_.empty()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleSetStyle",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_SET_STYLE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1162,7 +1160,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
 
   // Handle font size change
   if (dirty_ & kDirtyFontSize) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleFontSizeChange",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_FONT_SIZE_CHANGE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1249,7 +1247,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   }
 
   if (has_transition_props_changed_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleTransitionProps",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_TRANSITION_PROPS,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1273,7 +1271,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
 
   // events
   if (dirty_ & kDirtyEvent) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleEvents",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_EVENTS,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1284,7 +1282,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
 
   // gestures
   if (dirty_ & kDirtyGesture) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleGestures",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_GESTURES,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1298,7 +1296,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
   if (dirty_ & kDirtyDataset) {
     // Pass the element's dataset as an attribute, with the key 'dataset', into
     // the propbundle for LynxUI.
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleDataset");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_DATASET);
     PreparePropBundleIfNeed();
     lepus::Value dataset_val(lepus::Dictionary::Create());
     for (const auto &pair : data_model()->dataset()) {
@@ -1336,7 +1334,7 @@ ParallelFlushReturn FiberElement::PrepareForCreateOrUpdate() {
 }
 
 void FiberElement::TriggerElementUpdate() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::TriggerElementUpdate",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_TRIGGER_ELEMENT_UPDATE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1357,7 +1355,7 @@ void FiberElement::VerifyKeyframePropsChangedHandling() {
 }
 
 void FiberElement::FlushActionsAsRoot() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::FlushActionsAsRoot",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_FLUSH_ACTIONS_AS_ROOT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1406,7 +1404,7 @@ void FiberElement::FlushActionsAsRoot() {
 }
 
 void FiberElement::FlushSelf() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::FlushSelf",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_FLUSH_SELF,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1472,12 +1470,12 @@ void FiberElement::OnParallelFlushAsRoot(PerfStatistic &stats) {
 }
 
 void FiberElement::ParallelFlushAsRoot() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ParallelFlushAsRoot");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PARALLEL_FLUSH_AS_ROOT);
   if (!element_manager()->GetEnableParallelElement()) {
     return;
   }
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "TasmTaskRunner::WaitForCompletion");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, TASM_TASK_RUNNER_WAIT_FOR_COMPLETION);
     element_manager()->GetTasmWorkerTaskRunner()->WaitForCompletion();
   }
   ParallelFlushRecursively();
@@ -1493,20 +1491,20 @@ void FiberElement::ParallelFlushAsRoot() {
   OnParallelFlushAsRoot(perf_stats);
 
   while (!task_queue.empty()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ConsumeParallelTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CONSUME_PARALLEL_TASK);
     if (task_queue.front().get()->GetFuture().wait_for(
             std::chrono::seconds(element_manager()->GetTaskWaitTimeout())) ==
         std::future_status::ready) {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ConsumeLeftIter");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CONSUME_LEFT_ITER);
       task_queue.front().get()->GetFuture().get()();
       task_queue.pop_front();
     } else if (task_queue.back().get()->Run()) {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ConsumeRightIter");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CONSUME_RIGHT_ITER);
       task_queue.back().get()->GetFuture().get()();
       task_queue.pop_back();
       ++perf_stats.engine_thread_task_count_;
     } else {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement:WaitLeftIter");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_WAIT_LEFT_ITER);
       ParallelFlushReturn task;
       if (perf_stats.enable_report_stats_) {
         uint64_t wait_start = base::CurrentTimeMicroseconds();
@@ -1559,7 +1557,7 @@ void FiberElement::PostResolveTaskToThreadPool(
   auto task_info_ptr = fml::MakeRefCounted<base::OnceTask<ParallelFlushReturn>>(
       [target = this, promise = std::move(promise)]() mutable {
         TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                    "FiberElement::PrepareForCreateOrUpdateAsync");
+                    FIBER_ELEMENT_PREPARE_FOR_CRATE_OR_UPDATE_ASYNC);
         target->UpdateResolveStatus(AsyncResolveStatus::kResolving);
         target->parallel_flush_ = true;
         promise.set_value(target->PrepareForCreateOrUpdate());
@@ -1573,7 +1571,7 @@ void FiberElement::PostResolveTaskToThreadPool(
 }
 
 void FiberElement::ParallelFlushRecursively() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ParallelFlushRecursively");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PARALLEL_FLUSH_RECURSIVELY);
   if (!flush_required_) {
     return;
   }
@@ -1584,7 +1582,7 @@ void FiberElement::ParallelFlushRecursively() {
 
   for (const auto &child : scoped_children_) {
     TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "FiberElement::ChildrenPrepareForCreateOrUpdate",
+                FIBER_ELEMENT_CHILD_PREPARE_FOR_CRATE_OR_UPDATE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1593,7 +1591,7 @@ void FiberElement::ParallelFlushRecursively() {
 }
 
 void FiberElement::PrepareChildren() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::PrepareChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PREPARE_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1630,7 +1628,7 @@ void FiberElement::PrepareChildForInsertion(FiberElement *child) {
 
 void FiberElement::PrepareAndGenerateChildrenActions() {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "FiberElement::PrepareAndGenerateChildrenActions",
+              FIBER_ELEMENT_PREPARE_AND_GENERATE_CHILDREN_ACTIONS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1641,7 +1639,7 @@ void FiberElement::PrepareAndGenerateChildrenActions() {
   }
   // process insert or remove related actions
   if (dirty_ & kDirtyTree) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleChildrenAction",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_CHILDREN_ACTION,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -1740,7 +1738,7 @@ void FiberElement::PrepareAndGenerateChildrenActions() {
 
 void FiberElement::HandleInsertChildAction(FiberElement *child, int to_index,
                                            FiberElement *ref_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleInsertChildAction",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_INSERT_CHILD_ACTION,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1785,7 +1783,7 @@ void FiberElement::HandleInsertChildAction(FiberElement *child, int to_index,
 }
 
 void FiberElement::HandleRemoveChildAction(FiberElement *child) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleRemoveChildAction",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_REMOVE_CHILD_ACTION,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1830,7 +1828,7 @@ void FiberElement::HandleRemoveChildAction(FiberElement *child) {
 void FiberElement::HandleContainerInsertion(FiberElement *parent,
                                             FiberElement *child,
                                             FiberElement *ref_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleContainerInsertion",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_CONTAINER_INSERTION,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1962,7 +1960,7 @@ ElementChildrenArray FiberElement::GetChildren() {
 // 3. Check every property to determine whether to intercept this update.
 void FiberElement::ConsumeStyle(const StyleMap &styles,
                                 const StyleMap *inherit_styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ConsumeStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CONSUME_STYLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1995,7 +1993,7 @@ void FiberElement::ConsumeStyle(const StyleMap &styles,
 void FiberElement::ConsumeStyleInternal(
     const StyleMap &styles, const StyleMap *inherit_styles,
     std::function<bool(CSSPropertyID, const tasm::CSSValue &)> should_skip) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ConsumeStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_CONSUME_STYLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2071,7 +2069,7 @@ void FiberElement::ConsumeStyleInternal(
 bool FiberElement::ConsumeAllAttributes() {
   bool need_update = false;
   if (dirty_ & kDirtyAttr) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleAttr",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_ATTR,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -2096,7 +2094,7 @@ bool FiberElement::ConsumeAllAttributes() {
 
 void FiberElement::PerformElementContainerCreateOrUpdate(bool need_update) {
   if (dirty_ & kDirtyCreated) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleCreate",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_HANDLE_CRATE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -2119,7 +2117,8 @@ ParallelFlushReturn FiberElement::CreateParallelTaskHandler() {
   this->parallel_flush_ = false;
   this->UpdateResolveStatus(AsyncResolveStatus::kResolved);
   return [this]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::HandleParallelReduceTasks");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY,
+                FIBER_ELEMENT_HANDLE_PARALLEL_REDUCE_TASKS);
     for (const auto &task : parallel_reduce_tasks_) {
       task();
     }
@@ -2239,14 +2238,14 @@ void FiberElement::SetAttributeInternal(const base::String &key,
 
 void FiberElement::AddDataset(const base::String &key,
                               const lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::AddDataset");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_ADD_DATA_SET);
 
   data_model_->SetDataSet(key, value);
   MarkDirty(kDirtyDataset);
 }
 
 void FiberElement::SetDataset(const lepus::Value &data_set) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetDataset");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_DATA_SET);
 
   data_model_->SetDataSet(data_set);
   MarkDirty(kDirtyDataset);
@@ -2255,7 +2254,7 @@ void FiberElement::SetDataset(const lepus::Value &data_set) {
 void FiberElement::SetJSEventHandler(const base::String &name,
                                      const base::String &type,
                                      const base::String &callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetJSEventHandler");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_JS_EVENT_HANDLER);
 
   data_model_->SetStaticEvent(type, name, callback);
   MarkDirty(kDirtyEvent);
@@ -2265,7 +2264,7 @@ void FiberElement::SetLepusEventHandler(const base::String &name,
                                         const base::String &type,
                                         const lepus::Value &script,
                                         const lepus::Value &callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetLepusEventHandler");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_LEPUS_EVENT_HANDLER);
 
   data_model_->SetLepusEvent(type, name, script, callback);
   MarkDirty(kDirtyEvent);
@@ -2275,7 +2274,7 @@ void FiberElement::SetWorkletEventHandler(const base::String &name,
                                           const base::String &type,
                                           const lepus::Value &worklet_info,
                                           lepus::Context *ctx) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetWorkletEventHandler");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_WORKLET_EVENT_HANDLER);
 
   data_model_->SetWorkletEvent(type, name, worklet_info, ctx);
   MarkDirty(kDirtyEvent);
@@ -2283,7 +2282,7 @@ void FiberElement::SetWorkletEventHandler(const base::String &name,
 
 void FiberElement::SetNativeProps(const lepus::Value &native_props,
                                   PipelineOptions &pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetNativeProps",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_NATIVE_PROPS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2342,7 +2341,7 @@ void FiberElement::RemoveAllEvents() {
 
 void FiberElement::SetParsedStyles(const ParsedStyles &parsed_styles,
                                    const lepus::Value &config) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetParsedStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_PARSED_STYLES);
 
   constexpr const static char kOnlySelector[] = "selectorParsedStyles";
   const auto &only_selector_prop =
@@ -2359,7 +2358,7 @@ void FiberElement::SetParsedStyles(const ParsedStyles &parsed_styles,
 
 void FiberElement::SetParsedStyles(StyleMap &&parsed_styles,
                                    CSSVariableMap &&css_var) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetParsedStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_PARSED_STYLES);
   has_extreme_parsed_styles_ = true;
   only_selector_extreme_parsed_styles_ = false;
   extreme_parsed_styles_ = std::move(parsed_styles);
@@ -2369,7 +2368,7 @@ void FiberElement::SetParsedStyles(StyleMap &&parsed_styles,
 
 void FiberElement::AddConfig(const base::String &key,
                              const lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::AddConfig");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_ADD_CONFIG);
   if (config_.IsTable() && config_.Table()->IsConst()) {
     config_ = lepus::Value::ShallowCopy(config_);
   }
@@ -2377,7 +2376,7 @@ void FiberElement::AddConfig(const base::String &key,
 }
 
 void FiberElement::SetConfig(const lepus::Value &config) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::SetConfig");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SET_CONFIG);
 
   // To improve performance, ensure that the isObject check is performed before
   // calling SetConfig, and the check and LOGW in SetConfig are no longer
@@ -2404,7 +2403,7 @@ void FiberElement::MarkFontSizeInvalidateRecursively() {
 }
 
 void FiberElement::FlushProps() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::FlushProps",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_FLUSH_PROPS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2416,7 +2415,7 @@ void FiberElement::FlushProps() {
 
   // Update The root if needed
   if (!has_painting_node_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "Catalyzer::FlushProps::NoPaintingNode",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, CATALYZER_NO_PAINTING_NODE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -2580,18 +2579,18 @@ void FiberElement::RequestNextFrame() {
 }
 
 void FiberElement::UpdateFiberElement() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::UpdateFiberElement",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_UPDATE_FIBER_ELEMENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
   if (!is_layout_only_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::UpdatePaintingNode",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_UPDATE_PAINTING_NODE,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
     painting_context()->UpdatePaintingNode(id_, TendToFlatten(), prop_bundle_);
   } else if (!CanBeLayoutOnly()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::TransitionToNativeView",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_TRANSITION_TO_NATIVE_VIEW,
                 [this](lynx::perfetto::EventContext ctx) {
                   UpdateTraceDebugInfo(ctx.event());
                 });
@@ -2602,7 +2601,7 @@ void FiberElement::UpdateFiberElement() {
 
 bool FiberElement::IsRelatedCSSVariableUpdated(
     AttributeHolder *holder, const lepus::Value changing_css_variables) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::IsRelatedCSSVariableUpdated",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_IS_RELATED_CSS_UPDATED,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2623,7 +2622,7 @@ bool FiberElement::IsRelatedCSSVariableUpdated(
 }
 
 void FiberElement::UpdateCSSVariable(const lepus::Value &css_variable_updated) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::UpdateCSSVariable",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_UPDATE_CSS_VARIABLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2794,7 +2793,7 @@ void FiberElement::RestoreLayoutNode(FiberElement *node) {
 
 void FiberElement::ParseRawInlineStyles(const lepus::Value &input,
                                         StyleMap *parsed_styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ParseRawInlineStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PARSE_RAW_INLINE_STYLES);
   auto &configs = element_manager_->GetCSSParserConfigs();
   if (input.IsString()) {
     const auto &str = input.StdString();
@@ -2832,7 +2831,7 @@ void FiberElement::ParseRawInlineStyles(const lepus::Value &input,
 }
 
 void FiberElement::DoFullCSSResolving() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::DoFullStyleResolve");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_DO_FULL_STYLE_RESOLVE);
 
   CSSVariableMap changed_css_vars;
   ResolveStyle(parsed_styles_map_, &changed_css_vars);
@@ -2859,7 +2858,7 @@ void FiberElement::DoFullCSSResolving() {
 
 const tasm::CSSValue &FiberElement::ResolveCurrentStyleValue(
     const CSSPropertyID &key, const tasm::CSSValue &default_value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::ResolveCurrentStyleValue");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_RESOLVE_CURRENT_STYLE);
   auto iter = parsed_styles_map_.find(key);
   if (iter != parsed_styles_map_.end()) {
     return iter->second;
@@ -2879,7 +2878,7 @@ const tasm::CSSValue &FiberElement::ResolveCurrentStyleValue(
 bool FiberElement::RefreshStyle(StyleMap &parsed_styles,
                                 base::Vector<CSSPropertyID> &reset_ids,
                                 bool force_use_parsed_styles_map) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::RefreshStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_REFRESH_STYLE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -2934,7 +2933,7 @@ void FiberElement::DumpStyle(StyleMap &computed_styles) {
 
 void FiberElement::OnPseudoStatusChanged(PseudoState prev_status,
                                          PseudoState current_status) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::OnPseudoStatusChanged",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_PSEUDO_CHANGED,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -3269,7 +3268,7 @@ void FiberElement::OnPatchFinish(PipelineOptions &option) {
 
 void FiberElement::FlushAnimatedStyleInternal(tasm::CSSPropertyID id,
                                               const tasm::CSSValue &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElement::FlushAnimatedStyleInternal");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_FLUSH_ANIMATED_STYLE);
   auto trans_id = ConvertRtlCSSPropertyID(id).second;
   if (value != CSSValue::Empty()) {
     SetStyleInternal(trans_id, value);

@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
 namespace lynx {
@@ -65,7 +66,7 @@ void DefaultListAdapter::OnDataSetChanged() {
 // generated and the pair <operation-id, ItemHolder> is added to a map.
 bool DefaultListAdapter::BindItemHolder(ItemHolder* item_holder, int index,
                                         bool preload_section /* = false */) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::BindItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_BIND_ITEM_HOLDER,
               [this, item_holder](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event(), item_holder);
               });
@@ -130,7 +131,7 @@ void DefaultListAdapter::OnFinishBindItemHolder(Element* component,
     return;
   }
   int64_t operation_id = option.operation_id;
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DefaultListAdapter::OnFinishBindItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, DEFAULT_LIST_ADAPTER_FINISH_BIND_ITEM_HOLDER,
               "operation_id", operation_id);
   list::BindingItemHolderMap::const_iterator it =
       binding_item_holder_map_->find(operation_id);
@@ -146,7 +147,7 @@ void DefaultListAdapter::OnFinishBindItemHolder(Element* component,
     int index = binding_item_holder->index();
     const std::string& item_key = binding_item_holder->item_key();
     TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "DefaultListAdapter::OnFinishBindItemHolder.finish", "index",
+                DEFAULT_LIST_ADAPTER_FINISH_BIND_ITEM_HOLDER_FINISH, "index",
                 index);
     NLIST_LOGI(
         "[" << list_container_
@@ -177,7 +178,7 @@ void DefaultListAdapter::OnFinishBindItemHolder(Element* component,
 // Recycle ItemHolder. It will invoked list's EnqueueComponent() to recycle
 // component bound with ItemHolder and remove platform view from parent.
 void DefaultListAdapter::RecycleItemHolder(ItemHolder* item_holder) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::RecycleItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_RECYCLE_ITEM_HOLDER,
               [this, item_holder](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event(), item_holder);
               });

@@ -42,7 +42,10 @@ lynx_core_source_set("worklet") {
 
   sources = worklet_shared_sources
 
-  public_deps = [ "//lynx/third_party/rapidjson" ]
+  public_deps = [
+    "//lynx/core/renderer/trace:renderer_trace",
+    "//lynx/third_party/rapidjson",
+  ]
   if (!enable_unittests) {
     public_deps += [ "//lynx/core/renderer/css:css_decoder" ]
   }

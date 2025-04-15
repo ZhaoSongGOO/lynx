@@ -42,6 +42,7 @@ lynx_core_source_set("tasm") {
     "//lynx/core/renderer/events",
     "//lynx/core/renderer/signal:signal",
     "//lynx/core/renderer/starlight",
+    "//lynx/core/renderer/trace:renderer_trace",
     "//lynx/core/renderer/utils:renderer_utils",
     "//lynx/core/runtime/bindings/lepus",
     "//lynx/core/runtime/vm/lepus",

@@ -14,7 +14,7 @@ LepusGesture::LepusGesture(int32_t element_id,
 
 // Set the gesture state to ACTIVE
 void LepusGesture::Active(Napi::Number gesture_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusGesture::Active");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_GESTURE_ACTIVE);
   auto element = GetElement();
   if (element != nullptr) {
     element->SetGestureDetectorState(
@@ -27,7 +27,7 @@ void LepusGesture::Active(Napi::Number gesture_id) {
 
 // Set the gesture state to FAIL
 void LepusGesture::Fail(Napi::Number gesture_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusGesture::Fail");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_GESTURE_FAIL);
   auto element = GetElement();
   if (element != nullptr) {
     element->SetGestureDetectorState(
@@ -39,7 +39,7 @@ void LepusGesture::Fail(Napi::Number gesture_id) {
 
 // Set the gesture state to END
 void LepusGesture::End(Napi::Number gesture_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusGesture::End");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_GESTURE_END);
   auto element = GetElement();
   if (element != nullptr) {
     element->SetGestureDetectorState(
@@ -55,7 +55,7 @@ void LepusGesture::End(Napi::Number gesture_id) {
 // - height: the vertical distance to scroll
 // Returns: a Napi::Value representing the new position of the view
 Napi::Value LepusGesture::ScrollBy(float width, float height) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusGesture::ScrollBy");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_GESTURE_SCROLL_BY);
   auto env = NapiEnv();
   Napi::Object obj = Napi::Object::New(env);
   std::vector<float> res{0, 0, width, height};

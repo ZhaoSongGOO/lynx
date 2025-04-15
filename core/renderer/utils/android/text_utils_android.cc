@@ -11,7 +11,6 @@
 #include "base/include/platform/android/jni_utils.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/android/java_only_map.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/TextUtils_jni.h"
 #include "core/renderer/dom/android/lepus_message_consumer.h"
 #include "core/renderer/utils/base/tasm_constants.h"

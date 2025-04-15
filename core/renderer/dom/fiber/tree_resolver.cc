@@ -19,6 +19,7 @@
 #include "core/renderer/dom/fiber/view_element.h"
 #include "core/renderer/dom/fiber/wrapper_element.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -262,7 +263,7 @@ fml::RefPtr<FiberElement> TreeResolver::CloneElements(
     const fml::RefPtr<FiberElement>& root,
     const std::shared_ptr<CSSStyleSheetManager>& style_manager,
     bool clone_resolved_props, CloningDepth cloning_depth) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TreeResolver::CloneElements");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TREE_RESOLVER_CLONE_ELEMENTS);
 
   fml::RefPtr<FiberElement> res = root->CloneElement(clone_resolved_props);
   res->AttachToElementManager(root->element_manager(), style_manager, false);
@@ -286,7 +287,7 @@ fml::RefPtr<FiberElement> TreeResolver::CloneElements(
 
 base::Vector<fml::RefPtr<FiberElement>> TreeResolver::FromTemplateInfo(
     const ElementTemplateInfo& info) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TreeResolver::FromTemplateInfo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TREE_RESOLVER_FROM_TEMPLATE_INFO);
   base::Vector<fml::RefPtr<FiberElement>> res;
   for (const auto& element_info : info.elements_) {
     auto element_node = FromElementInfo(-1, element_info);
@@ -300,7 +301,7 @@ lepus::Value TreeResolver::InitElementTree(
     base::Vector<fml::RefPtr<FiberElement>>&& elements, int64_t pid,
     ElementManager* manager,
     const std::shared_ptr<CSSStyleSheetManager>& style_manager) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TreeResolver::InitElementTree");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TREE_RESOLVER_INIT_ELEMENT_TREE);
   auto ary = lepus::CArray::Create();
   for (auto& element : elements) {
     element->ApplyFunctionRecursive([manager, style_manager](FiberElement* e) {
@@ -328,7 +329,7 @@ void TreeResolver::AttachRootToElementManager(
     fml::RefPtr<FiberElement>& root, ElementManager* element_manager,
     const std::shared_ptr<CSSStyleSheetManager>& style_manager,
     bool keep_element_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TreeResolver::AttachRootToElementManager");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TREE_RESOLVER_ATTACH_TO_ELEMENT_MANAGER);
   element_manager->SetFiberPageElement(
       fml::static_ref_ptr_cast<PageElement>(root));
 
@@ -365,7 +366,7 @@ void TreeResolver::GetPartsRecursively(
 
 fml::RefPtr<FiberElement> TreeResolver::FromElementInfo(
     int64_t parent_component_id, const ElementInfo& info) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TreeResolver::FromElementInfo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TREE_RESOLVER_FROM_ELEMENT_INFO);
   fml::RefPtr<FiberElement> res =
       ElementManager::StaticCreateFiberElement(info.tag_enum_, info.tag_);
   if (res->is_component()) {

@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "base/include/float_comparison.h"
-#include "core/base/trace/trace_event_def.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
 namespace lynx {
@@ -19,7 +19,7 @@ LinearLayoutManager::LinearLayoutManager(ListContainerImpl* list_container_impl)
     : ListLayoutManager(list_container_impl) {}
 
 void LinearLayoutManager::OnBatchLayoutChildren() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnBatchLayoutChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_BATCH_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -40,7 +40,7 @@ void LinearLayoutManager::OnBatchLayoutChildren() {
   SendAnchorDebugInfo(anchor_info);
 
   // step 2. Invoke batch render.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "BatchRender");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_BATCH_RENDER);
   LayoutInvalidItemHolder(0);
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
@@ -49,19 +49,20 @@ void LinearLayoutManager::OnBatchLayoutChildren() {
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3. Invoke OnLayoutChildren after batch render.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutChildrenInternal");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_LAYOUT_CHILDREN_INTERNAL);
   OnLayoutChildrenInternal(anchor_info, layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 4. Handle layout result: recycle and update layout to platform.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_LAYOUT_AFTER);
   OnLayoutAfter(layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
 
 void LinearLayoutManager::OnLayoutChildren(
     bool is_component_finished /* = false */, int component_index /* = -1 */) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnLayoutChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_LAYOUT_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -86,12 +87,13 @@ void LinearLayoutManager::OnLayoutChildren(
   SendAnchorDebugInfo(anchor_info);
 
   // step 2. Fill after find anchor.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutChildrenInternal");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_LAYOUT_CHILDREN_INTERNAL);
   OnLayoutChildrenInternal(anchor_info, layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3. Handle layout result: recycle and update layout to platform.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_LAYOUT_AFTER);
   OnLayoutAfter(layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
@@ -118,7 +120,8 @@ void LinearLayoutManager::OnLayoutChildrenInternal(
   }
 
   // step 2. Update content size and offset
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateContentSizeAndOffset");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_HANDLE_CONTENT_SIZE_AND_OFFSET);
   LayoutInvalidItemHolder(0);
   content_size_ = GetTargetContentSize();
   list_anchor_manager_->AdjustContentOffsetWithAnchor(anchor_info,
@@ -137,7 +140,8 @@ void LinearLayoutManager::OnLayoutChildrenInternal(
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3. Handle Preload.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "HandlePreloadIfNeeded");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_HANDLE_PRELOAD_IF_NEED);
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
   if (enable_preload_section_) {
@@ -184,7 +188,8 @@ void LinearLayoutManager::OnLayoutAfter(LayoutState& layout_state) {
 
 void LinearLayoutManager::HandleLayoutOrScrollResult(LayoutState& layout_state,
                                                      bool is_layout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "HandleLayoutOrScrollResult",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY,
+              LINEAR_LAYOUT_MANAGER_HANDLE_LAYOUT_OR_SCROLL,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -223,8 +228,7 @@ void LinearLayoutManager::HandleLayoutOrScrollResult(LayoutState& layout_state,
 }
 
 void LinearLayoutManager::PreloadSectionOnNextFrame() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LinearLayoutManager::PreloadSectionOnNextFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_PRELOAD_SECTION);
   if (list_container_ && list_container_->need_preload_section_on_next_frame_) {
     list_container_->element()->RequestNextFrame();
   }
@@ -262,15 +266,14 @@ void LinearLayoutManager::FillWithAnchor(
   float extra_for_end = list_orientation_helper_->GetEndPadding();
   UpdateLayoutStateToFillEnd(layout_state, anchor_info);
   layout_state.extra_ = extra_for_end;
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
-                    "LinearLayoutManager::FillWithAnchor.FillToEnd",
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_FILL_ANCHOR_END,
                     "anchor_index", std::to_string(anchor_info.index_));
   Fill(layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step2. Fill to start from anchor_info's index - 1
   TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
-                    "LinearLayoutManager::FillWithAnchor.FillToStart");
+                    LINEAR_LAYOUT_MANAGER_FILL_ANCHOR_START);
   if (layout_state.available_ > 0.f) {
     extra_for_start += layout_state.available_;
   }
@@ -284,8 +287,7 @@ void LinearLayoutManager::FillWithAnchor(
   // step3. Fill extra from anchor index instead of the index which is recorded
   // after filling to end, which can avoid the situation that the available
   // space calculated incorrectly.
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LinearLayoutManager::FillWithAnchor.FillExtra");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_FILL_ANCHOR_EXTRA);
   if (layout_state.available_ > 0.f) {
     layout_state.extra_ = layout_state.available_;
     UpdateLayoutStateToFillEnd(layout_state, anchor_info);
@@ -335,7 +337,8 @@ bool LinearLayoutManager::Preload(LayoutState& layout_state) {
           end_index, list::LayoutDirection::kLayoutToEnd);
       // Fill to end for preload
       TRACE_EVENT_BEGIN(
-          LYNX_TRACE_CATEGORY, "LinearLayoutManager::PreloadToEnd", "info",
+          LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_HANDLE_PRELOAD_TO_END,
+          "info",
           base::FormatString("[%d -> %d]", end_index, target_end_index));
       NLIST_LOGD(
           "LinearLayoutManager::Preload: preload to end, "
@@ -414,8 +417,7 @@ void LinearLayoutManager::PreloadInternal(LayoutState& layout_state,
  */
 void LinearLayoutManager::RecycleOffPreloadItemHolders(bool recycle_to_end,
                                                        int target_index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LinearLayoutManager::RecycleOffPreloadItemHolders");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_RECYCLE_PRELOAD_ITEM);
   if (target_index != list::kInvalidIndex) {
     list_children_helper_->ForEachChild(
         [this, target_index, recycle_to_end](ItemHolder* item_holder) {
@@ -467,7 +469,7 @@ int LinearLayoutManager::GetTargetIndexForPreloadBuffer(
 void LinearLayoutManager::ScrollByInternal(float content_offset,
                                            float original_offset,
                                            bool from_platform) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ScrollByInternal",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_SCROLL_BY_INTERNAL,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -519,19 +521,21 @@ void LinearLayoutManager::ScrollByInternal(float content_offset,
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3.5. Handle sticky.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateStickyItems");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_UPDATE_STICKY_ITEMS);
   UpdateStickyItems();
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 4. Handle preload
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "HandlePreloadIfNeeded");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LINEAR_LAYOUT_MANAGER_HANDLE_PRELOAD_IF_NEED);
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
   HandlePreloadIfNeeded(layout_state, anchor_info, false);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 5. Handle scroll result.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnScrollAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_ON_SCROLL_AFTER);
   OnScrollAfter(layout_state, original_offset);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
@@ -552,7 +556,7 @@ void LinearLayoutManager::UpdateScrollAnchorInfo(
     ListAnchorManager::AnchorInfo& anchor_info,
     const ItemHolderSet& on_screen_children, const float content_offset) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LinearLayoutManager::UpdateScrollAnchorInfo");
+              LINEAR_LAYOUT_MANAGER_UPDATE_SCROLL_ANCHOR_INFO);
   ItemHolder* first_visible_item_holder = list_children_helper_->GetFirstChild(
       on_screen_children,
       [this, list_adapter = list_container_->list_adapter()](
@@ -598,8 +602,7 @@ void LinearLayoutManager::UpdateScrollAnchorInfo(
 }
 
 void LinearLayoutManager::LayoutInvalidItemHolder(int first_invalid_index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LinearLayoutManager::LayoutInvalidItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_LAYOUT_INVALID_ITEM,
               "first_invalid_index", std::to_string(first_invalid_index));
   if (!list_container_ || !list_children_helper_ || first_invalid_index < 0 ||
       first_invalid_index >= list_container_->GetDataCount()) {
@@ -656,7 +659,7 @@ float LinearLayoutManager::GetTargetContentSize() {
 void LinearLayoutManager::LayoutChunk(LayoutChunkResult& result,
                                       LayoutState& layout_state,
                                       bool preload_section) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LinearLayoutManager::LayoutChunk", "index",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_LAYOUT_CHUNK, "index",
               base::FormatString("%d", layout_state.next_bind_index_));
   if (!list_container_ || !list_children_helper_ || !list_orientation_helper_) {
     result.consumed_ = 0.f;
@@ -867,7 +870,7 @@ void LinearLayoutManager::PreloadSection(LayoutState& layout_state) {
              last_visible_item_holder) {
         target_end_index = std::min(end_index + section_count, data_count - 1);
         TRACE_EVENT(
-            LYNX_TRACE_CATEGORY, "LinearLayoutManager::PreloadSectionToEnd",
+            LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_PRELOAD_SECTION_TO_END,
             "info",
             base::FormatString("[%d -> %d]", end_index, target_end_index));
         UpdateLayoutStateToFillPreloadBuffer(
@@ -887,7 +890,7 @@ void LinearLayoutManager::PreloadSection(LayoutState& layout_state) {
              first_visible_item_holder) {
         target_start_index = std::max(start_index - section_count, 0);
         TRACE_EVENT(
-            LYNX_TRACE_CATEGORY, "LinearLayoutManager::PreloadSectionToStart",
+            LYNX_TRACE_CATEGORY, LINEAR_LAYOUT_MANAGER_PRELOAD_SECTION_TO_START,
             "info",
             base::FormatString("[%d -> %d]", start_index, target_start_index));
         UpdateLayoutStateToFillPreloadBuffer(

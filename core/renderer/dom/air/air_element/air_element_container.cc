@@ -5,8 +5,8 @@
 #include "core/renderer/dom/air/air_element/air_element_container.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/air/air_element/air_element.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -100,7 +100,7 @@ PaintingContext* AirElementContainer::painting_context() {
 
 std::pair<AirElementContainer*, int> AirElementContainer::FindParentForChild(
     AirElement* child) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElementContainer::FindParentForChild");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_CONTAINER_FIND_PARENT);
   AirElement* node = air_element_;
   size_t ui_index = air_element_->GetUIIndexForChild(child);
   while (node->IsLayoutOnly()) {

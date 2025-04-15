@@ -32,9 +32,9 @@ SOFTWARE.
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/signal/computation.h"
 #include "core/renderer/signal/scope.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -97,10 +97,10 @@ void SignalContext::RunUpdates(std::function<void()>&& func) {
 }
 
 void SignalContext::CompleteUpdates(bool wait) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "SignalContext::CompleteUpdates");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, SIGNAL_CONTEXT_COMPLETE_UPDATES);
 
   if (memo_computation_list_ptr_ != nullptr) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "SignalContext::CompleteUpdates::Updates",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, SIGNAL_CONTEXT_COMPLETE_UPDATES_UPDATES,
                 [this](lynx::perfetto::EventContext ctx) {
                   auto event = ctx.event();
                   auto* tagInfo = event->add_debug_annotations();
@@ -116,7 +116,7 @@ void SignalContext::CompleteUpdates(bool wait) {
     return;
   }
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "SignalContext::CompleteUpdates::Effects",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, SIGNAL_CONTEXT_COMPLETE_UPDATES_EFFECTS,
               [this](lynx::perfetto::EventContext ctx) {
                 auto event = ctx.event();
                 auto* tagInfo = event->add_debug_annotations();

@@ -8,7 +8,6 @@
 #include "base/include/string/string_number_convert.h"
 #include "base/include/vector.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_node.h"
@@ -16,6 +15,7 @@
 #include "core/renderer/page_proxy.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 #include "core/runtime/piper/js/runtime_constant.h"
 #include "core/runtime/vm/lepus/array.h"
@@ -142,8 +142,8 @@ void TouchEventHandler::HandleTouchEvent(TemplateAssembler *tasm,
                                          const std::string &page_name,
                                          const std::string &name,
                                          const EventInfo &info) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::HandleTouchEvent",
-              "page_name", page_name, "name", name);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_TOUCH_EVENT, "page_name",
+              page_name, "name", name);
   LOGI("HandleTouchEvent page:" << page_name << " ;event: " << name
                                 << " tag:" << info.tag
                                 << " ;multiFinger:" << info.is_multi_finger);
@@ -223,8 +223,8 @@ void TouchEventHandler::HandleGestureEvent(TemplateAssembler *tasm,
                                            const base::String &name, int tag,
                                            int gesture_id,
                                            const lepus::Value &params) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::HandleGestureEvent",
-              "name", name.str());
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_GESTURE_EVENT, "name",
+              name.str());
   // Check if using LepusNG
   if (!use_lepus_ng_) {
     LOGE("HandleGestureEvent error: not use lepus ng.");
@@ -310,8 +310,8 @@ void TouchEventHandler::HandleCustomEvent(TemplateAssembler *tasm,
                                           const std::string &name, int tag,
                                           const lepus::Value &params,
                                           const std::string &pname) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::HandleCustomEvent",
-              "name", name);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_CUSTOM_EVENT, "name",
+              name);
   LOGI("SendCustomEvent event name:" << name << " tag:" << tag);
 
   if (tasm == nullptr || tasm->page_proxy() == nullptr) {
@@ -345,8 +345,7 @@ void TouchEventHandler::HandleCustomEvent(TemplateAssembler *tasm,
 void TouchEventHandler::HandlePseudoStatusChanged(int32_t id,
                                                   PseudoState pre_status,
                                                   PseudoState current_status) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "TouchEventHandler::HandlePseudoStatusChanged");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_PSEUDO_STATUS_CHANGED);
   LOGI("HandlePseudoStatusChanged sign:"
        << id << " , with pre_status: " << pre_status
        << " , and current_status:" << current_status);
@@ -362,7 +361,7 @@ void TouchEventHandler::FireEvent(const EventType &type,
                                   const Element *target,
                                   const Element *current_target,
                                   const lepus::Value &params) const {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::FireEvent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_FIRE_EVENT);
 
   bool in_component = current_target->InComponent();
   if (!support_component_js_ || !in_component) {
@@ -382,7 +381,7 @@ void TouchEventHandler::FireEventForAir(TemplateAssembler *tasm,
                                         const Element *target,
                                         const Element *current_target,
                                         const lepus::Value &params) const {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::FireEventForAir");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_FIRE_EVENT_FOR_AIR);
 
   // In Air Mode, page/component's event triggered by specific lepus function.
   bool in_component = current_target->InComponent();
@@ -430,8 +429,8 @@ void TouchEventHandler::HandleBubbleEvent(TemplateAssembler *tasm,
                                           const std::string &page_name,
                                           const std::string &name, int tag,
                                           lepus::DictionaryPtr params) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TouchEventHandler::HandleBubbleEvent",
-              "page_name", page_name, "name", name);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_BUBBLE_EVENT, "page_name",
+              page_name, "name", name);
   LOGI("HandleBubbleEvent page:" << page_name << " ;event: " << name
                                  << " tag:" << tag);
   if (tasm == nullptr || tasm->page_proxy() == nullptr) {
@@ -487,8 +486,7 @@ void TouchEventHandler::CallJSFunctionInLepusEvent(
 void TouchEventHandler::HandleTriggerComponentEvent(
     TemplateAssembler *tasm, const std::string &event_name,
     const lepus::Value &data) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "TouchEventHandler::HandleTriggerComponentEvent", "name",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_TRIGGER_COMPONENT_EVENT, "name",
               event_name);
   LOGI("HandleTriggerComponentEvent event: " << event_name);
   if (tasm == nullptr || tasm->page_proxy() == nullptr) {
@@ -1013,7 +1011,8 @@ lepus::Value TouchEventHandler::GetCustomEventParam(
 bool TouchEventHandler::HandleEventInternal(
     const ResponseChainVector &response_chain, const std::string &event_name,
     const EventOption &option, EventOpsVector &operation) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "HandleEventInternal", "name", event_name);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_HANDLE_EVENT_INTERNAL, "name",
+              event_name);
   if (response_chain.empty()) {
     LOGI(
         "Lynx HandleEventInternal failed, response_chain empty & event_name "
@@ -1269,8 +1268,7 @@ std::optional<lepus::Value> TouchEventHandler::TriggerFiberElementWorklet(
     tasm::TemplateAssembler *tasm, const lepus::Value &worklet_info,
     const lepus::Value &event_param, int element_id, tasm::EventType type,
     lepus::Context *context) const {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "TouchEventHandler::TriggerFiberElementWorklet");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TOUCH_EVENT_TRIGGER_FIBER_ELEMENT_WORKLET);
 
   if (tasm == nullptr) {
     LOGE(

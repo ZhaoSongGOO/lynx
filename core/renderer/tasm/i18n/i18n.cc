@@ -5,6 +5,7 @@
 #include "core/renderer/tasm/i18n/i18n.h"
 
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 #include "core/runtime/vm/lepus/json_parser.h"
 
@@ -90,7 +91,7 @@ void I18n::SetChannelConfig(const std::string& channel,
 }
 
 void I18n::Bind(intptr_t ptr) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "i18n::Bind");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, I18N_BIND);
 #if OS_ANDROID
   I18nBinderAndroid binder;
   binder.Bind(ptr);

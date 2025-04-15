@@ -10,7 +10,6 @@
 #include "base/include/algorithm.h"
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/css_sheet.h"
 #include "core/renderer/css/parser/css_string_parser.h"
 #include "core/renderer/dom/element.h"
@@ -59,7 +58,7 @@ void CSSPatching::SetEnableFiberArch(bool enable) {
 
 void CSSPatching::ResolveStyle(StyleMap& result, CSSFragment* fragment,
                                CSSVariableMap* changed_css_vars) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSPatching::ResolveStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_PATCH_RESOLVE_STYLE);
 
   if (element_ == nullptr || element_->data_model() == nullptr) {
     LOGE(
@@ -417,7 +416,7 @@ void CSSPatching::PreSetGlobalPseudoNotCSS(
 void CSSPatching::ApplyPseudoNotCSSStyle(
     AttributeHolder* node, const PseudoClassStyleMap& pseudo_not_map,
     CSSFragment* style_sheet, const std::string& selector_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSPatching::ApplyPseudoNotCSSStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_PATCH_APPLY_PSEUDO_NOT_STYLE);
   for (const auto& it : pseudo_not_map) {
     const auto& pseudo_key = it.second.selector_key;
     if (selector_key == pseudo_key ||
@@ -470,7 +469,7 @@ void CSSPatching::ApplyPseudoClassChildSelectorStyle(
     Element* current_node, CSSFragment* style_sheet,
     const std::string& selector_key) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "CSSPatching::ApplyPseudoClassChildSelectorStyle");
+              CSS_PATCH_APPLY_PSEUDO_CLASS_CHILD_SELECTOR_STYLE);
   if (current_node->IsFiberArch()) {
     // child selector is only supported in RadonArch.
     return;
@@ -535,7 +534,7 @@ void CSSPatching::ApplyPseudoClassChildSelectorStyle(
 void CSSPatching::GetCSSByRule(CSSSheet::SheetType type,
                                CSSFragment* style_sheet, AttributeHolder* node,
                                const std::string& rule) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSPatching::GetCSSByRule",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_PATCH_GET_CSS_BY_RULE,
               [&](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("rule", rule);
               });
@@ -591,7 +590,7 @@ void CSSPatching::MergeHigherCascadeStyles(const std::string& current_selector,
 void CSSPatching::ApplyCascadeStyles(CSSFragment* style_sheet,
                                      AttributeHolder* node,
                                      const std::string& rule) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSPatching::ApplyCascadeStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_PATCH_APPLY_CASCADE_STYLES);
   if (node == nullptr) {
     return;
   }

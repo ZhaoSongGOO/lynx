@@ -17,8 +17,6 @@
 #include "base/include/string/string_number_convert.h"
 #include "base/trace/native/trace_event.h"
 #include "core/base/json/json_util.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/css/css_fragment.h"
 #include "core/renderer/css/css_style_sheet_manager.h"
@@ -33,6 +31,7 @@
 #include "core/renderer/dom/vdom/radon/radon_lazy_component.h"
 #include "core/renderer/dom/vdom/radon/radon_node.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_wrapper/painting/painting_context.h"
 #include "core/renderer/utils/base/base_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
@@ -168,7 +167,7 @@ thread_local TemplateAssembler* TemplateAssembler::curr_ = nullptr;
 static constexpr const char k_actual_first_screen[] = "__isActualFirstScreen";
 
 TemplateAssembler::Scope::Scope(TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateAssembler::Scope::Scope");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_SCOPE_CONSTRUCTOR);
   if (tasm != nullptr && curr_ == nullptr) {
     curr_ = tasm;
     scoped_ = true;
@@ -219,7 +218,7 @@ TemplateAssembler::TemplateAssembler(Delegate& delegate,
       is_loading_template_(false),
       font_scale_(1.0),
       component_loader_(nullptr) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateAssembler::TemplateAssembler");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_CONSTRUCTOR);
   page_proxy()->element_manager()->SetElementManagerDelegate(
       &element_manager_delegate_);
   auto card = std::make_shared<TemplateEntry>();
@@ -237,7 +236,7 @@ void TemplateAssembler::UpdateGlobalProps(const lepus::Value& data,
   tasm::recorder::TemplateAssemblerRecorder::RecordSetGlobalProps(data,
                                                                   record_id_);
 #endif
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LynxUpdateGlobalProps", "need_render",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_UPDATE_GLOBAL_PROPS, "need_render",
               need_render);
   global_props_ = data;
   if (template_loaded_) {
@@ -564,7 +563,7 @@ TemplateData TemplateAssembler::OnRenderTemplate(
   tasm::TimingCollector::Instance()->MarkFrameworkTiming(
       tasm::timing::kSetInitDataStart);
   if (!data.GetValue().IsEmpty()) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "TemplateEntry::SetInitData");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, TEMPLATE_ENTRY_SET_INIT_DATA);
     if (ShouldPostDataToJs() && !EnableDataProcessorOnJs()) {
       card->SetInitData(GenerateTemplateDataPostedToJs(data));
     }
@@ -774,7 +773,7 @@ void TemplateAssembler::RenderTemplateForAir(
   }
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kRenderPageEndAir);
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "OnPatchFinishInnerForAir");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, PATCH_FINISH_INNER_FOR_AIR);
   page_proxy()->element_manager()->AirRoot()->SetFontFaces();
   pipeline_options.is_first_screen = true;
   EnsureAirTouchEventHandler();
@@ -957,7 +956,7 @@ void TemplateAssembler::LoadTemplateInternal(
                              page_proxy_.GetDefaultPageData().IsEmpty();
   {
     // Trace Decode
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LynxDecode");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LYNX_DECODE);
 
     // Before exec decode template, do some preparation. Only timing actions
     // now.
@@ -983,7 +982,7 @@ void TemplateAssembler::LoadTemplateInternal(
 
   {
     // Trace VM Execute
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "VMExecute");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, VM_EXECUTE);
 
     // Before vm execute template, do some preparation. Only timing actions now.
     OnVMExecute();
@@ -1005,7 +1004,7 @@ void TemplateAssembler::LoadTemplateInternal(
 
   {
     // Trace DOM ready
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LynxDomReady");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LYNX_DOM_READY);
 
     // Before render template, do some preparation.
     // 1. update global props if needed
@@ -1073,7 +1072,7 @@ void TemplateAssembler::ReloadTemplate(
        << url_ << " len: " << source_size_ << " this:" << this);
 
   is_loading_template_ = true;
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LynxReloadTemplate",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LYNX_RELOAD_TEMPLATE,
               [&](lynx::perfetto::EventContext ctx) {
                 auto* debug = ctx.event()->add_debug_annotations();
                 debug->set_name("url");
@@ -1111,7 +1110,7 @@ void TemplateAssembler::ReloadTemplate(
   actual_fmp_end_ = 0;
 
   // No need to decode and set page config here.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY_VITALS, "LynxDomReady");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY_VITALS, LYNX_DOM_READY);
 
   TemplateData data = ProcessTemplateData(template_data, true);
 
@@ -1160,7 +1159,8 @@ void TemplateAssembler::ReloadTemplate(
     const std::shared_ptr<TemplateData>& template_data,
     const lepus::Value& global_props, UpdatePageOption& update_page_option,
     PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "LynxReloadTemplateWithGlobalProps");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS,
+              LYNX_RELOAD_TEMPLATE_WITH_GLOBAL_PROPS);
   if (!global_props.IsNil()) {
     UpdateGlobalProps(global_props, false, pipeline_options);
   }
@@ -1169,7 +1169,7 @@ void TemplateAssembler::ReloadTemplate(
 
 void TemplateAssembler::ReloadFromJS(const runtime::UpdateDataTask& task,
                                      PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "ReloadFromJS");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RELOAD_FROM_JS);
   Scope scope(this);
   LOGI("Lynx ReloadFromJS. url: " << url_);
 
@@ -1254,7 +1254,7 @@ void TemplateAssembler::LoadComponentWithCallbackInfo(
   auto sync = callback_info.sync;
   auto callback_id = callback_info.callback_id;
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyBundle.Load",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_BUNDLE_LOAD,
               [sync, url](lynx::perfetto::EventContext ctx) {
                 ctx.event()->set_name("LoadComponentWithCallback");
                 auto* debug = ctx.event()->add_debug_annotations();
@@ -1355,7 +1355,7 @@ bool TemplateAssembler::BuildComponentEntryInternal(
     const std::string& url,
     const base::MoveOnlyClosure<bool, const std::shared_ptr<TemplateEntry>&>&
         entry_initializer) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyBundle::BuildTemplateEntry", "url",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_BUNDLE_BUILD_TEMPLATE_ENTRY, "url",
               url);
   component_entry->SetIsCard(false);
   component_entry->SetName(url);
@@ -1960,7 +1960,7 @@ void TemplateAssembler::OnEventFire(long target_id, bool is_stop,
 
 TemplateData TemplateAssembler::GenerateTemplateDataPostedToJs(
     const TemplateData& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ConvertValueWithReadOnly");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CONVERT_VALUE_WITH_READ_ONLY);
   if (EnableDataProcessorOnJs()) {
     return TemplateData::CopyPlatformData(value);
   } else {
@@ -1972,7 +1972,7 @@ void TemplateAssembler::UpdateMetaData(
     const std::shared_ptr<TemplateData>& template_data,
     const lepus::Value& global_props, UpdatePageOption& update_page_option,
     PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UpdateMetaData");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UPDATE_META_DATA);
   if (destroyed()) {
     return;
   }
@@ -2124,7 +2124,7 @@ void TemplateAssembler::UpdateDataByJS(const runtime::UpdateDataTask& task,
 
 bool TemplateAssembler::FromBinary(const std::shared_ptr<TemplateEntry>& entry,
                                    std::vector<uint8_t> source, bool is_card) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FromBinary");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FROM_BINARY);
 
   auto ReportDecodeError = [this](bool is_card,
                                   const std::shared_ptr<TemplateEntry>& entry,
@@ -2485,7 +2485,7 @@ std::shared_ptr<TemplateEntry> TemplateAssembler::QueryComponent(
 
 void TemplateAssembler::PreloadLazyBundles(
     const std::vector<std::string>& urls) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyBundle::Preload", "preload_urls",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_BUNDLE_PRELOAD, "preload_urls",
               std::accumulate(urls.cbegin(), urls.cend(), std::string(", ")));
   if (component_loader_) {
     component_loader_->PreloadTemplates(urls);
@@ -2520,7 +2520,7 @@ void TemplateAssembler::OnBTSConsoleEvent(const std::string& func_name,
 }
 
 void TemplateAssembler::ExecuteDataProcessor(TemplateData& input) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "dataProcessor",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, DATA_PROCESSOR,
               [functionName =
                    input.PreprocessorName()](lynx::perfetto::EventContext ctx) {
                 auto* debug = ctx.event()->add_debug_annotations();
@@ -2569,7 +2569,7 @@ void TemplateAssembler::ExecuteDataProcessor(TemplateData& input) {
 // we will load appservice in later MRs
 void TemplateAssembler::OnJSPrepared(const std::string& url,
                                      const PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "TemplateAssembler::OnJSPrepared",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, TEMPLATE_ASSEMBLER_ON_JS_PREPARED,
               "url", url);
   auto card = FindEntry(DEFAULT_ENTRY_NAME);
   delegate_.OnJSSourcePrepared(card->CreateTasmRuntimeBundle(),
@@ -2762,7 +2762,7 @@ void TemplateAssembler::SetNativeProps(const NodeSelectRoot& root,
                                        const tasm::NodeSelectOptions& options,
                                        const lepus::Value& native_props,
                                        PipelineOptions& pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateAssembler::SetNativeProps",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_SET_NATIVE_PROPS,
               [&native_props](lynx::perfetto::EventContext ctx) {
                 auto* debug = ctx.event()->add_debug_annotations();
                 debug->set_name("setNativeProps");
@@ -2787,8 +2787,7 @@ void TemplateAssembler::SetNativeProps(const NodeSelectRoot& root,
 
 void TemplateAssembler::SendLazyBundleGlobalEvent(const std::string& url,
                                                   const lepus::Value& err) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "TemplateAssembler::SendLazyBundleGlobalEvent", "url", url);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, SEND_LAZY_BUNDLE_GLOBAL_EVENT, "url", url);
   auto param = lepus::CArray::Create();
   param->push_back(err);
   auto arguments = lepus::CArray::Create();
@@ -3047,7 +3046,7 @@ void TemplateAssembler::CallLepusMethod(const std::string& method_name,
                                         lepus::Value args,
                                         const piper::ApiCallBack& callback,
                                         uint64_t trace_flow_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateAssembler::CallLepusMethod",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_CALL_LEPUS_METHOD,
               [&](perfetto::EventContext ctx) {
                 ctx.event()->add_flow_ids(callback.trace_flow_id());
                 ctx.event()->add_terminating_flow_ids(trace_flow_id);

@@ -6,11 +6,11 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/page_proxy.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/services/feature_count/feature_counter.h"
 
 namespace lynx {
@@ -29,7 +29,7 @@ RadonDiffListNode::RadonDiffListNode(lepus::Context* context,
 void RadonDiffListNode::SyncComponentExtraInfo(RadonComponent* comp,
                                                uint32_t index,
                                                int64_t operation_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode::SyncComponentExtraInfo",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_SYNC_COMPONENT_EXTRA_INFO,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -89,7 +89,7 @@ void RadonDiffListNode::SyncComponentExtraInfo(RadonComponent* comp,
 bool RadonDiffListNode::ShouldFlush(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode::ShouldFlush",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_SHOULD_FLUSH,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -141,7 +141,7 @@ void RadonDiffListNode::TransmitDispatchOptionFromOldComponentToNewComponent(
 void RadonDiffListNode::RadonDiffChildren(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode::RadonDiffChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_DIFF_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

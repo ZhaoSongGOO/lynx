@@ -5,7 +5,7 @@
 #include "core/renderer/lynx_env_config.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -28,7 +28,7 @@ LynxEnvConfig::LynxEnvConfig(float width, float height,
 void LynxEnvConfig::UpdateScreenSize(float width, float height) {
   screen_width_ = width;
   screen_height_ = height;
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UpdateScreenSize",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LYNX_ENV_CONFIG_UPDATE_SCREEN_SIZE,
               [width, height](lynx::perfetto::EventContext ctx) {
                 ctx.event()->add_debug_annotations("screen_width",
                                                    std::to_string(width));

@@ -8,11 +8,11 @@
 
 #include "base/include/string/string_number_convert.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/css_keyframes_token.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/page_proxy.h"
 #include "core/renderer/starlight/layout/layout_object.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/renderer/utils/value_utils.h"
@@ -274,7 +274,7 @@ void AirElement::RemoveAirNode(AirElement *child) {
 
 void AirElement::SetAttribute(const base::String &key,
                               const lepus::Value &value, bool resolve) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::SetAttribute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_SET_ATTRIBUTE);
   // check flatten prop and update config_flatten_
   if (resolve) {
     CheckFlattenProp(key, value);
@@ -288,7 +288,7 @@ void AirElement::SetAttribute(const base::String &key,
 }
 
 void AirElement::ComputeCSSStyle(CSSPropertyID id, tasm::CSSValue &css_value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::ComputeCSSStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_COMPUTE_CSS_STYLE);
   computed_css_style()->SetValue(id, css_value);
   css_value.SetValue(computed_css_style()->GetValue(id));
 }
@@ -359,7 +359,7 @@ void AirElement::UpdateLayout(float left, float top, float width, float height,
                               const std::array<float, 4> &borders,
                               const std::array<float, 4> *sticky_positions,
                               float max_height) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::UpdateLayout");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_UPDATE_LAYOUT);
   frame_changed_ = true;
   top_ = top;
   left_ = left;
@@ -535,7 +535,7 @@ void AirElement::SetStyle(CSSPropertyID id, tasm::CSSValue &value) {
   // 2. layoutOnly: set to starlight
   // 3. layoutWanted: set to starlight & set to platform
   // 4. other:set to platform
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::SetStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_SET_STYLE);
   // Handle animation properties
   if (UNLIKELY(ResolveKeyframesMap(id, value.GetValue()))) {
     has_animate_props_ = true;
@@ -590,7 +590,7 @@ void AirElement::SetStyle(CSSPropertyID id, tasm::CSSValue &value) {
 }
 
 void AirElement::ResetStyle(CSSPropertyID id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::ResetStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_RESET_STYLE);
   bool is_layout_only = LayoutNode::IsLayoutOnly(id);
   if (is_layout_only || LayoutNode::IsLayoutWanted(id)) {
     if (EnableAsyncCalc()) {
@@ -706,7 +706,7 @@ void AirElement::ConsumeStyle(CSSPropertyID id, const tasm::CSSValue &value) {
 void AirElement::FlushProps() { FlushPropsResolveStyles(true); }
 
 void AirElement::FlushPropsResolveStyles(bool resolve_styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::FlushPropsResolveStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_FLUSH_PROPS_RESOLVE_STYLES);
   if (!resolve_styles && state_ & ElementState::kPropsUpdated) {
     return;
   };
@@ -728,7 +728,7 @@ void AirElement::FlushPropsResolveStyles(bool resolve_styles) {
 
   // Update The root if needed
   if (!has_painting_node_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::FlushProps::NoPaintingNode");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_NO_PAINTING_NODE);
     const auto &env_config = element_manager()->GetLynxEnvConfig();
     if (EnableAsyncCalc()) {
       // send to layoutcontext in main thread
@@ -779,7 +779,7 @@ void AirElement::FlushPropsResolveStyles(bool resolve_styles) {
 }
 
 bool AirElement::CalcStyle(bool waiting) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::CalcStyle",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_CALC_STYLE,
               [&](lynx::perfetto::EventContext ctx) {
                 auto *debug = ctx.event()->add_debug_annotations();
                 debug->set_name("lepus_id");
@@ -908,7 +908,7 @@ bool AirElement::CheckFlattenProp(const base::String &key,
 }
 
 void AirElement::SetClasses(const lepus::Value &class_names) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::SetClasses");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_SET_CLASSES);
   if (class_names.IsEmpty()) {
     classes_.clear();
     style_dirty_ |= Selector::kCLASS;
@@ -1019,7 +1019,7 @@ void AirElement::SetInlineStyle(const std::string &inline_style, bool resolve) {
 void AirElement::DiffStyles(StyleMap &old_map, const StyleMap &new_map,
                             StylePatch &style_patch, bool is_final,
                             bool is_dirty) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::DiffStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_DIFF_STYLES);
   // Selector has not changed
   if (new_map.empty()) {
     for (auto &old_map_item : old_map) {
@@ -1110,7 +1110,7 @@ void AirElement::DiffStyles(StyleMap &old_map, const StyleMap &new_map,
 void AirElement::RefreshStyles() {
   // Diff&merge the css StyleMap corresponding to global, tag, class, id and
   // inline in order to get stylePatch
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::RefreshStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_REFRESH_STYLES);
   StylePatch style_patch;
   UpdateStylePatch(Selector::kSTABLE, style_patch);
   UpdateStylePatch(Selector::kCLASS, style_patch);
@@ -1137,7 +1137,7 @@ void AirElement::RefreshStyles() {
 
 void AirElement::UpdateStylePatch(Selector selector,
                                   AirElement::StylePatch &style_patch) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::UpdateStylePatch");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_UPDATE_STYLE_PATCH);
   // first screen & not style_dirty_
   if (!has_painting_node_ && !(style_dirty_ & selector)) {
     return;
@@ -1170,7 +1170,7 @@ void AirElement::UpdateStylePatch(Selector selector,
   }
 }
 void AirElement::GetStyleMap(Selector selector, StyleMap &result) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::GetStyleMap");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_GET_STYLE_MAP);
   switch (selector) {
     case Selector::kSTABLE:
       GetStableStyleMap(tag_.str(), result);
@@ -1271,7 +1271,7 @@ void AirElement::GetKeyframesMap(const std::string &keyframes_name,
 
 void AirElement::PushToPropsBundle(const base::String &key,
                                    const lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirElement::PushToPropsBundle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_ELEMENT_PUSH_TO_PROPS_BUNDLE);
   PreparePropBundleIfNeed();
   has_layout_only_props_ = false;
   prop_bundle_->SetProps(key.c_str(), pub::ValueImplLepus(value));

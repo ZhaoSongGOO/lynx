@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "core/base/lynx_trace_categories.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -27,7 +27,7 @@ void ListChildrenHelper::AddChild(const ItemHolderSet& children,
 // element.
 void ListChildrenHelper::AttachChild(ItemHolder* item_holder,
                                      Element* element) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListChildrenHelper::AttachChild", "index",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CHILDREN_ATTACH_CHILD, "index",
               std::to_string(item_holder ? item_holder->index() : -1),
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
@@ -45,7 +45,7 @@ void ListChildrenHelper::AttachChild(ItemHolder* item_holder,
 // ListContainer::RecycleChild() when the ItemHolder is recycled.
 void ListChildrenHelper::DetachChild(ItemHolder* item_holder,
                                      Element* element) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListChildrenHelper::DetachChild", "index",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CHILDREN_DETACH_CHILD, "index",
               std::to_string(item_holder ? item_holder->index() : -1),
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
@@ -143,7 +143,7 @@ void ListChildrenHelper::UpdateOnScreenChildren(
         return false;
       });
   // This trace event is used to output the debug info.
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListChildrenHelper::UpdateOnScreenChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_CHILDREN_UPDATE_ON_SCREEN_CHILD,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -181,7 +181,7 @@ void ListChildrenHelper::HandleLayoutOrScrollResult(
     const std::function<bool(ItemHolder*)>& recycle_handler,
     const std::function<bool(ItemHolder*)>& update_handler) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListChildrenHelper::HandleLayoutOrScrollResult");
+              LIST_CHILDREN_HANDLE_LAYOUT_OR_SCROLL_RESULT);
   ItemHolderSet new_binding_children;
   ItemHolderSet new_added_children;
   // Merge all need binding children from on_screen_children_ /

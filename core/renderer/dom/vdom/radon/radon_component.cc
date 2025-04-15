@@ -9,12 +9,11 @@
 
 #include "base/include/string/string_utils.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/component_config.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
 #include "core/renderer/dom/vdom/radon/node_selector.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/base_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 #include "core/renderer/utils/base/tasm_utils.h"
@@ -271,7 +270,7 @@ static void update_root_css_variable(
 }
 
 void RadonComponent::PrepareRootCSSVariables(AttributeHolder* holder) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonComponent::PrepareRootCSSVariables");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_COMPONENT_PREPARE_ROOT_CSS);
   // component may be empty
   if (!intrinsic_style_sheet_) {
     return;
@@ -335,7 +334,7 @@ void RadonComponent::DeriveFromMould(ComponentMould* data) {
 }
 
 lepus_value RadonComponent::PreprocessData() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PreprocessData");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_PREPROCESS_DATA);
   if (get_derived_state_from_props_function_.IsCallable() && context_) {
     lepus_value data = context_->CallClosure(
         get_derived_state_from_props_function_, properties_, data_);
@@ -362,7 +361,7 @@ bool RadonComponent::PreRender(const RenderType& render_type) {
 }
 
 bool RadonComponent::PreRenderReact(const RenderType& render_type) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PreRenderReact");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_PRERENDER_REACT);
   switch (render_type) {
     case RenderType::UpdateFromJSBySelf:
       return true;
@@ -491,7 +490,7 @@ void RadonComponent::ResetDataVersions() {
 }
 
 bool RadonComponent::PreRenderTT(const RenderType& render_type) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PreRenderTT");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_PRERENDER_TT);
   if (render_type == RenderType::UpdateFromJSBySelf) {
     // update from js, no need to call `getDerivedStateFromProps`
     return ShouldComponentUpdate();
@@ -511,7 +510,7 @@ bool RadonComponent::PreRenderTT(const RenderType& render_type) {
 }
 
 bool RadonComponent::ShouldComponentUpdate() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ShouldComponentUpdate");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SHOULD_COMPONET_UPDATE);
   if (should_component_update_function_.IsCallable() && context_) {
     lepus::Value result =
         context_->CallClosure(should_component_update_function_, properties_,
@@ -747,8 +746,7 @@ bool RadonComponent::ShouldBlockEmptyProperty() {
 bool RadonComponent::UpdateRadonComponentWithoutDispatch(
     RenderType render_type, const lepus::Value& incoming_property,
     const lepus::Value& incoming_data) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "RadonComponent::UpdateRadonComponentWithoutDispatch",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_UPDATE_COMPONET_WITHOUT_DISPATCH,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -900,7 +898,7 @@ void RadonComponent::Refresh(const DispatchOption& option,
 }
 
 void RadonComponent::PreHandlerCSSVariable() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonComponent::PreHandlerCSSVariable",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_PRE_HANDLER_CSS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -927,8 +925,7 @@ void RadonComponent::PreHandlerCSSVariable() {
 }
 
 void RadonComponent::RenderRadonComponentIfNeeded(RenderOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "RadonComponent::RenderRadonComponentIfNeeded",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_RENDER_COMPONENT_IF_NEEDED,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -951,7 +948,7 @@ void RadonComponent::RenderRadonComponent(RenderOption& option) {
 // modifies data)
 void RadonComponent::OnReactComponentRenderBase(lepus::Value& new_data,
                                                 bool should_component_update) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonComponent::OnReactComponentRenderBase",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_COMPONENT_RENDER_BASE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -1389,7 +1386,7 @@ void RadonComponent::SwapElement(
 void RadonComponent::RadonDiffChildren(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonComponent::RadonDiffChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_COMPONENT_DIFF_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

@@ -4,8 +4,8 @@
 #include "core/renderer/css/css_style_sheet_manager.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/css_fragment.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -44,7 +44,7 @@ SharedCSSFragment* CSSStyleSheetManager::GetCSSStyleSheetForPage(int32_t id) {
 }
 
 SharedCSSFragment* CSSStyleSheetManager::GetCSSStyleSheet(int32_t id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSStyleSheetManager::GetCSSStyleSheet");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, STYLE_SHEET_MANAGER_GET_STYLE_SHEET);
   SharedCSSFragment* fragment = GetSharedCSSFragmentById(id);
   if (fragment == nullptr) {
     if (delegate_ && delegate_->DecodeCSSFragmentById(id)) {

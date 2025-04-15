@@ -10,7 +10,6 @@
 
 #include "base/include/fml/make_copyable.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/data/template_data.h"
 #include "core/renderer/dom/fiber/component_element.h"
 #include "core/renderer/dom/fiber/page_element.h"
@@ -62,7 +61,7 @@ LepusComponent::LepusComponent(
 LepusComponent::~LepusComponent() = default;
 
 LepusElement* LepusComponent::QuerySelector(const std::string& selector) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::QuerySelector", "selector",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_QUERY_SELECTOR, "selector",
               selector);
   const auto& res = QuerySelector(selector, true);
   if (res.empty()) {
@@ -93,14 +92,14 @@ void LepusComponent::HandleJSCallbackLepus(const int64_t callback_id,
 
 std::vector<LepusElement*> LepusComponent::QuerySelectorAll(
     const std::string& selector) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::QuerySelectorAll",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_QUERY_SELECTOR_ALL,
               "selector", selector);
   return QuerySelector(selector, false);
 }
 
 int64_t LepusComponent::RequestAnimationFrame(
     std::unique_ptr<NapiFrameCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::RequestAnimationFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_REQUEST_ANIMATION_FRAME);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::RequestAnimationFrame failed since tasm is null.");
@@ -121,14 +120,14 @@ int64_t LepusComponent::RequestAnimationFrame(
 }
 
 void LepusComponent::CancelAnimationFrame(int64_t id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::CancelAnimationFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_CANCEL_ANIMATION_FRAME);
   raf_handler_->CancelAnimationFrame(id);
 }
 
 void LepusComponent::TriggerEvent(const std::string& event_name,
                                   Napi::Object event_detail,
                                   Napi::Object event_option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::TriggerEvent", "event_name",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_TRIGGER_EVENT, "event_name",
               event_name);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
@@ -173,7 +172,7 @@ void LepusComponent::CallJSFunction(const std::string& func_name,
 void LepusComponent::CallJSFunction(
     const std::string& func_name, Napi::Object func_param,
     std::unique_ptr<NapiFuncCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::CallJSFunction",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_CALL_JS_FUNCTION,
               "func_name", func_name);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
@@ -216,7 +215,7 @@ void LepusComponent::CallJSFunction(
 
 std::vector<LepusElement*> LepusComponent::QuerySelector(
     const std::string& selector, bool single) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::QuerySelector", "selector",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_QUERY_SELECTOR, "selector",
               selector, "single", single);
   std::vector<LepusElement*> res;
   auto tasm = weak_tasm_.lock();
@@ -272,7 +271,7 @@ std::vector<LepusElement*> LepusComponent::QuerySelector(
 }
 
 void LepusComponent::DoFrame(int64_t start_time, int64_t end_time) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::DoFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_DO_FRAME);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::DoFrame failed since tasm is null.");
@@ -313,7 +312,7 @@ void LepusComponent::DoFrame(int64_t start_time, int64_t end_time) {
 }
 
 Napi::Object LepusComponent::GetStore() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::GetStore");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_GET_STORE);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::GetStore failed since tasm is null.");
@@ -331,7 +330,7 @@ Napi::Object LepusComponent::GetStore() {
 }
 
 void LepusComponent::SetStore(const Napi::Object& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::SetStore");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_SET_STORE);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::SetStore failed since tasm is null.");
@@ -349,7 +348,7 @@ void LepusComponent::SetStore(const Napi::Object& value) {
 }
 
 Napi::Object LepusComponent::GetData() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::GetData");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_GET_DATA);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::GetData failed since tasm is null.");
@@ -367,7 +366,7 @@ Napi::Object LepusComponent::GetData() {
 }
 
 void LepusComponent::SetData(const Napi::Object& value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::SetData");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_SET_DATA);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::SetData failed since tasm is null.");
@@ -393,7 +392,7 @@ void LepusComponent::SetData(const Napi::Object& value) {
 }
 
 Napi::Object LepusComponent::GetProperties() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::GetProperties");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_COMPONENT_GET_PROPERTIES);
   auto tasm = weak_tasm_.lock();
   if (tasm == nullptr) {
     LOGE("LepusComponent::GetProperties failed since tasm is null.");

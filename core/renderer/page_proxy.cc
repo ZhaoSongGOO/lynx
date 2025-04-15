@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/dom/fiber/fiber_node_info.h"
 #include "core/renderer/dom/fiber/list_element.h"
@@ -22,6 +21,7 @@
 #include "core/renderer/dom/vdom/radon/radon_lazy_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/renderer/utils/value_utils.h"
@@ -332,7 +332,7 @@ LynxGetUIResult PageProxy::GetLynxUI(const NodeSelectRoot &root,
 void PageProxy::UpdateInLoadTemplate(const lepus::Value &data,
                                      const UpdatePageOption &update_page_option,
                                      PipelineOptions &pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "UpdateInLoadTemplate");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, PAGE_PROXY_UPDATE_IN_LOAD_TEMPLATE);
   // TODO(huzhanbo.luc): check if we can remove this
   if (Page()) {
     /*
@@ -347,7 +347,7 @@ void PageProxy::UpdateInLoadTemplate(const lepus::Value &data,
 }
 
 void PageProxy::ForceUpdate(const UpdatePageOption &update_page_option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "ForceUpdate");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, PAGE_PROXY_FORCE_UPDATE);
   lepus::Value data = lepus::Value(lepus::Dictionary::Create());
   PipelineOptions pipeline_options;
   UpdateInLoadTemplate(data, update_page_option, pipeline_options);
@@ -567,7 +567,7 @@ void PageProxy::OnComponentSelectorChanged(RadonComponent *node,
 }
 
 void PageProxy::OnComponentAdded(RadonComponent *node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnComponentAdded");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_COMPONENT_ADDED);
   AdoptComponent(node);
 
   lepus::Value data = ProcessInitDataForJS(node->GetData());
@@ -596,7 +596,7 @@ void PageProxy::OnComponentAdded(RadonComponent *node) {
 }
 
 void PageProxy::OnComponentRemoved(RadonComponent *node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnComponentRemoved");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_COMPONENT_REMOVED);
   if (destroyed_) {
     return;
   }
@@ -618,7 +618,7 @@ void PageProxy::OnComponentRemoved(RadonComponent *node) {
 }
 
 void PageProxy::OnComponentMoved(RadonComponent *node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnComponentMoved");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_COMPONENT_MOVED);
   if (!CheckComponentExists(node->ComponentId())) {
     LOGF("component doesn't exist in OnComponentMoved");
     return;
@@ -632,7 +632,7 @@ void PageProxy::OnReactComponentCreated(RadonComponent *component,
                                         const lepus::Value &props,
                                         const lepus::Value &data,
                                         const std::string &parent_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactComponentCreated");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_COMPONENT_CREATED);
   if (!component->IsEmpty() &&
       pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ != nullptr &&
@@ -662,7 +662,7 @@ void PageProxy::OnReactComponentRender(RadonComponent *component,
                                        const lepus::Value &props,
                                        const lepus::Value &data,
                                        bool should_component_update) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactComponentRender");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_COMPONENT_RENDER);
   if (!component->IsEmpty() &&
       pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ != nullptr &&
@@ -682,7 +682,7 @@ void PageProxy::OnReactComponentRender(RadonComponent *component,
 }
 
 void PageProxy::OnReactComponentDidUpdate(RadonComponent *component) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactComponentDidUpdate");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_COMPONENT_DID_UPDATE);
   if (!component->IsEmpty() &&
       pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ != nullptr &&
@@ -698,7 +698,7 @@ void PageProxy::OnReactComponentDidUpdate(RadonComponent *component) {
 
 void PageProxy::OnReactComponentDidCatch(RadonComponent *component,
                                          const lepus::Value &error) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactComponentDidCatch");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_COMPONENT_DID_CATCH);
   if (!component->IsEmpty() &&
       pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ != nullptr &&
@@ -716,7 +716,7 @@ void PageProxy::OnReactComponentDidCatch(RadonComponent *component,
 }
 
 void PageProxy::OnReactComponentUnmount(RadonComponent *component) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactComponentUnmount");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_COMPONENT_UNMOUNT);
   if (!component->IsEmpty() &&
       pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ != nullptr &&
@@ -732,7 +732,7 @@ void PageProxy::OnReactComponentUnmount(RadonComponent *component) {
 
 void PageProxy::OnReactCardRender(const lepus::Value &data,
                                   bool should_component_update) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactCardRender");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_CARD_RENDER);
   if (pre_painting_stage_ != PrePaintingStage::kStartPrePainting &&
       context_proxy_delegate_ != nullptr &&
       tasm_delegate_->SupportComponentJS()) {
@@ -753,7 +753,7 @@ void PageProxy::OnReactCardRender(const lepus::Value &data,
 }
 
 void PageProxy::OnReactCardDidUpdate() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnReactCardDidUpdate");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_ON_REACT_CARD_DID_UPDATE);
   if (pre_painting_stage_ == PrePaintingStage::kPrePaintingOFF &&
       context_proxy_delegate_ && tasm_delegate_->SupportComponentJS()) {
     runtime::MessageEvent event(runtime::KMessageEventTypeOnReactCardDidUpdate,
@@ -981,7 +981,7 @@ lepus::Value PageProxy::GetPathInfo(const NodeSelectRoot &root,
 
   LOGI("GetPathInfo by root: " << root.ToPrettyString()
                                << ", node: " << options.ToString());
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PageProxy::GetPathInfo",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_GET_PATH_INFO,
               [&](lynx::perfetto::EventContext ctx) {
                 std::string info = std::string("root: ")
                                        .append(root.ToPrettyString())
@@ -1068,7 +1068,7 @@ lepus::Value PageProxy::GetFields(const NodeSelectRoot &root,
 
   LOGI("GetFields by root: " << root.ToPrettyString()
                              << ", node: " << options.ToString());
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PageProxy::GetFields",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_GET_FIELDS,
               [&](lynx::perfetto::EventContext ctx) {
                 std::string info = std::string("root: ")
                                        .append(root.ToPrettyString())
@@ -1222,7 +1222,7 @@ void PageProxy::UpdateDataForSsr(std::vector<base::String> &keys_updated,
     return;
   }
 
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateDataForSsr");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, PAGE_PROXY_UPDATE_DATA_FOR_SSR);
 
   // update placeholders in DOM and fresh UI
   ssr_data_update_manager_->UpdateDomIfUpdated(keys_updated, dict);
@@ -1256,7 +1256,7 @@ void PageProxy::RenderWithSSRData(TemplateAssembler *tasm,
       this, 1, nullptr, tasm->style_sheet_manager(tasm::DEFAULT_ENTRY_NAME),
       nullptr, nullptr);
 
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "SSR::CreateDom");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, PAGE_PROXY_SSR_CREATE_DOM);
 
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kCreateVDomStartSSR);
 
@@ -1277,7 +1277,7 @@ void PageProxy::RenderWithSSRData(TemplateAssembler *tasm,
   DispatchOption dispatch_option(this);
   dispatch_option.need_update_element_ = true;
 
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "SSR::Dispatch");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, PAGE_PROXY_SSR_DISPATCH);
 
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kDispatchStartSSR);
 
@@ -1310,7 +1310,7 @@ void PageProxy::RenderWithSSRData(SSRHydrateInfo info,
   element_manager()->OnPatchFinish(pipeline_options);
 
   // script
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "SSR::ProcessScript");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_PROXY_SSR_PROCESS_SCRIPT);
   if (!global_event_script.empty()) {
     OnSsrScriptReady(std::move(global_event_script));
   }

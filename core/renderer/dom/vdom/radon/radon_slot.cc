@@ -9,8 +9,8 @@
 
 #include "base/include/string/string_utils.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 #include "core/runtime/vm/lepus/context.h"
 
@@ -65,7 +65,7 @@ bool RadonSlot::CanBeReusedBy(const RadonBase* const radon_base) const {
 void RadonSlot::RadonDiffChildren(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonSlot::RadonDiffChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SLOT_DIFF_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -156,7 +156,7 @@ RadonPlug::RadonPlug(const base::String& plug_name, RadonComponent* component)
 }
 
 void RadonPlug::SetAttachedComponent(RadonComponent* component) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonPlug::SetAttachedComponent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_PLUG_SET_ATTACHED_COMPONENT);
   if (!component) {
     return;
   }
@@ -220,7 +220,7 @@ RadonSlotsHelper::RadonSlotsHelper(RadonComponent* radon_component)
 
 void RadonSlotsHelper::MovePlugsFromSlots(NameToPlugMap& plugs,
                                           NameToSlotMap& slots) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonSlotsHelper::MovePlugsFromSlots");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SLOT_MOVE_PLUGS_FROM_SLOTS);
   for (auto& slot : slots) {
     if (!slot.second->radon_children_.empty()) {
       // here we assume a plug is the child and only child of the related slot
@@ -233,7 +233,7 @@ void RadonSlotsHelper::MovePlugsFromSlots(NameToPlugMap& plugs,
 
 void RadonSlotsHelper::DiffWithPlugs(NameToPlugMap& old_plugs,
                                      const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonSlotsHelper::DiffWithPlugs");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SLOT_DIFF_WITH_PLUGS);
   auto& new_slots = radon_component_->slots();
   for (const auto& slot : new_slots) {
     auto& new_slot_ptr = slot.second;
@@ -267,8 +267,7 @@ void RadonSlotsHelper::DiffWithPlugs(NameToPlugMap& old_plugs,
 
 void RadonSlotsHelper::ReFillSlotsAfterChildrenDiff(
     NameToSlotMap& old_slots, const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "RadonSlotsHelper::ReFillSlotsAfterChildrenDiff");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SLOT_REFILL_SLOTS_AFTER_DIFF);
   auto& new_slots = radon_component_->slots();
   auto& new_plugs = radon_component_->plugs();
   // the old plug has already been attached to the new slot,
@@ -339,7 +338,7 @@ void RadonSlotsHelper::ReFillSlotsAfterChildrenDiff(
 }
 
 void RadonSlotsHelper::FillUnattachedPlugs() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonSlotsHelper::FillUnattachedPlugs");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_SLOT_FILL_UNATTACHED_PLUGS);
   auto& plugs = radon_component_->plugs();
   for (auto& plug : plugs) {
     radon_component_->AddRadonPlug(plug.first, std::move(plug.second));

@@ -8,7 +8,6 @@
 
 #include "base/include/no_destructor.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 
 namespace lynx {
 namespace tasm {

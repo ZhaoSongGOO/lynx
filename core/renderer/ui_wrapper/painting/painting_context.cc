@@ -28,7 +28,7 @@ void PaintingContext::OnNodeReload(int tag) {
 }
 
 void PaintingContext::InsertPaintingNode(int parent, int child, int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "InsertPaintingNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_INSERT_NODE);
   if (platform_impl_->HasEnableUIOperationBatching()) {
     platform_impl_->InsertPaintingNode(parent, child, index);
   } else {
@@ -48,7 +48,7 @@ void PaintingContext::InsertPaintingNode(int parent, int child, int index) {
 //   InsertPaintingNode(new_parent, child, new_index);
 void PaintingContext::RemovePaintingNode(int parent, int child, int index,
                                          bool is_move) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PaintingContext::RemovePaintingNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_REMOVE_NODE);
   if (platform_impl_->HasEnableUIOperationBatching()) {
     platform_impl_->RemovePaintingNode(parent, child, index, is_move);
   } else {
@@ -65,7 +65,7 @@ void PaintingContext::RemovePaintingNode(int parent, int child, int index,
 }
 
 void PaintingContext::DestroyPaintingNode(int parent, int child, int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DestroyPaintingNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_DESTROY_NODE);
   if (platform_impl_->HasEnableUIOperationBatching()) {
     platform_impl_->DestroyPaintingNode(parent, child, index);
   } else {
@@ -205,8 +205,7 @@ void PaintingContext::MarkUIOperationQueueFlushTiming(
       timing_collector_platform_;
   Enqueue(
       [weak_timing_collector_platform, key = std::move(key), pipeline_id]() {
-        TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                    "UIOperationQueue::MarkUIOperationQueueFlushTimingTask");
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_MARK_TIMING);
         if (auto timing_collector_platform =
                 weak_timing_collector_platform.lock()) {
           timing_collector_platform->MarkTiming(pipeline_id, key);
@@ -240,7 +239,7 @@ void PaintingContext::MarkLayoutUIOperationQueueFlushStartIfNeed() {
 }
 
 void PaintingContext::FinishLayoutOperation(const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FinishLayoutOperation");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_FINISH_LAYOUT_OPERATION);
   if (has_first_screen_) {
     platform_impl_->FinishLayoutOperation(options);
   }
@@ -261,7 +260,7 @@ void PaintingContext::FinishLayoutOperation(const PipelineOptions& options) {
     }
   }
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "CleanOptionsForTiming");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_CLEAN_OPTIONS_FOR_TIMING);
     // clean
     ClearOptionsForTiming();
   }

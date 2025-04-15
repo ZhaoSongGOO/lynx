@@ -8,8 +8,8 @@
 
 #include "base/trace/native/trace_event.h"
 #include "core/base/android/android_jni.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/LayoutContext_jni.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_wrapper/common/android/platform_extra_bundle_android.h"
 #include "core/renderer/ui_wrapper/common/android/prop_bundle_android.h"
 #include "core/renderer/ui_wrapper/layout/layout_node.h"
@@ -131,7 +131,7 @@ void LayoutContextAndroid::UpdateLayoutNode(int id, PropBundle* painting_data) {
   if (local_ref.IsNull()) {
     return;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LayoutContext.UpdateLayoutNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_UPDATE_LAYOUT_NODE);
   // we now split props into attributes & styles.
   // if using mapBuffer, css styles parts in stored in styles, otherwise
   // styles is null and css styles info & attribute info is stored in

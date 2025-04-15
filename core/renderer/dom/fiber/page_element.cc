@@ -10,6 +10,7 @@
 #include "base/include/fml/memory/ref_counted.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -70,7 +71,7 @@ void PageElement::AttachToElementManager(
 }
 
 void PageElement::FlushActionsAsRoot() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "PageElement::FlushActionsAsRoot",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAGE_ELEMENT_FLUSH_ACTIONS_AS_ROOT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -109,7 +110,7 @@ void PageElement::PostResolveTaskToThreadPool(
       [promise = std::move(promise),
        task = std::move(remaining_task)]() mutable {
         TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                    "FiberElement::PrepareForCreateOrUpdateAsync");
+                    FIBER_ELEMENT_PREPARE_FOR_CRATE_OR_UPDATE_ASYNC);
         promise.set_value(std::move(task));
       },
       std::move(future));

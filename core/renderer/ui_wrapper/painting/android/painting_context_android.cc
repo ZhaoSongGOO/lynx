@@ -10,7 +10,6 @@
 #include "base/trace/native/trace_event.h"
 #include "core/base/android/android_jni.h"
 #include "core/base/android/jni_helper.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/base/thread/once_task.h"
 #include "core/build/gen/PaintingContext_jni.h"
 #include "core/renderer/css/css_property.h"
@@ -63,7 +62,7 @@ PaintingContextAndroidRef::PaintingContextAndroidRef(JNIEnv* env, jobject impl)
 
 void PaintingContextAndroidRef::InsertPaintingNode(int parent, int child,
                                                    int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::InsertPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_INSERT_PAINTING_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -76,7 +75,7 @@ void PaintingContextAndroidRef::InsertPaintingNode(int parent, int child,
 
 void PaintingContextAndroidRef::RemovePaintingNode(int parent, int child,
                                                    int index, bool is_move) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::RemovePaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_REMOVE_PAINTING_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -89,7 +88,7 @@ void PaintingContextAndroidRef::RemovePaintingNode(int parent, int child,
 
 void PaintingContextAndroidRef::DestroyPaintingNode(int parent, int child,
                                                     int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::DestroyPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_DESTORY_PAINTING_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -104,7 +103,7 @@ void PaintingContextAndroidRef::UpdateScrollInfo(int32_t container_id,
                                                  bool smooth,
                                                  float estimated_offset,
                                                  bool scrolling) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateScrollInfoTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_SCROLL_INFO_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -120,8 +119,7 @@ void PaintingContextAndroidRef::UpdateScrollInfo(int32_t container_id,
 void PaintingContextAndroidRef::SetGestureDetectorState(int64_t idx,
                                                         int32_t gesture_id,
                                                         int32_t state) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::SetGestureDetectorStateTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_GESTURE_STATE_TASK);
 
   // Check if the Java reference is null before proceeding.
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
@@ -143,7 +141,7 @@ void PaintingContextAndroidRef::UpdateNodeReadyPatching(
   }
 
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::UpdateNodeReadyPatchingTask");
+              UI_OPERATION_QUEUE_UPDATE_NODE_READY_PATCHING);
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
     return;
@@ -170,7 +168,7 @@ void PaintingContextAndroidRef::UpdateNodeReloadPatching(
   }
 
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::UpdateNodeReloadPatchingTask");
+              UI_OPERATION_QUEUE_UPDATE_NODE_RELOAD_PATCHING);
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
     return;
@@ -186,7 +184,7 @@ void PaintingContextAndroidRef::UpdateNodeReloadPatching(
 }
 
 void PaintingContextAndroidRef::UpdateEventInfo(bool has_touch_pseudo) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateEventInfoTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_EVENT_INFO);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -199,7 +197,7 @@ void PaintingContextAndroidRef::UpdateEventInfo(bool has_touch_pseudo) {
 }
 
 void PaintingContextAndroidRef::UpdateFlattenStatus(int id, bool flatten) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateFlattenStatusTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_FLATTEN_STATUS);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -224,7 +222,7 @@ void PaintingContextAndroidRef::ListReusePaintingNode(
 
 void PaintingContextAndroidRef::ListCellWillAppear(
     int sign, const std::string& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListCellWillAppearTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_CELL_WILL_APPEAR);
   JNIEnv* env = base::android::AttachCurrentThread();
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -238,7 +236,7 @@ void PaintingContextAndroidRef::ListCellWillAppear(
 
 void PaintingContextAndroidRef::ListCellDisappear(int sign, bool isExist,
                                                   const std::string& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListCellDisappearTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_CELL_DISAPPEAR);
   JNIEnv* env = base::android::AttachCurrentThread();
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -254,7 +252,7 @@ void PaintingContextAndroidRef::ListCellDisappear(int sign, bool isExist,
 void PaintingContextAndroidRef::InsertListItemPaintingNode(int list_sign,
                                                            int child_sign) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::InsertListItemPaintingNodeTask");
+              UI_OPERATION_QUEUE_INSERT_LIST_PAINTING_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -269,7 +267,7 @@ void PaintingContextAndroidRef::InsertListItemPaintingNode(int list_sign,
 void PaintingContextAndroidRef::RemoveListItemPaintingNode(int list_sign,
                                                            int child_sign) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::RemoveListItemPaintingNodeTask");
+              UI_OPERATION_QUEUE_REMOVE_LIST_PAINTING_TASK);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -285,8 +283,7 @@ void PaintingContextAndroidRef::UpdateContentOffsetForListContainer(
     int32_t container_id, float content_size, float target_content_offset_x,
     float target_content_offset_y, bool is_init_scroll_offset,
     bool from_layout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::UpdateContentOffsetForListContainerTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_OFFSET_FOR_LIST);
 
   base::android::ScopedLocalJavaRef<jobject> local_ref(java_ref_);
   if (local_ref.IsNull()) {
@@ -302,8 +299,7 @@ void PaintingContextAndroidRef::UpdateContentOffsetForListContainer(
 void PaintingContextAndroidRef::SetNeedMarkDrawEndTiming(
     std::weak_ptr<shell::TimingCollectorPlatform> weak_timing_collector,
     const tasm::PipelineID& pipeline_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "UIOperationQueue::SetNeedMarkDrawEndTimingTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_NEED_MARK_TIMING);
   if (auto timing_collector_platform = weak_timing_collector.lock()) {
     timing_collector_platform->SetNeedMarkDrawEndTiming(pipeline_id);
   }
@@ -317,7 +313,7 @@ void PaintingContextAndroid::SetKeyframes(
   base::android::ScopedGlobalJavaRef<jobject> props_ref{
       env, pda->jni_map()->jni_object()};
   Enqueue([impl = impl_, props_ref = std::move(props_ref)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::SetKeyframesTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_KEYFRAME_TASK);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -338,7 +334,7 @@ void PaintingContextAndroid::ConsumeGesture(int64_t idx, int32_t gesture_id,
   auto lepus_map = pub::ValueUtils::ConvertValueToLepusValue(params);
 
   Enqueue([impl = impl_, idx, gesture_id, map = std::move(lepus_map)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ConsumeGesture");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_CONSUME_GESTURE);
 
     // Check if the Java reference is null before proceeding.
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
@@ -405,8 +401,7 @@ void PaintingContextAndroid::CreatePaintingNode(
     int id, const std::string& tag,
     const std::shared_ptr<PropBundle>& painting_data, bool flatten,
     bool create_node_async, uint32_t node_index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "PaintingContextAndroid::CreatePaintingNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, PAINTING_CONTEXT_ANDROID_CREAT_NODE);
   if (!LynxEnv::GetInstance().EnableNativeCreateViewAsync()) {
     JNIEnv* env = base::android::AttachCurrentThread();
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl_);
@@ -421,8 +416,7 @@ void PaintingContextAndroid::CreatePaintingNode(
         GetArgsForCreatePaintingNode(painting_data);
     const auto tag_ref = base::android::JNIConvertHelper::ConvertToJNIStringUTF(
         env, tag.c_str());
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::createNode.enqueueCreateView");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_ENQUEUE_CREATE_VIEW);
     // we now split props into initialProps & initialStyles.
     // if using mapBuffer, css styles parts in stored in initialStyles,
     // otherwise initialStyles is null and css styles info & attribute info is
@@ -439,8 +433,7 @@ void PaintingContextAndroid::CreatePaintingNode(
           {{"node_index", std::to_string(node_index)}});
     }
     Enqueue([this, task_ref = std::move(task_ref)]() {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                  "UIOperationQueue::CreatePaintingNodeTask");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_CREATE_PAINTING_NODE);
       if (task_ref.IsNull()) {
         return;
       }
@@ -553,7 +546,7 @@ void PaintingContextAndroid::CreatePaintingNode(
 
 void PaintingContextAndroid::SetContextHasAttached() {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "PaintingContextAndroid::SetContextHasAttached");
+              PAINTING_CONTEXT_ANDROID_SET_CONTEXT_ATTACHED);
   if (enable_context_free_) {
     enable_context_free_ = false;
     auto tasks = context_free_create_node_async_task_queue_.PopAll();
@@ -576,8 +569,7 @@ void PaintingContextAndroid::InsertPaintingNode(int parent, int child,
     return;
   }
   Enqueue([impl = impl_, parent, child, index]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::InsertPaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_INSERT_PAINTING_TASK);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -600,8 +592,7 @@ void PaintingContextAndroid::RemovePaintingNode(int parent, int child,
   }
 
   Enqueue([impl = impl_, parent, child]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::RemovePaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_REMOVE_PAINTING_TASK);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -623,8 +614,7 @@ void PaintingContextAndroid::DestroyPaintingNode(int parent, int child,
     return;
   }
   Enqueue([impl = impl_, parent, child]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::DestroyPaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_DESTORY_PAINTING_TASK);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -689,13 +679,12 @@ void PaintingContextAndroid::UpdatePaintingNode(
   base::android::ScopedGlobalJavaRef<jobject> styles_ref(
       env, pda->GetStyleMapBuffer().Get());
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "Catalyzer.UpdatePaintingNode");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CATALYZER_UPDATE_PAINTING_NODE);
   Enqueue([impl = impl_, id, tend_to_flatten, props_ref = std::move(props_ref),
            listeners_ref = std::move(listeners_ref),
            gestures_ref = std::move(gestures_ref),
            styles_ref = std::move(styles_ref)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::UpdatePaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_PAINTING_NODE);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -721,8 +710,7 @@ void PaintingContextAndroid::UpdatePlatformExtraBundle(
                ->GetPlatformBundle()
                .Get());
   Enqueue([impl = impl_, id, java_bundle_ref = std::move(java_bundle_ref)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::UpdatePlatformExtraBundleTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_EXTRA_BUNDLE);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -749,8 +737,7 @@ void PaintingContextAndroid::FlushImmediately() {
 
 void PaintingContextAndroid::HandleValidate(int tag) {
   Enqueue([impl = impl_, tag]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "UIOperationQueue::UpdatePlatformExtraBundleTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_EXTRA_BUNDLE);
 
     base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
     if (local_ref.IsNull()) {
@@ -772,7 +759,7 @@ void PaintingContextAndroid::FinishLayoutOperation(
   } else {
     Enqueue([impl = impl_, options = options]() {
       TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                  "UIOperationQueue::FinishLayoutOperationTask");
+                  UI_OPERATION_QUEUE_FINISH_LAYOUT_OPERATION);
 
       base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
       if (local_ref.IsNull()) {
@@ -818,9 +805,8 @@ void PaintingContextAndroid::FinishTasmOperation(
   {
     if (LynxEnv::GetInstance().EnableNativeCreateViewAsync()) {
       Enqueue([this]() mutable {
-        TRACE_EVENT(
-            LYNX_TRACE_CATEGORY,
-            "PaintingContextAndroid::ResetCreatePaintingNodeIterableContainer");
+        TRACE_EVENT(LYNX_TRACE_CATEGORY,
+                    PAINTING_CONTEXT_ANDROID_RESET_PAINTING_NODE_CONTAINER);
         backward_create_node_async_task_iterable_container_.reset();
       });
     }
@@ -832,7 +818,7 @@ void PaintingContextAndroid::FinishTasmOperation(
   } else {
     Enqueue([impl = impl_, options]() {
       TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                  "UIOperationQueue::FinishTasmOperationTask");
+                  UI_OPERATION_QUEUE_FINISH_TASM_OPERATION);
 
       base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
       if (local_ref.IsNull()) {
@@ -1050,7 +1036,7 @@ void PaintingContextAndroid::UpdateLayoutPatching() {
              patching_stickies = std::move(patching_stickies_),
              patching_node_index = std::move(patching_node_index_)]() {
       TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                  "UIOperationQueue::UpdateLayoutPatchingTask");
+                  UI_OPERATION_QUEUE_UPDATE_LAYOUT_PATCHING);
 
       base::android::ScopedLocalJavaRef<jobject> local_ref(*impl);
       if (local_ref.IsNull()) {
@@ -1143,9 +1129,9 @@ void PaintingContextAndroid::BeforeFlush() {
       EnqueueHighPriorityUIOperation(
           [this, iterable_container = scheduled_create_node_async_task_queue_
                                           .ReversePopAll()]() mutable {
-            TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                        "PaintingContextAndroid::"
-                        "ReinitializeCreatePaintingNodeIterableContainer");
+            TRACE_EVENT(
+                LYNX_TRACE_CATEGORY,
+                PAINTING_CONTEXT_ANDROID_REINIT_PAINTING_NODE_CONTAINER);
             backward_create_node_async_task_iterable_container_ =
                 std::move(iterable_container);
             backward_create_node_async_task_iterator_ =
@@ -1166,7 +1152,8 @@ void PaintingContextAndroid::BeforeFlush() {
   }
 
   Enqueue([impl = impl_, ui_operation_batch = std::move(ui_operation_batch)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "FlushUIOperationBatch");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY,
+                PAINTING_CONTEXT_ANDROID_FLUSH_UI_OPERATION_BATCH);
     if (!ui_operation_batch) {
       return;
     }

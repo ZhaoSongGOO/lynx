@@ -8,6 +8,7 @@ lynx_core_source_set("ui_wrapper") {
   sources = []
 
   deps = [
+    "//lynx/core/renderer/trace:renderer_trace",
     "//lynx/core/renderer/ui_wrapper/common",
     "//lynx/core/renderer/ui_wrapper/layout",
     "//lynx/core/renderer/ui_wrapper/painting",

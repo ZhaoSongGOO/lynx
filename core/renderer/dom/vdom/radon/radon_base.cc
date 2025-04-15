@@ -9,14 +9,13 @@
 
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/select_element_token.h"
 #include "core/renderer/dom/element.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
 #include "core/renderer/dom/vdom/radon/node_selector.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/diff_algorithm.h"
 #include "core/renderer/utils/lynx_env.h"
 
@@ -114,7 +113,7 @@ void RadonBase::DispatchSubTree(const DispatchOption& option) {
 }
 
 void RadonBase::DispatchChildren(const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DispatchChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_DISPATCH_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -148,7 +147,7 @@ void RadonBase::DispatchChildrenForDiff(const DispatchOption& option) {
 // Radon Element Structure
 
 void RadonBase::ResetElementRecursively() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonBase::ResetElementRecursively",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_RESET_ELEMENT_RECURSIVELY,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -412,7 +411,7 @@ void RadonBase::RadonMyersDiff(RadonBaseVector& old_radon_children,
 void RadonBase::RadonDiffChildren(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonBase::RadonDiffChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_BASE_DISPATCH_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -420,7 +419,7 @@ void RadonBase::RadonDiffChildren(
 }
 
 void RadonBase::NeedModifySubTreeComponent(RadonComponent* const target) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonBase::NeedModifySubTreeComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_BASE_MODIFY_SUBTREE_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

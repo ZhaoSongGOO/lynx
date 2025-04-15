@@ -11,9 +11,7 @@
 #include "base/include/debug/lynx_assert.h"
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/base/threading/vsync_monitor.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/computed_css_style.h"
 #include "core/renderer/css/css_color.h"
 #include "core/renderer/css/css_selector_constants.h"
@@ -35,6 +33,7 @@
 #include "core/renderer/dom/fiber/wrapper_element.h"
 #include "core/renderer/dom/vdom/radon/radon_list_base.h"
 #include "core/renderer/lynx_env_config.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/radon_list_element.h"
 #include "core/renderer/ui_wrapper/painting/catalyzer.h"
 #include "core/renderer/ui_wrapper/painting/painting_context.h"
@@ -212,7 +211,7 @@ void ElementManager::WillDestroy() {
 fml::RefPtr<RadonElement> ElementManager::CreateNode(
     const base::String &tag, const fml::RefPtr<AttributeHolder> &node,
     uint32_t node_index, RadonNodeType radon_node_type) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::CreateNode", "tag",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_CREATE_NODE, "tag",
               tag.str());
   fml::RefPtr<RadonElement> element = nullptr;
   if (radon_node_type == RadonNodeType::kRadonListNode && node &&
@@ -283,7 +282,7 @@ void ElementManager::OnComponentUselessUpdate(const std::string &component_name,
     if (hierarchy_observer) {
       hierarchy_observer->OnComponentUselessUpdate(component_name, properties);
       TRACE_EVENT_INSTANT(LYNX_TRACE_CATEGORY,
-                          "Devtool::OnComponentUselessUpdate",
+                          DEVTOOL_PREPARE_COMPONENT_USELESS_UPDATE,
                           [&component_name](lynx::perfetto::EventContext ctx) {
                             auto *debug = ctx.event()->add_debug_annotations();
                             debug->set_name("ComponentName");
@@ -331,8 +330,7 @@ void ElementManager::FiberAttachToInspectorRecursively(FiberElement *root) {
     if (!devtool_flag_ || !IsDomTreeEnabled()) {
       return;
     }
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "Devtool::FiberAttachToInspectorRecursively");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_FIBER_ATTACH_TO_INSPECTOR);
     std::function<void(FiberElement *)> prepare_and_add_node_f =
         [this, &prepare_and_add_node_f](FiberElement *element) {
           PrepareNodeForInspector(element);
@@ -348,7 +346,7 @@ void ElementManager::FiberAttachToInspectorRecursively(FiberElement *root) {
 
 void ElementManager::PrepareNodeForInspector(Element *element) {
   EXEC_EXPR_FOR_INSPECTOR({
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "Devtool::PrepareNodeForInspector");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_PREPARE_NODE_FOR_INSPECTOR);
     if (devtool_flag_ && IsDomTreeEnabled()) {
       RunDevToolFunction(lynx::devtool::DevToolFunction::InitForInspector,
                          std::make_tuple(element));
@@ -363,8 +361,7 @@ void ElementManager::PrepareNodeForInspector(Element *element) {
 
 void ElementManager::CheckAndProcessSlotForInspector(Element *element) {
   EXEC_EXPR_FOR_INSPECTOR({
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "Devtool::CheckAndProcessSlotForInspector");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_CHECK_AND_PROCESS_FOR_INSPECTOR);
     // If devtool_flag_ is false or IsDomTreeEnabled() is false, return.
     if (!devtool_flag_ || !IsDomTreeEnabled()) {
       return;
@@ -411,7 +408,7 @@ void ElementManager::CheckAndProcessSlotForInspector(Element *element) {
 }
 
 void ElementManager::RequestLayout(const PipelineOptions &options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::RequestLayout");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_REQUEST_LAYOUT);
   if (enable_diff_without_layout_) {
     delegate_->SetEnableLayout();
   } else {
@@ -438,8 +435,7 @@ void ElementManager::DidPatchFinishForFiber() {}
 
 void ElementManager::PrepareComponentNodeForInspector(Element *component) {
   EXEC_EXPR_FOR_INSPECTOR({
-    TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "Devtool::PrepareComponentNodeForInspector");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, DEVTOOL_PREPARE_COMPONENT_FOR_INSPECTOR);
 
     const auto &create_element = [this, component](const std::string &tag) {
       bool enable_fiber = this->UseFiberElement();
@@ -497,7 +493,7 @@ void ElementManager::PrepareComponentNodeForInspector(Element *component) {
 void ElementManager::ResolveAttributesAndStyle(AttributeHolder *node,
                                                Element *shadow_node,
                                                const StyleMap &styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ResolveAttributesAndStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RESOLVE_ATTRIBUTES_AND_STYLE);
   // FIXME: key frames should not be singleton
   auto style_sheet = node->ParentStyleSheet();
   if (preresolving_style_sheet_ != style_sheet && style_sheet && !style_sheet->HasFontFacesResolved() /* && TODO:(radon)
@@ -630,7 +626,7 @@ void ElementManager::OnPatchFinishForRadon(PipelineOptions &options) {
     delegate_->OnUpdateDataWithoutChange();
   } else {
     LOGI("ElementManager::OnPatchFinish");
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::OnPatchFinishInner",
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_ON_PATCH_FINISH_INNER,
                 [&options](lynx::perfetto::EventContext ctx) {
                   options.UpdateTraceDebugInfo(ctx.event());
                 });
@@ -639,7 +635,7 @@ void ElementManager::OnPatchFinishForRadon(PipelineOptions &options) {
     root()->UpdateDynamicElementStyle(DynamicCSSStylesManager::kAllStyleUpdate,
                                       false);
     {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager sort z-index");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_SORT_Z_INDEX);
       // sort z-index children
       for (const auto &context : dirty_stacking_contexts_) {
         context->UpdateZIndexList();
@@ -660,7 +656,7 @@ void ElementManager::PatchEventRelatedInfo() {
 
 #if ENABLE_AIR
 void ElementManager::OnPatchFinishInnerForAir(const PipelineOptions &options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::OnPatchFinishInnerForAir");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_ON_PATCH_FINISH_FOR_AIR);
   DispatchLayoutUpdates(options);
 }
 #endif
@@ -672,7 +668,7 @@ PaintingContext *ElementManager::painting_context() {
 void ElementManager::UpdateViewport(float width, SLMeasureMode width_mode,
                                     float height, SLMeasureMode height_mode,
                                     bool need_layout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::UpdateViewport");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_UPDATE_VIEWPORT);
   auto old_env = GetLynxEnvConfig();
   GetLynxEnvConfig().UpdateViewport(width, width_mode, height, height_mode);
   if (old_env.ViewportHeight() != GetLynxEnvConfig().ViewportHeight() ||
@@ -869,7 +865,7 @@ void ElementManager::NotifyElementDestroy(Element *element) {
 }
 
 void ElementManager::TickAllElement(fml::TimePoint &frame_time) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::TickAllElement");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_TICK_ALL_ELEMENT);
   if (element_vsync_proxy_) {
     PipelineOptions options;
     auto temp_element_set = std::unordered_set<Element *>();
@@ -1166,7 +1162,7 @@ void ElementManager::OnPatchFinish(PipelineOptions &option, Element *element) {
 
 void ElementManager::OnPatchFinishForFiber(PipelineOptions &options,
                                            FiberElement *element) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::OnPatchFinishInner");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_ON_PATCH_FINISH_FOR_FIBER);
   if (options.need_timestamps) {
     painting_context()->MarkUIOperationQueueFlushTiming(
         tasm::timing::kPaintingUiOperationExecuteStart, options.pipeline_id);
@@ -1215,7 +1211,7 @@ void ElementManager::OnPatchFinishForFiber(PipelineOptions &options,
   // layout.
   if (!need_layout_ || !options.trigger_layout_) {
     TRACE_EVENT(LYNX_TRACE_CATEGORY,
-                "ElementManager::OnPatchFinishForFiberNoPatch");
+                ELEMENT_MANAGER_ON_PATCH_FINISH_FIBER_NO_PATCH);
     LOGI("ElementManager::OnPatchFinishForFiber NoPatch!");
 
     // When list render a child which is obtained from pool, it may has no patch
@@ -1227,7 +1223,7 @@ void ElementManager::OnPatchFinishForFiber(PipelineOptions &options,
   } else {
     LOGI("ElementManager::OnPatchFinishForFiber WithPatch!");
     {
-      TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementManager::UpdateZIndexList");
+      TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_MANAGER_UPDATE_Z_INDEX_LIST);
       // sort z-index children
       for (const auto &context : dirty_stacking_contexts_) {
         context->UpdateZIndexList();

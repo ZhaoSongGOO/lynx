@@ -13,6 +13,7 @@
 #include "base/include/vector.h"
 #include "core/renderer/css/select_element_token.h"
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -26,7 +27,7 @@ FiberElementSelector::ElementSelectResult FiberElementSelector::Select(
   }
   LOGI(" SelectNode: " << options.ToString()
                        << ", root_impl_id: " << root->impl_id());
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "FiberElementSelector::Select");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, FIBER_ELEMENT_SELECTOR_SELECT);
   FiberElementSelector selector;
   selector.Distribute(root, options);
   selector.UniqueAndSortResult(root);

@@ -4,6 +4,7 @@
 
 #include "core/renderer/ui_component/list/batch_list_adapter.h"
 
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
 namespace lynx {
@@ -59,7 +60,7 @@ void BatchListAdapter::OnDataSetChanged() {
 
 bool BatchListAdapter::BindItemHolder(ItemHolder* item_holder, int index,
                                       bool preload_section /* = false */) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::BindItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_BIND_ITEM_HOLDER,
               [this, item_holder](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event(), item_holder);
               });
@@ -78,7 +79,7 @@ bool BatchListAdapter::BindItemHolder(ItemHolder* item_holder, int index,
 }
 
 void BatchListAdapter::BindItemHolders(const ItemHolderSet& item_holder_set) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "BatchListAdapter::BindItemHolders",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_BIND_ITEM_HOLDERS,
               "batch_item_number", item_holder_set.size());
   ListNode* list_node = nullptr;
   if (!list_element_ || !(list_node = list_element_->GetListNode())) {
@@ -172,7 +173,7 @@ void BatchListAdapter::OnFinishBindItemHolder(Element* list_item,
 
 void BatchListAdapter::OnFinishBindItemHolders(
     const std::vector<Element*>& list_items, const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "BatchListAdapter::OnFinishBindItemHolders",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_FINISH_BIND_ITEM_HOLDERS,
               "batch_item_number", list_items.size());
   if (list_items.empty() || options.operation_ids_.empty() ||
       list_items.size() != options.operation_ids_.size()) {
@@ -209,7 +210,7 @@ void BatchListAdapter::OnFinishBindItemHolders(
 int BatchListAdapter::OnFinishBindInternal(Element* list_item,
                                            int64_t operation_id,
                                            ListNode* list_node) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "BatchListAdapter::OnFinishBindInternal",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_FINISH_BIND_INTERNAL,
               "operation_id", operation_id);
   int valid_bind_index = list::kInvalidIndex;
   if (!list_item) {
@@ -275,7 +276,7 @@ int BatchListAdapter::OnFinishValidBind(const std::string& item_key,
 }
 
 void BatchListAdapter::RecycleItemHolder(ItemHolder* item_holder) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::BindItemHolder",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_BIND_ITEM_HOLDER,
               [this, item_holder](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event(), item_holder);
               });

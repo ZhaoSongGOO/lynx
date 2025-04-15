@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/runtime/vm/lepus/table.h"
 
 namespace lynx {
@@ -110,8 +110,8 @@ base::String CSSVariableHandler::GetCSSVariableByRule(
 base::String CSSVariableHandler::GetCSSVariableByRule(
     const std::string& format, AttributeHolder* holder,
     const base::String& default_props, const lepus::Value& default_value_map) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "CSSVariableHandler::GetCSSVariableByRule",
-              "format", format);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, CSS_HANDLER_GET_VARIABLE_BY_RULE, "format",
+              format);
   auto css_variable_value = GetCSSVariableByRule(
       format,
       [holder, self = this, &default_value_map](const std::string& maybe_key) {

@@ -9,9 +9,9 @@
 #include <deque>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/element.h"
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/value_wrapper/value_impl_lepus.h"
 
 namespace lynx {
@@ -195,7 +195,7 @@ PaintingContext* ElementContainer::painting_context() {
 
 std::pair<ElementContainer*, int> ElementContainer::FindParentForChild(
     Element* child) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementContainer::FindParentForChild");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONTAINER_FIND_PARENT);
   Element* node = element_;
   size_t ui_index = element_->GetUIIndexForChild(child);
   while (node->IsLayoutOnly()) {
@@ -401,7 +401,7 @@ void ElementContainer::UpdateLayoutWithoutChange() {
 
 void ElementContainer::TransitionToNativeView(
     std::shared_ptr<PropBundle> prop_bundle) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementContainer::TransitionToNativeView");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONTAINER_TRANSITION);
   if (prop_bundle == nullptr) {
     return;
   }
@@ -491,7 +491,7 @@ void ElementContainer::MoveZChildrenRecursively(Element* element,
 }
 
 void ElementContainer::StyleChanged() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementContainer::StyleChanged");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONTAINER_STYLE_CHANGED);
   props_changed_ = true;
   if (element()->GetEnableZIndex()) {
     ZIndexChanged();
@@ -503,7 +503,7 @@ void ElementContainer::StyleChanged() {
 
 void ElementContainer::ZIndexChanged() {
   if (!parent() || !element()->parent() || element()->IsLayoutOnly()) return;
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementContainer::ZIndexChanged");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONTAINER_Z_INDEX_CHANGED);
   auto* element_parent = element()->parent();
   bool is_stacking_context = IsStackingContextNode();
   auto* parent_stacking_context = parent()->EnclosingStackingContextNode();
@@ -560,7 +560,7 @@ void ElementContainer::UpdateZIndexList() {
 
   if (z_list.empty()) return;
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementContainer::UpdateZIndexList");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_CONTAINER_UPDATE_Z_INDEX_LIST);
   std::stable_sort(z_list.begin(), z_list.end(),
                    [](const auto& first, const auto& second) {
                      return first->ZIndex() < second->ZIndex();

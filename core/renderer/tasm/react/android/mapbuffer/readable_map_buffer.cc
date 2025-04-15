@@ -9,7 +9,6 @@
 
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/ReadableMapBuffer_jni.h"
 
 namespace lynx {

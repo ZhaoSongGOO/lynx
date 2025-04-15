@@ -7,8 +7,8 @@
 #include <unordered_set>
 
 #include "base/include/log/logging.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/tasm/config.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 #include "core/renderer/utils/value_utils.h"
 
@@ -92,8 +92,7 @@ bool ListAdapter::UpdateDataSource(const lepus::Value& data_source) {
     }
   }
   // For output list diff info before clear
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListAdapter::UpdateDataSource.OutputDiffInfo",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_OUTPUT_DATA_SOURCE_DIFF_INFO,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -126,7 +125,7 @@ bool ListAdapter::UpdateFiberDataSource(const lepus::Value& data) {
   adapter_helper_->UpdateFiberExtraInfo();
   // For output list diff info before clear
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListAdapter::UpdateFiberDataSource.OutputDiffInfo",
+              LIST_ADAPTER_OUTPUT_FIBER_DATA_SOURCE_DIFF_INFO,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -163,7 +162,7 @@ void ListAdapter::UpdateListContainerDataSource(
 // and add them to the ItemHolder map.
 void ListAdapter::UpdateItemHolderToLatest(
     ListChildrenHelper* list_children_helper) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::UpdateItemHolderToLatest");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_UPDATE_ITEM_TO_LATEST);
   if (!list_children_helper) {
     return;
   }
@@ -222,7 +221,7 @@ void ListAdapter::UpdateItemHolderToLatest(
 
 // Mark all child ItemHolders's diff status.
 void ListAdapter::MarkChildHolderDirty() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::MarkChildHolderDirty");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_MARK_CHILD_DIRTY);
   if (!adapter_helper_) {
     return;
   }
@@ -337,7 +336,7 @@ int64_t ListAdapter::GenerateOperationId() const {
 }
 
 void ListAdapter::RecycleAllItemHolders() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::RecycleAllItemHolders");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_RECYCLE_ALL_ITEM_HOLDER);
   for (auto it = item_holder_map_->begin(); it != item_holder_map_->end();) {
     const auto& item_holder = it->second;
     if (item_holder) {
@@ -348,7 +347,7 @@ void ListAdapter::RecycleAllItemHolders() {
 }
 
 void ListAdapter::RecycleRemovedItemHolders() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListAdapter::RecycleRemovedItemHolders");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ADAPTER_RECYCLE_REMOVED_ITEM_HOLDER);
   for (auto it = item_holder_map_->begin(); it != item_holder_map_->end();) {
     const auto& item_holder = it->second;
     if (item_holder && IsRemoved(item_holder.get())) {

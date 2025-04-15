@@ -4,8 +4,8 @@
 #include "core/renderer/css/shared_css_fragment.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/css_style_sheet_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -180,7 +180,7 @@ void SharedCSSFragment::InitPseudoNotStyle() {
   if (pseudo_not_style_) {
     return;
   }
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "SharedCSSFragment::InitPseudoNotStyle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, SHARED_FRAGMENT_INIT_PSEUDO_NOT_STYLE);
   pseudo_not_style_ = PseudoNotStyle();
   PseudoClassStyleMap global_pseudo_not_tag, global_pseudo_not_class,
       global_pseudo_not_id;

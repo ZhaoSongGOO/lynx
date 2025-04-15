@@ -11,7 +11,7 @@
 
 #include "base/trace/native/trace_event.h"
 #include "core/base/js_constants.h"
-#include "core/base/lynx_trace_categories.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/runtime/vm/lepus/array.h"
 #include "core/runtime/vm/lepus/byte_array.h"
 #include "core/runtime/vm/lepus/table.h"
@@ -37,7 +37,7 @@ static const int Alignment = 8;
 LepusDecoder::LepusDecoder() : index_(0){};
 
 lepus_value LepusDecoder::DecodeMessage(char *buffer, uint32_t len) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusDecoder::DecodeMessage");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_DECODE_MESSAGE);
   index_ = 0;
   buffer_ = buffer;
   len_ = len;
@@ -344,7 +344,7 @@ std::optional<piper::Object> LepusDecoder::forwardJSDictionary(
 
 std::vector<int8_t> LepusEncoder::EncodeMessage(
     const lynx::lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusEncoder::EncodeMessage",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_ENCODE_MESSAGE,
               [&value](perfetto::EventContext ctx) {
                 std::stringstream ss;
                 value.PrintValue(ss);
@@ -359,7 +359,7 @@ std::vector<int8_t> LepusEncoder::EncodeMessage(
 
 void LepusEncoder::WriteValue(std::vector<int8_t> &vec,
                               const lynx::lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusEncoder::WriteValue");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_WRITE_VALUE);
   if (value.IsJSValue()) {
     WriteJSValue(vec, value);
     return;
@@ -446,7 +446,7 @@ void LepusEncoder::WriteValue(std::vector<int8_t> &vec,
 
 void LepusEncoder::WriteString(std::vector<int8_t> &vec,
                                const base::String &string) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusEncoder::WriteString",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_WRITE_STRING,
               [&string](perfetto::EventContext ctx) {
                 auto *debug = ctx.event()->add_debug_annotations();
                 debug->set_name("write_string");
@@ -459,7 +459,7 @@ void LepusEncoder::WriteString(std::vector<int8_t> &vec,
 }
 
 void LepusEncoder::WriteSize(std::vector<int8_t> &vec, const size_t size) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusEncoder::WriteSize",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_WRITE_SIZE,
               [&size](perfetto::EventContext ctx) {
                 auto *debug = ctx.event()->add_debug_annotations();
                 debug->set_name("write_size");
@@ -486,7 +486,7 @@ void LepusEncoder::WriteSize(std::vector<int8_t> &vec, const size_t size) {
 
 void LepusEncoder::WriteJSValue(std::vector<int8_t> &vec,
                                 const lepus::Value &value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusEncoder::WriteJSValue",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_DECODER_WRITE_JS_VALUE,
               [&value](perfetto::EventContext ctx) {
                 std::stringstream ss;
                 value.PrintValue(ss);

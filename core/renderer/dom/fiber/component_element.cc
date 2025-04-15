@@ -6,6 +6,7 @@
 
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 
 namespace lynx {
@@ -109,8 +110,7 @@ CSSFragment* ComponentElement::GetCSSFragment() {
 }
 
 void ComponentElement::PrepareForRootCSSVariables() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ComponentElement::PrepareForRootCSSVariables");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, COMPONENT_ELEMENT_PREPARE_ROOT_CSS);
   auto* rule_set = style_sheet_->rule_set();
   if (rule_set) {
     const auto& root_css_token = rule_set->GetRootToken();

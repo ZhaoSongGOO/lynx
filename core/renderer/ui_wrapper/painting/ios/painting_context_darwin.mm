@@ -99,26 +99,26 @@ void ExecuteSafely(const F& func) {
 }  // namespace
 
 void PaintingContextDarwinRef::InsertPaintingNode(int parent, int child, int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::InsertPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_INSERT_PAINTING_TASK);
 
   [uiOwner_ insertNode:child toParent:parent atIndex:index];
 }
 
 void PaintingContextDarwinRef::RemovePaintingNode(int parent, int child, int index, bool is_move) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::RemovePaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_REMOVE_PAINTING_TASK);
 
   [uiOwner_ detachNode:child];
 }
 
 void PaintingContextDarwinRef::DestroyPaintingNode(int parent, int child, int index) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::DestroyPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_DESTORY_PAINTING_TASK);
 
   [uiOwner_ recycleNode:child];
 }
 
 void PaintingContextDarwinRef::UpdateScrollInfo(int32_t container_id, bool smooth,
                                                 float estimated_offset, bool scrolling) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateScrollInfoTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_SCROLL_INFO_TASK);
 
   [uiOwner_ updateScrollInfo:container_id
              estimatedOffset:estimated_offset
@@ -143,7 +143,7 @@ void PaintingContextDarwinRef::UpdateNodeReadyPatching(std::vector<int32_t> read
     return;
   }
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateNodeReadyPatchingTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_NODE_READY_PATCHING);
 
   for (const auto& tag : ready_ids) {
     [uiOwner_ onNodeReady:tag];
@@ -158,7 +158,7 @@ void PaintingContextDarwinRef::UpdateNodeReloadPatching(std::vector<int32_t> rel
     return;
   }
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateNodeReloadPatchingTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_NODE_RELOAD_PATCHING);
 
   for (const auto& tag : reload_ids) {
     [uiOwner_ onNodeReload:tag];
@@ -166,19 +166,19 @@ void PaintingContextDarwinRef::UpdateNodeReloadPatching(std::vector<int32_t> rel
 }
 
 void PaintingContextDarwinRef::UpdateEventInfo(bool has_touch_pseudo) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateEventInfoTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_EVENT_INFO);
 
   [uiOwner_.uiContext.eventHandler.touchRecognizer setEnableTouchPseudo:has_touch_pseudo];
 }
 
 void PaintingContextDarwinRef::ListReusePaintingNode(int sign, const std::string& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListReusePaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_REUSE_PAINTING_NODE);
 
   [uiOwner_ listWillReuseNode:sign withItemKey:[NSString stringWithUTF8String:item_key.c_str()]];
 }
 
 void PaintingContextDarwinRef::ListCellWillAppear(int sign, const std::string& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListCellWillAppearTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_CELL_WILL_APPEAR);
 
   auto itemKey = [NSString stringWithUTF8String:item_key.c_str()];
   [uiOwner_ listCellWillAppear:sign withItemKey:itemKey];
@@ -186,7 +186,7 @@ void PaintingContextDarwinRef::ListCellWillAppear(int sign, const std::string& i
 
 void PaintingContextDarwinRef::ListCellDisappear(int sign, bool isExist,
                                                  const std::string& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListCellDisappearTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_CELL_DISAPPEAR);
 
   auto itemKey = [NSString stringWithUTF8String:item_key.c_str()];
   [uiOwner_ ListCellDisappear:sign exist:isExist withItemKey:itemKey];
@@ -197,7 +197,7 @@ void PaintingContextDarwinRef::UpdateContentOffsetForListContainer(int32_t conta
                                                                    float delta_x, float delta_y,
                                                                    bool is_init_scroll_offset,
                                                                    bool from_layout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateContentOffsetForListContainerTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_OFFSET_FOR_LIST);
 
   [uiOwner_ updateContentOffsetForListContainer:container_id
                                     contentSize:content_size
@@ -206,13 +206,13 @@ void PaintingContextDarwinRef::UpdateContentOffsetForListContainer(int32_t conta
 }
 
 void PaintingContextDarwinRef::InsertListItemPaintingNode(int32_t list_id, int32_t child_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::InsertListItemPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_INSERT_LIST_PAINTING_TASK);
 
   [uiOwner_ insertListComponent:list_id componentSign:child_id];
 };
 
 void PaintingContextDarwinRef::RemoveListItemPaintingNode(int32_t list_id, int32_t child_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::RemoveListItemPaintingNodeTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_REMOVE_LIST_PAINTING_TASK);
 
   [uiOwner_ removeListComponent:list_id componentSign:child_id];
 }
@@ -220,7 +220,7 @@ void PaintingContextDarwinRef::RemoveListItemPaintingNode(int32_t list_id, int32
 void PaintingContextDarwinRef::SetNeedMarkDrawEndTiming(
     std::weak_ptr<shell::TimingCollectorPlatform> weak_timing_collector,
     const tasm::PipelineID& pipeline_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::SetNeedMarkDrawEndTimingTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_NEED_MARK_TIMING);
 
   if (auto timing_collector_platform = weak_timing_collector.lock()) {
     timing_collector_platform->SetNeedMarkDrawEndTiming(pipeline_id);
@@ -238,7 +238,7 @@ void PaintingContextDarwin::SetKeyframes(std::unique_ptr<PropBundle> keyframes_d
   __weak LynxUIOwner* uiOwner = uiOwner_;
   Enqueue([uiOwner,
            keyframesDict = static_cast<PropBundleDarwin*>(keyframes_data.get())->dictionary()]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::SetKeyframesTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_KEYFRAME_TASK);
 
     [uiOwner updateAnimationKeyframes:keyframesDict];
   });
@@ -314,7 +314,7 @@ void PaintingContextDarwin::CreatePaintingNode(int sign, const std::string& tag,
       base::TaskRunnerManufactor::PostTaskToConcurrentLoop([async_task]() { async_task->Run(); },
                                                            base::ConcurrentTaskType::HIGH_PRIORITY);
       Enqueue([async_task, uiOwner, sign, tagName, props]() {
-        TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::CreatePaintingNodeAsyncTask");
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_CREATE_PAINTING_NODE_ASYNC);
 
         async_task->Run();
         LynxUI* ui = async_task->GetFuture().get();
@@ -326,7 +326,7 @@ void PaintingContextDarwin::CreatePaintingNode(int sign, const std::string& tag,
       Enqueue([uiOwner, sign, tagName, clazz, state, eventSet = pda->event_set(),
                lepusEventSet = pda->lepus_event_set(), props, node_index,
                gestureDetectorSet = pda->gesture_detector_set()]() {
-        TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::CreatePaintingNodeSyncTask");
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_CREATE_PAINTING_NODE_SYNC);
 
         [uiOwner createUISyncWithSign:sign
                               tagName:tagName
@@ -345,7 +345,7 @@ void PaintingContextDarwin::CreatePaintingNode(int sign, const std::string& tag,
   Enqueue([uiOwner, sign, tagName, eventSet = pda->event_set(),
            lepusEventSet = pda->lepus_event_set(), props, node_index,
            gestureDetectorSet = pda->gesture_detector_set()]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::CreatePaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_CREATE_PAINTING_NODE);
 
     [uiOwner createUIWithSign:sign
                       tagName:tagName
@@ -364,7 +364,7 @@ void PaintingContextDarwin::UpdatePaintingNode(int id, bool tend_to_flatten,
   Enqueue([uiOwner, id, props = pda->dictionary(), eventSet = pda->event_set(),
            lepusEventSet = pda->lepus_event_set(),
            gestureDetectorSet = pda->gesture_detector_set()]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdatePaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_PAINTING_NODE);
 
     [uiOwner updateUIWithSign:id
                         props:props
@@ -392,7 +392,7 @@ void PaintingContextDarwin::UpdateLayout(int sign, float x, float y, float width
   __weak LynxUIOwner* uiOwner = uiOwner_;
   Enqueue([uiOwner, sign, x, y, width, height, padding = UI_EDGE_INSETS(paddings),
            border = UI_EDGE_INSETS(borders), margin = UI_EDGE_INSETS(margins), stickyArr]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdateLayoutTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_LAYOUT_TASK);
 
     [uiOwner updateUI:sign
            layoutLeft:x
@@ -527,7 +527,7 @@ void PaintingContextDarwin::ConsumeGesture(int64_t idx, int32_t gesture_id,
   auto lepusMap = pub::ValueUtils::ConvertValueToLepusValue(params);
 
   Enqueue([uiOwner, idx, gesture_id, map = std::move(lepusMap)]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::ListReusePaintingNodeTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_LIST_REUSE_PAINTING_NODE);
 
     // Find the LynxUI associated with the given index (sign).
     LynxUI* ui = [uiOwner findUIBySign:(int)idx];
@@ -631,7 +631,7 @@ void PaintingContextDarwin::UpdatePlatformExtraBundle(int32_t signature,
   auto platform_bundle = static_cast<PlatformExtraBundleDarwin*>(bundle);
   __weak LynxUIOwner* uiOwner = uiOwner_;
   Enqueue([uiOwner, signature, value = platform_bundle->PlatformBundle()]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::UpdatePlatformExtraBundleTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_UPDATE_EXTRA_BUNDLE);
 
     [uiOwner onReceiveUIOperation:value onUI:signature];
   });
@@ -641,7 +641,7 @@ void PaintingContextDarwin::FinishLayoutOperation(const PipelineOptions& options
   is_layout_finish_ = true;
   __weak LynxUIOwner* uiOwner = uiOwner_;
   Enqueue([uiOwner, weak_queue = std::weak_ptr<shell::DynamicUIOperationQueue>(queue_), options]() {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "UIOperationQueue::FinishLayoutOperationTask");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_FINISH_LAYOUT_OPERATION);
 
     if (auto queue = weak_queue.lock()) {
       [uiOwner finishLayoutOperation:options.operation_id componentID:options.list_comp_id_];

@@ -10,10 +10,9 @@
 #include "base/include/log/logging.h"
 #include "base/include/string/string_number_convert.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/css/computed_css_style.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/base_def.h"
 #include "core/renderer/utils/base/tasm_constants.h"
 #include "core/renderer/utils/base/tasm_utils.h"
@@ -164,7 +163,7 @@ std::unique_ptr<lepus::Value> RadonPage::GetPageData() {
 
 // acquire specified value from page data.
 lepus::Value RadonPage::GetPageDataByKey(const std::vector<std::string> &keys) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "GetPageDataByKey",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_GET_PAGE_DATA_BY_KEY,
               [&keys](perfetto::EventContext ctx) {
                 ctx.event()->set_name("GetPageDataByKey");
                 auto *debug = ctx.event()->add_debug_annotations();
@@ -281,8 +280,7 @@ bool RadonPage::UpdatePage(const lepus::Value &table,
       !update_page_option.update_first_time &&
       !update_page_option.global_props_changed &&
       !update_page_option.reload_from_js) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS,
-                "RadonPage::UpdatePage::CheckTableShouldUpdated");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_CHECK_TABLE_SHOULD_UPDATED);
     bool update_data_is_equal = false;
     if (ShouldKeepPageData()) {
       if (data_.IsObject()) {
@@ -332,7 +330,7 @@ bool RadonPage::UpdatePage(const lepus::Value &table,
   this->attribute_holder()->Reset();
   {
     // using radon diff
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "RadonPage::UpdatePage::RadonDiff");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, RADON_UPDATE_PAGE_DIFF);
     if (update_page_option.update_first_time) {
       tasm::TimingCollector::Instance()->Mark(tasm::timing::kMtsRenderStart);
       lepus::Value p1(this);
@@ -509,7 +507,7 @@ void RadonPage::DispatchForDiff(const DispatchOption &option) {
 bool RadonPage::RefreshWithGlobalProps(const lynx::lepus::Value &table,
                                        bool should_render,
                                        PipelineOptions &pipeline_options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RefreshWithGlobalProps",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_REFRESH_WITH_GLOBAL_PROPS,
               [&should_render](lynx::perfetto::EventContext ctx) {
                 auto *debug = ctx.event()->add_debug_annotations();
                 debug->set_name("should_render");

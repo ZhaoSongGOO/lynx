@@ -8,7 +8,6 @@
 
 #include "base/include/debug/lynx_assert.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/worklet/base/worklet_utils.h"
 #include "core/renderer/worklet/lepus_element.h"
@@ -25,8 +24,7 @@ LepusAnimationFrameTaskHandler::FrameTask::FrameTask(
 
 void LepusAnimationFrameTaskHandler::FrameTask::Execute(
     int64_t time_stamp, std::shared_ptr<tasm::TemplateAssembler> tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LepusAnimationFrameTaskHandler::FrameTask::Execute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ANIMATION_FRAME_TASK_EXECUTE);
   if (cancelled_ || tasm == nullptr) {
     return;
   }
@@ -67,8 +65,7 @@ LepusAnimationFrameTaskHandler::~LepusAnimationFrameTaskHandler() { Destroy(); }
 
 int64_t LepusAnimationFrameTaskHandler::RequestAnimationFrame(
     std::unique_ptr<NapiFrameCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "LepusAnimationFrameTaskHandler::RequestAnimationFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ANIMATION_FRAME_REQUEST_FRAME);
   const int64_t task_id = current_index_++;
   std::unique_ptr<FrameTask> task =
       std::make_unique<FrameTask>(std::move(callback));
@@ -99,7 +96,7 @@ void LepusAnimationFrameTaskHandler::CancelAnimationFrame(int64_t id) {
 
 void LepusAnimationFrameTaskHandler::DoFrame(
     int64_t time_stamp, std::shared_ptr<tasm::TemplateAssembler> tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusAnimationFrameTaskHandler::DoFrame");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ANIMATION_FRAME_DO_FRAME);
   doing_frame_ = true;
   TaskMap& task_map = CurrentFrameTaskMap();
   for (auto& itr : task_map) {
@@ -149,7 +146,7 @@ LepusApiHandler::FuncTask::FuncTask(std::unique_ptr<NapiFuncCallback> callback)
 
 void LepusApiHandler::FuncTask::Execute(const lepus::Value& value,
                                         tasm::TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::FuncTask::Execute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_FUNC_TASK_EXECUTE);
   if (cancelled_ || tasm == nullptr) {
     return;
   }
@@ -167,7 +164,7 @@ void LepusApiHandler::FuncTask::Execute(const lepus::Value& value,
 
 void LepusApiHandler::FuncTask::Execute(Napi::Value value,
                                         tasm::TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::FuncTask::Execute");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_FUNC_TASK_EXECUTE);
   if (cancelled_ || tasm == nullptr) {
     return;
   }
@@ -184,7 +181,7 @@ void LepusApiHandler::FuncTask::Execute(Napi::Value value,
 void LepusApiHandler::FuncTask::Cancel() { cancelled_ = true; }
 
 int64_t LepusApiHandler::StoreTask(std::unique_ptr<NapiFuncCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::StoreTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_STORE_TASK);
   const int64_t task_id = current_task_id_++;
   std::unique_ptr<FuncTask> task =
       std::make_unique<FuncTask>(std::move(callback));
@@ -196,7 +193,7 @@ int64_t LepusApiHandler::StoreTask(std::unique_ptr<NapiFuncCallback> callback) {
 // void LepusApiHandler::Destroy() { lepus_task_map_.clear(); }
 int64_t LepusApiHandler::StoreTimedTask(
     std::unique_ptr<NapiFuncCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::StoreTimedTask");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_STORE_TIMED_TASK);
   const int64_t task_id = current_task_id_++;
   std::unique_ptr<FuncTask> task =
       std::make_unique<FuncTask>(std::move(callback));
@@ -214,7 +211,7 @@ bool LepusApiHandler::HasPendingCalling() { return !lepus_task_map_.empty(); }
 void LepusApiHandler::InvokeWithTaskID(int64_t task_id,
                                        const lepus::Value& value,
                                        tasm::TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::InvokeWithTaskID");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_INVOKE_WITH_TASK_ID);
   LepusTaskMap& task_map = lepus_task_map_;
   auto itr = task_map.find(task_id);
   if (itr != task_map.end()) {
@@ -225,7 +222,7 @@ void LepusApiHandler::InvokeWithTaskID(int64_t task_id,
 
 void LepusApiHandler::InvokeWithTaskID(int64_t task_id, Napi::Value value,
                                        tasm::TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::InvokeWithTaskID");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_INVOKE_WITH_TASK_ID);
   LepusTaskMap& task_map = lepus_task_map_;
   auto itr = task_map.find(task_id);
   if (itr != task_map.end()) {
@@ -236,7 +233,7 @@ void LepusApiHandler::InvokeWithTaskID(int64_t task_id, Napi::Value value,
 
 void LepusApiHandler::InvokeWithTimedTaskID(int64_t task_id, Napi::Value value,
                                             tasm::TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusApiHandler::InvokeWithTimedTaskID");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_API_INVOKE_WITH_TIMED_TASK_ID);
   auto itr = lepus_timed_task_map_.find(task_id);
   if (itr != lepus_timed_task_map_.end()) {
     itr->second->Execute(value, tasm);

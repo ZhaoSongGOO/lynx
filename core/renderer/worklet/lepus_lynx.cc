@@ -10,7 +10,6 @@
 
 #include "base/include/fml/make_copyable.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/vdom/radon/radon_base.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
@@ -35,14 +34,14 @@ LepusLynx::LepusLynx(Napi::Env env, const std::string& entry_name,
 uint32_t LepusLynx::SetTimeout(std::unique_ptr<NapiFuncCallback> callback,
                                int64_t delay) {
   int32_t instance_id = tasm_->GetInstanceId();
-  TRACE_EVENT("lynx", "MainThread::SetTimeout", "delay", delay, "instance_id",
-              instance_id);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_MAIN_THREAD_SET_TIMEOUT, "delay",
+              delay, "instance_id", instance_id);
   EnsureTimeTaskInvoker();
   auto callback_id = task_handler_->StoreTimedTask(std::move(callback));
   auto task_id = timer_->SetTimeout(
       fml::MakeCopyable([env = NapiEnv(), callback_id, this, instance_id]() {
-        TRACE_EVENT("lynx", "MainThread::InvokeSetTimeoutTask", "instance_id",
-                    instance_id);
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_MAIN_THREAD_INVOKE_TIMEOUT_TASK,
+                    "instance_id", instance_id);
         tasm::timing::LongTaskMonitor::Scope long_task_scope(
             instance_id, tasm::timing::kTimerTask,
             tasm::timing::kTaskNameLepusLynxSetTimeout);
@@ -62,14 +61,14 @@ uint32_t LepusLynx::SetTimeout(std::unique_ptr<NapiFuncCallback> callback,
 uint32_t LepusLynx::SetInterval(std::unique_ptr<NapiFuncCallback> callback,
                                 int64_t delay) {
   int32_t instance_id = tasm_->GetInstanceId();
-  TRACE_EVENT("lynx", "MainThread::SetInterval", "delay", delay, "instance_id",
-              instance_id);
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_MAIN_THREAD_SET_INTERVAL, "delay",
+              delay, "instance_id", instance_id);
   EnsureTimeTaskInvoker();
   auto callback_id = task_handler_->StoreTimedTask(std::move(callback));
   auto task_id = timer_->SetInterval(
       [callback_id, this, instance_id]() {
-        TRACE_EVENT("lynx", "MainThread::InvokeSetIntervalTask", "instance_id",
-                    instance_id);
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_MAIN_THREAD_INVOKE_INTERVAL_TASK,
+                    "instance_id", instance_id);
         tasm::timing::LongTaskMonitor::Scope long_task_scope(
             instance_id, tasm::timing::kTimerTask,
             tasm::timing::kTaskNameLepusLynxSetInterval);
@@ -112,7 +111,7 @@ void LepusLynx::EnsureTimeTaskInvoker() {
 void LepusLynx::TriggerLepusBridge(const std::string& method_name,
                                    Napi::Object method_detail,
                                    std::unique_ptr<NapiFuncCallback> callback) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusLynx:::TriggerLepusBridge",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_LYNX_TRIGGER_LEPUS_BRIDGE,
               "method_name", method_name);
 
   constexpr const static char* kEventDetail = "methodDetail";
@@ -136,7 +135,7 @@ void LepusLynx::TriggerLepusBridge(const std::string& method_name,
 
 Napi::Value LepusLynx::TriggerLepusBridgeSync(const std::string& method_name,
                                               Napi::Object method_detail) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusLynx:::TriggerLepusBridgeSync",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_LYNX_TRIGGER_LEPUS_BRIDGE_SYNC,
               "method_name", method_name);
   LOGI("LepusLynx TriggerLepusBridgeSync triggered");
   if (tasm_ == nullptr) {

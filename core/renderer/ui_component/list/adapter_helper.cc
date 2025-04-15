@@ -9,8 +9,8 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/lynx_sub_error_code.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 
 namespace lynx {
@@ -41,7 +41,7 @@ std::string AdapterHelper::DiffResult::ToString() const {
 
 //  update "diff-result" info  on radon_diff architecture
 bool AdapterHelper::UpdateDiffResult(const lepus::Value& diff_result) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateDiffResult");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_DIFF_RESULT);
   bool has_update = false;
   if (diff_result.IsObject()) {
     ForEachLepusValue(diff_result,
@@ -73,7 +73,7 @@ bool AdapterHelper::UpdateDiffResult(const lepus::Value& diff_result) {
 }
 
 void AdapterHelper::UpdateInsertions(const lepus::Value& diff_insertions) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateInsertions");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_INSERTIONS);
   diff_result_.insertions_.clear();
   if (diff_insertions.IsArray()) {
     ForEachLepusValue(diff_insertions, [this](const lepus::Value& key,
@@ -86,7 +86,7 @@ void AdapterHelper::UpdateInsertions(const lepus::Value& diff_insertions) {
 }
 
 void AdapterHelper::UpdateRemovals(const lepus::Value& diff_removals) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateRemovals");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_REMOVALS);
   diff_result_.removals_.clear();
   if (diff_removals.IsArray()) {
     ForEachLepusValue(diff_removals, [this](const lepus::Value& key,
@@ -99,7 +99,7 @@ void AdapterHelper::UpdateRemovals(const lepus::Value& diff_removals) {
 }
 
 void AdapterHelper::UpdateUpdateFrom(const lepus::Value& diff_update_from) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateUpdateFrom");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FROM);
   diff_result_.update_from_.clear();
   if (diff_update_from.IsArray()) {
     ForEachLepusValue(diff_update_from, [this](const lepus::Value& key,
@@ -112,7 +112,7 @@ void AdapterHelper::UpdateUpdateFrom(const lepus::Value& diff_update_from) {
 }
 
 void AdapterHelper::UpdateUpdateTo(const lepus::Value& diff_update_to) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateUpdateTo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_TO);
   diff_result_.update_to_.clear();
   if (diff_update_to.IsArray()) {
     ForEachLepusValue(diff_update_to, [this](const lepus::Value& key,
@@ -125,7 +125,7 @@ void AdapterHelper::UpdateUpdateTo(const lepus::Value& diff_update_to) {
 }
 
 void AdapterHelper::UpdateMoveTo(const lepus::Value& diff_move_to) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateMoveTo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_MOVE_TO);
   diff_result_.move_to_.clear();
   if (diff_move_to.IsArray()) {
     ForEachLepusValue(diff_move_to, [this](const lepus::Value& key,
@@ -138,7 +138,7 @@ void AdapterHelper::UpdateMoveTo(const lepus::Value& diff_move_to) {
 }
 
 void AdapterHelper::UpdateMoveFrom(const lepus::Value& diff_move_from) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateMoveFrom");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_MOVE_FROM);
   diff_result_.move_from_.clear();
   if (diff_move_from.IsArray()) {
     ForEachLepusValue(diff_move_from, [this](const lepus::Value& key,
@@ -193,7 +193,7 @@ fml::RefPtr<lepus::Dictionary> AdapterHelper::GenerateDiffInfo() const {
 
 //   update "item-key" info  on radon_diff architecture
 void AdapterHelper::UpdateItemKeys(const lepus::Value& item_keys_value) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateItemKeys");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_ITEM_KEYS);
   auto& item_keys = diff_result_.item_keys_;
   item_keys.clear();
   item_key_map_.clear();
@@ -237,7 +237,7 @@ void AdapterHelper::UpdateItemKeys(const lepus::Value& item_keys_value) {
 // update "estimated-height-px" info  on radon_diff architecture
 void AdapterHelper::UpdateEstimatedHeightsPx(
     const lepus::Value& estimated_heights_px) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateEstimatedHeightsPx");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_ESTIMATED_HEIGHT);
   estimated_heights_px_.clear();
   if (estimated_heights_px.IsArray()) {
     ForEachLepusValue(estimated_heights_px, [this](const lepus::Value& key,
@@ -254,7 +254,7 @@ void AdapterHelper::UpdateEstimatedHeightsPx(
 // update "estimated-main-axis-size-px" info  on radon_diff architecture
 void AdapterHelper::UpdateEstimatedSizesPx(
     const lepus::Value& estimated_sizes_px) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateEstimatedSizesPx");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_ESTIMATED_SIZE);
   estimated_sizes_px_.clear();
   if (estimated_sizes_px.IsArray()) {
     ForEachLepusValue(estimated_sizes_px, [this](const lepus::Value& key,
@@ -270,7 +270,7 @@ void AdapterHelper::UpdateEstimatedSizesPx(
 
 //  update "full-span" info  on radon_diff architecture
 void AdapterHelper::UpdateFullSpans(const lepus::Value& full_spans) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateFullSpans");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FULL_SPANS);
   full_spans_.clear();
   if (full_spans.IsArray()) {
     ForEachLepusValue(
@@ -284,7 +284,7 @@ void AdapterHelper::UpdateFullSpans(const lepus::Value& full_spans) {
 
 // update "sticky-bottom" info  on radon_diff architecture
 void AdapterHelper::UpdateStickyBottoms(const lepus::Value& sticky_bottoms) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateStickyBottoms");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_STICKY_BOTTOMS);
   sticky_bottoms_.clear();
   if (sticky_bottoms.IsArray()) {
     ForEachLepusValue(sticky_bottoms, [this](const lepus::Value& key,
@@ -298,7 +298,7 @@ void AdapterHelper::UpdateStickyBottoms(const lepus::Value& sticky_bottoms) {
 
 // update "sticky-top" info  on radon_diff architecture
 void AdapterHelper::UpdateStickyTops(const lepus::Value& sticky_tops) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateStickyTops");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_STICKY_TOPS);
   sticky_tops_.clear();
   if (sticky_tops.IsArray()) {
     ForEachLepusValue(sticky_tops, [this](const lepus::Value& key,
@@ -313,7 +313,7 @@ void AdapterHelper::UpdateStickyTops(const lepus::Value& sticky_tops) {
 // update "insert-action" on fiber architecture
 void AdapterHelper::UpdateFiberInsertAction(const lepus::Value& insert_action,
                                             bool only_parse_insertions) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateFiberInsertAction");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FIBER_INSERT_ACTION);
   if (!insert_action.IsArray()) {
     return;
   }
@@ -399,7 +399,7 @@ void AdapterHelper::UpdateFiberInsertAction(const lepus::Value& insert_action,
 // update "remove-action" on  fiber architecture
 void AdapterHelper::UpdateFiberRemoveAction(const lepus::Value& remove_action,
                                             bool only_parse_removals) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateFiberRemoveAction");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FIBER_REMOVE_ACTION);
   if (!remove_action.IsArray()) {
     return;
   }
@@ -466,7 +466,7 @@ void AdapterHelper::UpdateFiberRemoveAction(const lepus::Value& remove_action,
 // update "update-action" on fiber architecture
 void AdapterHelper::UpdateFiberUpdateAction(const lepus::Value& update_action,
                                             bool only_parse_update) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateFiberUpdateAction");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FIBER_UPDATE_ACTION);
   if (!update_action.IsArray()) {
     return;
   }
@@ -578,7 +578,7 @@ void AdapterHelper::UpdateFiberUpdateAction(const lepus::Value& update_action,
 
 // update extra info such as sticky、full-span on fiber architecture
 void AdapterHelper::UpdateFiberExtraInfo() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AdapterHelper::UpdateFiberExtraInfo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, ADAPTER_HELPER_UPDATE_FIBER_EXTRA_INFO);
   // update item_key_map_ from item_keys_ vector after parse insert / remove /
   // update actions
   auto& item_keys = diff_result_.item_keys_;

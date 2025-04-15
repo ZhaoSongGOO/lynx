@@ -5,7 +5,6 @@
 #include "core/renderer/dom/vdom/radon/radon_dispatch_option.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/dom/vdom/radon/radon_base.h"
 #include "core/renderer/page_proxy.h"

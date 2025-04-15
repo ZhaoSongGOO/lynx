@@ -10,11 +10,11 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/vdom/radon/list_reuse_pool.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_types.h"
 #include "core/renderer/utils/base/tasm_utils.h"
 #include "core/renderer/utils/diff_algorithm.h"
@@ -41,7 +41,7 @@ RadonDiffListNode2::RadonDiffListNode2(lepus::Context* context,
 bool RadonDiffListNode2::ShouldFlush(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode::ShouldFlush",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_SHOULD_FLUSH,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -311,7 +311,7 @@ void RadonDiffListNode2::SetupListInfo(bool list_updated) {
 void RadonDiffListNode2::RadonDiffChildren(
     const std::unique_ptr<RadonBase>& old_radon_child,
     const DispatchOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode::RadonDiffChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_DIFF_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -377,7 +377,7 @@ void RadonDiffListNode2::DispatchFirstTime() {
 int32_t RadonDiffListNode2::ComponentAtIndex(uint32_t index,
                                              int64_t operationId,
                                              bool enable_reuse_notification) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode2::ComponentAtIndex");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_COMPONENT_AT_INDEX);
   if (index >= components_.size()) {
     LOGE("index out of range in RadonDiffListNode2::ComponentAtIndex.");
     return 0;
@@ -593,7 +593,7 @@ void UpdateRadonComponentWithInitialData(RadonComponent* comp,
 void RadonDiffListNode2::SyncComponentExtraInfo(RadonComponent* comp,
                                                 uint32_t index,
                                                 int64_t operation_id) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonDiffListNode2::SyncComponentExtraInfo",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_2_SYNC_COMPONENT_EXTRA_INFO,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });

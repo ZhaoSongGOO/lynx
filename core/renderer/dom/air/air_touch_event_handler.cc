@@ -7,11 +7,11 @@
 #include <utility>
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/air/air_element/air_page_element.h"
 #include "core/renderer/dom/element_manager.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/value_utils.h"
 #include "core/runtime/vm/lepus/array.h"
 #include "core/runtime/vm/lepus/json_parser.h"
@@ -39,7 +39,7 @@ void AirTouchEventHandler::HandleTouchEvent(TemplateAssembler *tasm,
                                             float x, float y, float client_x,
                                             float client_y, float page_x,
                                             float page_y) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirTouchEventHandler::HandleTouchEvent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_TOUCH_EVENT_HANDLE_TOUCH_EVENT);
 
   if (tasm == nullptr) {
     LOGE("HandleTouchEvent error: tasm is null.");
@@ -65,7 +65,7 @@ void AirTouchEventHandler::FireTouchEvent(
     const EventHandler *handler, const AirElement *target,
     const AirElement *current_target, float x, float y, float client_x,
     float client_y, float page_x, float page_y) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirTouchEventHandler::FireTouchEvent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_TOUCH_EVENT_FIRE_TOUCH_EVENT);
 
   const lepus::Value &value =
       GetTouchEventParam(handler->name(), target, current_target, x, y,
@@ -86,8 +86,7 @@ void AirTouchEventHandler::FireTouchEvent(
 size_t AirTouchEventHandler::TriggerComponentEvent(
     TemplateAssembler *tasm, const std::string &event_name,
     const lepus::Value &data) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "AirTouchEventHandler::TriggerComponentEvent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_TOUCH_EVENT_TRIGGER_COMPONENT_EVENT);
 
   BASE_STATIC_STRING_DECL(kComponentId, "componentId");
   lepus_value component_id = data.GetProperty(kComponentId);
@@ -188,7 +187,7 @@ void AirTouchEventHandler::HandleCustomEvent(TemplateAssembler *tasm,
                                              const std::string &name, int tag,
                                              const lepus::Value &params,
                                              const std::string &pname) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "AirTouchEventHandler::HandleCustomEvent");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_TOUCH_EVENT_HANDLE_CUSTOM_EVENT);
   LOGI("SendCustomEvent event name:" << name << " tag:" << tag);
 
   if (tasm == nullptr) {
@@ -288,8 +287,7 @@ bool AirTouchEventHandler::GenerateEventOperation(
     const std::vector<AirElement *> &response_chain,
     const std::string &event_name, const EventOption &option,
     std::vector<AirEventOperation> &operation) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "AirTouchEventHandler::GenerateEventOperation");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, AIR_TOUCH_EVENT_GENERATE_EVENT_OPERATION);
   if (response_chain.empty()) {
     LOGE(
         "Lynx_air HandleEventInternal failed, response_chain empty & "

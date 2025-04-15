@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "base/include/string/string_number_convert.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/css/select_element_token.h"
 #include "core/renderer/dom/vdom/radon/node_select_options.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
@@ -154,7 +153,7 @@ RadonNodeSelectResult RadonNodeSelector::Select(
   }
   LOGI(" SelectNode: " << options.ToString()
                        << ", root_impl_id: " << root->ImplId());
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonNodeSelector::Select");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_NODE_SELECTOR_SELECT);
 
   RadonNodeSelector selector;
   selector.Distribute(root, options);

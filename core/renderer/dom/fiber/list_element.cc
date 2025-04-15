@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-#include "core/base/trace/trace_event_def.h"
 #include "core/renderer/dom/list_component_info.h"
 #include "core/renderer/dom/vdom/radon/radon_list_base.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_types.h"
 #include "core/services/feature_count/feature_counter.h"
 #include "core/services/long_task_timing/long_task_monitor.h"
@@ -66,7 +66,7 @@ void ListElement::OnNodeAdded(FiberElement* child) {
 }
 
 void ListElement::ParallelFlushAsRoot() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::ParallelFlushAsRoot");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_PARALLEL_FLUSH_AS_ROOT);
   if (!element_manager()->GetEnableParallelElement()) {
     return;
   }
@@ -85,14 +85,14 @@ void ListElement::ParallelFlushAsRoot() {
   // step1:wait for the tasm worker queue to complete execution
 
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "TasmTaskRunner::WaitForCompletion");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, TASM_TASK_RUNNER_WAIT_FOR_COMPLETION);
     element_manager()->GetTasmWorkerTaskRunner()->WaitForCompletion();
   }
 
   // step2:consume the reduce task of the list item after resloving
   // the props
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "AsyncResolveListElementProperty");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ASYNC_RESOLVE_PROPERTY);
     auto& parallel_task_queue = element_manager()->ParallelTasks();
     while (!parallel_task_queue.empty()) {
       parallel_task_queue.front().get()->Run();
@@ -104,7 +104,7 @@ void ListElement::ParallelFlushAsRoot() {
   // step 3:consume the reduce task of the list item after resolving the element
   // tree
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "AsyncResolveListElementTree");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ASYNC_RESOLVE_TREE);
 
     // TODO(@hujing.1) move ParallelResolveTreeTasks to the list_element
     auto& parallel_resolve_element_tree_task_queue =
@@ -172,7 +172,7 @@ void ListElement::ComponentAtIndexes(
     const fml::RefPtr<lepus::CArray>& index_array,
     const fml::RefPtr<lepus::CArray>& operation_id_array,
     bool enable_reuse_notification /* = false */) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::ComponentAtIndexes",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_COMPONENT_AT_INDEXES,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -197,7 +197,7 @@ void ListElement::ComponentAtIndexes(
 }
 
 void ListElement::EnqueueComponent(int32_t sign) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::EnqueueComponent",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ENQUEUE_COMPONENT,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -220,7 +220,7 @@ void ListElement::TickElement(fml::TimePoint& time) {
 void ListElement::UpdateCallbacks(const lepus::Value& component_at_index,
                                   const lepus::Value& enqueue_component,
                                   const lepus::Value& component_at_indexes) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::UpdateCallbacks",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_UPDATE_CALLBACKS,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -235,7 +235,7 @@ void ListElement::UpdateCallbacks(const lepus::Value& component_at_index,
 
 void ListElement::NotifyListReuseNode(const fml::RefPtr<FiberElement>& child,
                                       const base::String& item_key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::NotifyListReuseNode",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_NOTIFY_REUSE_NODE,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -408,7 +408,7 @@ void ListElement::PropsUpdateFinish() {
  *diff information.
  **/
 void ListElement::OnListElementUpdated(const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListElement::OnListElementUpdated");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_ON_ELEMENT_UPDATED);
   if (DisableListPlatformImplementation() && list_container_delegate()) {
     list_container_delegate()->OnLayoutChildren(options);
   }

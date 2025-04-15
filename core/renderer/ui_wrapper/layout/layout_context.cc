@@ -16,8 +16,6 @@
 #include "base/include/log/logging.h"
 #include "base/include/no_destructor.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
-#include "core/base/trace/trace_event_def.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/public/layout_node_value.h"
 #include "core/renderer/dom/attribute_holder.h"
@@ -30,6 +28,7 @@
 #include "core/renderer/starlight/types/layout_constraints.h"
 #include "core/renderer/starlight/types/layout_directions.h"
 #include "core/renderer/starlight/types/nlength.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_wrapper/layout/layout_context_data.h"
 #include "core/renderer/ui_wrapper/layout/no_needed_layout_list.h"
 #include "core/renderer/utils/lynx_env.h"
@@ -617,7 +616,7 @@ void LayoutContext::AttachLayoutNodeTypeInner(
     node->set_type(LayoutNodeType::COMMON);
     return;
   }
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "LayoutContext.CreateLayoutNode");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_CREATE_NODE);
   int result = platform_impl_->CreateLayoutNode(node->id(), tag.str(),
                                                 props.get(), allow_inline);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
@@ -653,7 +652,7 @@ LayoutNode* LayoutContext::FindNodeById(int32_t id) {
 }
 
 void LayoutContext::DispatchLayoutUpdates(const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LayoutContext::DispatchLayoutUpdates");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_DISPATCH_LAYOUT_UPDATES);
   tasm::timing::LongTaskMonitor::Scope longTaskScope(
       instance_id_, tasm::timing::kNativeFuncTask,
       "LayoutContext::DispatchLayoutUpdates");
@@ -783,18 +782,18 @@ void LayoutContext::Layout(const PipelineOptions& options) {
   // Dispatch OnLayoutBefore
   LOGD("[Layout] Layout start" << view_port_info_str);
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "DispatchLayoutBeforeRecursively");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_DISPATCH_BEFORE_RECURSIVE);
     DispatchLayoutBeforeRecursively(root_);
   }
   // CalculateLayout
   LOGV("[Layout] Computing layout" << view_port_info_str);
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "CalculateLayout");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, LAYOUT_CONTEXT_CALCULATE_LAYOUT);
     root_->CalculateLayout(GetFixedNodeSet());
   }
   LOGV("[Layout] Updating layout result" << view_port_info_str);
   {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "LayoutRecursively");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_LAYOUT_RECURSIVE);
     LayoutRecursively(root(), options);
   }
   LOGV("[Layout] Dispatch layout after" << view_port_info_str);
@@ -808,7 +807,7 @@ void LayoutContext::Layout(const PipelineOptions& options) {
         base::CurrentTimeMicroseconds();
   }
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnLayoutAfter");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_ON_LAYOUT_AFTER);
 
   auto root_size = root()->slnode()->GetLayoutResult().size_;
   platform_impl_->UpdateRootSize(root_size.width_, root_size.height_);
@@ -849,7 +848,7 @@ void LayoutContext::Layout(const PipelineOptions& options) {
   }
 
   TRACE_EVENT_INSTANT(
-      LYNX_TRACE_CATEGORY, "LayoutContext.LayoutResult",
+      LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_LAYOUT_RESULT,
       [&](lynx::perfetto::EventContext ctx) {
         ctx.event()->add_debug_annotations(
             "width", base::FormatString("%.1f", layout_result.size_.width_));
@@ -1141,16 +1140,18 @@ void LayoutContext::OnLayoutEvent(const starlight::LayoutObject* node,
                                   const starlight::LayoutEventData& data) {
   switch (type) {
     case starlight::LayoutEventType::UpdateMeasureBegin: {
-      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateMeasure");
+      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_UPDATE_MEASURE);
     } break;
     case starlight::LayoutEventType::UpdateAlignmentBegin: {
-      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateAlignment");
+      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, LAYOUT_CONTEXT_UPDATE_ALIGNMENT);
     } break;
     case starlight::LayoutEventType::RemoveAlgorithmRecursiveBegin: {
-      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "RemoveAlgorithmRecursive");
+      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                        LAYOUT_CONTEXT_REMOVE_ALGORITHM_RECURSIVE);
     } break;
     case starlight::LayoutEventType::RoundToPixelGridBegin: {
-      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "RoundToPixelGrid");
+      TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                        LAYOUT_CONTEXT_ROUND_TO_PIXEL_GRID);
     } break;
     case starlight::LayoutEventType::UpdateMeasureEnd:
     case starlight::LayoutEventType::UpdateAlignmentEnd:

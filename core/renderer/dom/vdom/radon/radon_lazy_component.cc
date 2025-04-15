@@ -6,9 +6,9 @@
 #include <utility>
 
 #include "base/include/log/logging.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/page_proxy.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/utils/base/base_def.h"
 #include "core/renderer/utils/base/tasm_utils.h"
 #include "core/renderer/utils/value_utils.h"
@@ -104,7 +104,7 @@ void RadonLazyComponent::UpdateSystemInfoToContext(
 void RadonLazyComponent::DeriveFromMould(ComponentMould* data) {
   // In the case of LazyComponent, DerivedFromMould maybe called after
   // setProps(Async Mode) We should merge the initProps and incoming properties.
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyComponent::DeriveFromMould");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_COMPONENT_DERIVE_FROM_MOULD);
   if (data != nullptr) {
     init_properties_ =
         lepus::Value::Clone(data->properties(), IsInLepusNGContext());
@@ -139,7 +139,7 @@ void RadonLazyComponent::DeriveFromMould(ComponentMould* data) {
 }
 
 bool RadonLazyComponent::SetContext(TemplateAssembler* tasm) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyComponent::SetContext");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_COMPONENT_SET_CONTEXT);
   auto entry = tasm->FindTemplateEntry(entry_name_);
   if (entry == nullptr) {
     return false;
@@ -176,7 +176,7 @@ bool RadonLazyComponent::SetContext(TemplateAssembler* tasm) {
 }
 
 void RadonLazyComponent::RenderRadonComponent(RenderOption& option) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyComponent::RenderEntrance");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_COMPONENT_RENDER_ENTRANCE);
   if (!IsEmpty()) {
     lepus::Value p1(this);
     lepus::Value p4(option.recursively);
@@ -191,7 +191,7 @@ void RadonLazyComponent::RenderRadonComponent(RenderOption& option) {
 bool RadonLazyComponent::LoadLazyBundle(const std::string& url,
                                         TemplateAssembler* tasm,
                                         const uint32_t uid) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LazyComponent::LoadLazyBundle");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LAZY_COMPONENT_LOAD_LAZY_BUNDLE);
   if (url != entry_name_ || uid != uid_) {
     return false;
   }

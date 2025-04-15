@@ -9,9 +9,9 @@
 
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/base/threading/vsync_monitor.h"
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/services/feature_count/feature_counter.h"
 #include "core/services/long_task_timing/long_task_monitor.h"
 
@@ -61,7 +61,7 @@ void ElementVsyncProxy::RequestNextFrame() {
         reinterpret_cast<uintptr_t>(this),
         [weak_ptr, instance_id = element_manager_->GetInstanceId()](
             int64_t frame_start, int64_t frame_end) {
-          TRACE_EVENT(LYNX_TRACE_CATEGORY, "ElementVsyncProxy::VsyncFrameTime",
+          TRACE_EVENT(LYNX_TRACE_CATEGORY, ELEMENT_VSYNC_PROXY_FRAME_TIME,
                       [instance_id](lynx::perfetto::EventContext ctx) {
                         ctx.event()->add_debug_annotations(
                             "instance_id", std::to_string(instance_id));

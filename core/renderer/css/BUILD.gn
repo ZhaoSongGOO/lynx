@@ -15,6 +15,7 @@ lynx_core_source_set("css") {
   exec_script("//lynx/tools/css_generator/css_parser_generator.py")
   public_deps = [
     "//lynx/core/base",
+    "//lynx/core/renderer/trace:renderer_trace",
     "//lynx/core/runtime/vm/lepus",
     "//lynx/core/style",
     "//lynx/third_party/rapidjson",

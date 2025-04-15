@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "base/include/log/logging.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_anchor_manager.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
@@ -131,7 +132,8 @@ void ListLayoutManager::SendAnchorDebugInfo(
 
 void ListLayoutManager::InitLayoutAndAnchor(
     ListAnchorManager::AnchorInfo& anchor_info, int finishing_binding_index) {
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "RetrieveAnchorInfoBeforeLayout");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    LIST_LAYOUT_MANAGER_RETRIEVE_ANCHOR_INFO);
   // Record the current anchor information BEFORE laying out the item_holders as
   // the layout result should be connected to the previous onScreen status.
   list_anchor_manager_->RetrieveAnchorInfoBeforeLayout(anchor_info,
@@ -255,8 +257,7 @@ bool ListLayoutManager::ItemHolderVisibleInList(ItemHolder* item_holder) {
 // Recycle all off-screen ItemHolders. It will be invoked after layouting
 // children or handling scroll events.
 void ListLayoutManager::RecycleOffScreenItemHolders() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListLayoutManager::RecycleOffScreenItemHolders");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_LAYOUT_MANAGER_RECYCLE_OFF_SCREEN_ITEM);
   if (!list_children_helper_) {
     return;
   }
@@ -327,7 +328,7 @@ void ListLayoutManager::FlushScrollInfoToPlatformIfNeeded() {
 // Callback before layout.
 void ListLayoutManager::OnPrepareForLayoutChildren() {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListLayoutManager::OnPrepareForLayoutChildren");
+              LIST_LAYOUT_MANAGER_PREPARE_FOR_LAYOUT_CHILDREN);
   list_container_->RecordVisibleItemIfNeeded(true);
 }
 
@@ -353,7 +354,7 @@ void ListLayoutManager::SendScrollEvents(float scroll_delta,
 
 // Callback if layout finished.
 void ListLayoutManager::OnLayoutCompleted() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ListLayoutManager::OnLayoutCompleted");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LIST_LAYOUT_MANAGER_LAYOUT_COMPONENT);
   // Recycle all removed child
   if (!list_container_ || !list_children_helper_) {
     return;
@@ -459,7 +460,7 @@ void ListLayoutManager::UpdateStickyItemsAfterLayout(
 
 void ListLayoutManager::HandleLayoutOrScrollResult(bool is_layout) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "ListLayoutManager::HandlePlatformOperation");
+              LIST_LAYOUT_MANAGER_HANDLE_PLATFORM_OPERATION);
   ListAdapter* list_adapter = list_container_->list_adapter();
   // The Handler to update layout info to platform.
   auto update_layout_handler = [this, list_adapter](ItemHolder* item_holder) {

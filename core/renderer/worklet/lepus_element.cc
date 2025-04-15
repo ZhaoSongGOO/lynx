@@ -10,7 +10,6 @@
 
 #include "base/include/debug/lynx_assert.h"
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/build/gen/lynx_sub_error_code.h"
 #include "core/renderer/css/computed_css_style.h"
 #include "core/renderer/css/css_decoder.h"
@@ -140,7 +139,7 @@ tasm::EventResult LepusElement::FireElementWorklet(
     const lepus::Value& func_obj, const lepus::Value& value,
     const std::shared_ptr<worklet::LepusApiHandler>& task_handler,
     int element_id, tasm::EventType type) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::FireElementWorklet");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_FIRE_ELEMENT_WORKLET);
   if (tasm == nullptr) {
     return tasm::EventResult::kDefault;
   }
@@ -227,7 +226,7 @@ std::optional<lepus::Value> LepusElement::TriggerWorkletFunction(
   // Lifetime of const reference worklet_module_name, method_name and args can
   // be determined at template_assembler triggerWorkletFunction
 
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusComponent::TriggerWorkletFunction");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_WORKLET_FUNC);
   if (component == nullptr || tasm == nullptr) {
     LOGE(
         "LepusComponent::TriggerWorkletFunction failed since tasm or component "
@@ -406,7 +405,7 @@ void LepusElement::ReportPendingJobException(
 }
 
 void LepusElement::SetStyles(const Napi::Object& styles) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::SetStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_SET_STYLES);
   auto element = GetElement();
   if (element == nullptr) {
     LOGE("LepusElement::SetStyles failed, since element is null.");
@@ -443,7 +442,7 @@ void LepusElement::SetStyles(const Napi::Object& styles) {
 }
 
 void LepusElement::SetAttributes(const Napi::Object& attributes) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::SetAttributes");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_SET_ATTRIBUTES);
   auto element = GetElement();
   if (element == nullptr) {
     LOGE("LepusElement::SetAttributes failed, since element is null.");
@@ -483,7 +482,7 @@ void LepusElement::SetAttributes(const Napi::Object& attributes) {
 
 Napi::Object LepusElement::GetComputedStyles(
     const std::vector<Napi::String>& keys) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::GetComputedStyles");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_GET_COMPUTED_STYLES);
   auto res = Napi::Object::New(NapiEnv());
   auto element = GetElement();
   if (element == nullptr) {
@@ -517,7 +516,7 @@ Napi::Object LepusElement::GetComputedStyles(
 
 Napi::Object LepusElement::GetAttributes(
     const std::vector<Napi::String>& keys) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::GetAttributes");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_GET_ATTRIBUTES);
   auto res = Napi::Object::New(NapiEnv());
   auto element = GetElement();
   if (element == nullptr) {
@@ -545,7 +544,7 @@ Napi::Object LepusElement::GetAttributes(
 }
 
 Napi::Object LepusElement::GetDataset() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::GetDataset");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_GET_DATASET);
   auto env = NapiEnv();
   auto res = Napi::Object::New(env);
   auto element = GetElement();
@@ -577,7 +576,7 @@ Napi::Object LepusElement::GetDataset() {
 }
 
 Napi::Value LepusElement::ScrollBy(float width, float height) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::ScrollBy");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_TRIGGER_SCROLL_BY);
   auto env = NapiEnv();
   Napi::Object obj = Napi::Object::New(env);
   std::vector<float> res{0, 0, width, height};
@@ -614,7 +613,7 @@ Napi::Value LepusElement::ScrollBy(float width, float height) {
 }
 
 Napi::Value LepusElement::GetBoundingClientRect() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::GetBoundingClientRect");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_GET_BOUNDING_CLIENT_RECT);
   auto env = NapiEnv();
   Napi::Object obj = Napi::Object::New(env);
   auto element = GetElement();
@@ -656,7 +655,7 @@ Napi::Value LepusElement::GetBoundingClientRect() {
 }
 
 void LepusElement::Invoke(const Napi::Object& object) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "LepusElement::Invoke");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, LEPUS_ELEMENT_INVOKE);
   auto element = GetElement();
   if (element == nullptr) {
     LOGE("LepusElement::Invoke failed since element is null.");

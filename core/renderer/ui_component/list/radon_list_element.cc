@@ -5,6 +5,7 @@
 #include "core/renderer/ui_component/list/radon_list_element.h"
 
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/services/feature_count/feature_counter.h"
 #include "core/services/timing_handler/timing_constants_deprecated.h"
 
@@ -49,7 +50,7 @@ bool RadonListElement::OnAttributeSet(const base::String& key,
  *diff information.
  **/
 void RadonListElement::OnListElementUpdated(const PipelineOptions& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "RadonListElement::OnListElementUpdated");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, RADON_LIST_ELEMENT_UPDATED);
   if (list_container_delegate()) {
     list_container_delegate()->OnLayoutChildren(options);
   }

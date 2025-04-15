@@ -10,6 +10,7 @@
 #include "base/include/log/logging.h"
 #include "base/trace/native/trace_event.h"
 #include "core/build/gen/lynx_sub_error_code.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 
 namespace lynx {
 namespace tasm {
@@ -22,7 +23,7 @@ void TemplateEntryHolder::InsertEntry(const std::string& name,
 
 const std::shared_ptr<TemplateEntry>& TemplateEntryHolder::FindEntry(
     const std::string& entry_name) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntryHolder::FindEntry");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_HOLDER_FIND_ENTRY);
   auto entry = template_entries_.find(entry_name);
   LynxFatal(entry != template_entries_.end(),
             error::E_APP_BUNDLE_LOAD_RENDER_FAILED,
@@ -33,14 +34,14 @@ const std::shared_ptr<TemplateEntry>& TemplateEntryHolder::FindEntry(
 
 std::shared_ptr<TemplateEntry> TemplateEntryHolder::FindTemplateEntry(
     const std::string& entry_name) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntryHolder::FindTemplateEntry");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_HOLDER_FIND_TEMPLATE_ENTRY);
   auto entry_iter = template_entries_.find(entry_name);
   return entry_iter == template_entries_.end() ? nullptr : entry_iter->second;
 }
 
 void TemplateEntryHolder::ForEachEntry(
     base::MoveOnlyClosure<void, const std::shared_ptr<TemplateEntry>&> func) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntryHolder::ForEachEntry");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_HOLDER_FOR_EACH_ENTRY);
   for (const auto& [name, entry] : template_entries_) {
     func(entry);
   }

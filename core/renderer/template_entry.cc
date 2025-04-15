@@ -5,12 +5,12 @@
 #include "core/renderer/template_entry.h"
 
 #include "base/trace/native/trace_event.h"
-#include "core/base/lynx_trace_categories.h"
 #include "core/renderer/dom/fiber/tree_resolver.h"
 #include "core/renderer/lynx_global_pool.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/tasm/i18n/i18n.h"
 #include "core/renderer/template_assembler.h"
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/runtime/bindings/lepus/renderer.h"
 #include "core/runtime/profile/lepusng/lepusng_profiler.h"
 #include "core/runtime/vm/lepus/quick_context.h"
@@ -29,7 +29,7 @@ namespace lynx {
 namespace tasm {
 
 TemplateEntry::TemplateEntry() : VmContextHolder(nullptr) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::TemplateEntry");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_CONSTRUCTOR);
   template_bundle_.css_style_manager_ =
       std::make_shared<CSSStyleSheetManager>(this);
 }
@@ -163,7 +163,7 @@ std::string TemplateEntry::GenerateLepusJSFileName(const std::string& name) {
 
 bool TemplateEntry::InitWithPageConfigger(
     TemplateBinaryReader::PageConfigger* configger) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::InitWithPageConfigger");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_INIT_WITH_PAGE_CONFIG);
 
   if (is_card_ != template_bundle_.IsCard()) {
     // expected type does not match actual type
@@ -187,7 +187,7 @@ bool TemplateEntry::InitWithPageConfigger(
   }
 
   if (is_card_) {
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "InitCardEnv");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_INIT_CARD_ENV);
     configger->SetSupportComponentJS(template_bundle_.support_component_js_);
     configger->SetTargetSdkVersion(template_bundle_.target_sdk_version_);
     configger->Themed().ResetWithPageTransMaps(
@@ -333,7 +333,7 @@ TemplateEntry::~TemplateEntry() {
 }
 
 void TemplateEntry::RegisterBuiltin(TemplateAssembler* assembler) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::RegisterBuiltin");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_REGISTER_BUILD_IN);
   BASE_STATIC_STRING_DECL(kTemplateAssembler, "$kTemplateAssembler");
   vm_context_->SetGlobalData(
       kTemplateAssembler,
@@ -371,7 +371,7 @@ lepus::Value TemplateEntry::ElementFromBinary(const std::string& key,
 
 const ElementTemplateInfo& TemplateEntry::GetElementTemplateInfo(
     const std::string& key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::GetElementTemplateInfo");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_GET_ELEMENT_TEMPLATE_INFO);
   auto iter = template_bundle_.element_template_infos_.find(key);
   if (iter == template_bundle_.element_template_infos_.end()) {
     auto info = reader_ ? reader_->DecodeElementTemplateInRender(key)
@@ -385,7 +385,7 @@ const ElementTemplateInfo& TemplateEntry::GetElementTemplateInfo(
 
 const std::shared_ptr<ParsedStyles>& TemplateEntry::GetParsedStyles(
     const std::string& key) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::GetParsedStyles", "key",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_GET_PARSED_STYLES, "key",
               key);
   if (reader_) {
     return reader_->GetParsedStylesInRender(key);
@@ -535,7 +535,7 @@ bool TemplateEntry::DecodeCSSFragmentById(int32_t fragmentId) {
 
 bool TemplateEntry::LoadLepusChunk(const std::string& entry_path,
                                    const lepus::Value& options) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "TemplateEntry::LoadLepusChunk");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ENTRY_LOAD_LEPUS_CHUNK);
 
   LynxTemplateBundle& template_bundle = template_bundle_;
 

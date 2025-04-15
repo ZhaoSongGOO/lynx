@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "core/renderer/trace/renderer_trace_event_def.h"
 #include "core/renderer/ui_component/list/list_container_impl.h"
 
 namespace lynx {
@@ -105,7 +106,7 @@ void StaggeredGridLayoutManager::UpdateStartAndEndLinesStatus(
 }
 
 void StaggeredGridLayoutManager::OnBatchLayoutChildren() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnBatchLayoutChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_BATCH_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -125,7 +126,7 @@ void StaggeredGridLayoutManager::OnBatchLayoutChildren() {
   SendAnchorDebugInfo(anchor_info);
 
   // step 2. Invoke batch render.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "BatchRender");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_BATCH_RENDER);
   LayoutInvalidItemHolder(0);
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
@@ -134,19 +135,20 @@ void StaggeredGridLayoutManager::OnBatchLayoutChildren() {
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3. Invoke OnLayoutChildren after batch render.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutChildrenInternal");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    GRID_LAYOUT_MANAGER_LAYOUT_CHILDREN_INTERNAL);
   OnLayoutChildrenInternal(anchor_info, layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 4. Handle layout result: recycle and update layout to platform.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_LAYOUT_AFTER);
   OnLayoutAfter();
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
 
 void StaggeredGridLayoutManager::OnLayoutChildren(
     bool is_component_finished /* = false */, int component_index /* = -1 */) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "OnLayoutChildren",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_LAYOUT_CHILDREN,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -166,12 +168,13 @@ void StaggeredGridLayoutManager::OnLayoutChildren(
   SendAnchorDebugInfo(anchor_info);
 
   // step 2. Fill after find anchor.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutChildrenInternal");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    GRID_LAYOUT_MANAGER_HANDLE_CONTENT_SIZE_AND_OFFSET);
   OnLayoutChildrenInternal(anchor_info, layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 
   // step 3. Handle layout result: recycle and update layout to platform.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnLayoutAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_LAYOUT_AFTER);
   OnLayoutAfter();
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
@@ -192,8 +195,9 @@ void StaggeredGridLayoutManager::OnLayoutChildrenInternal(
   }
 
   // step 1. Bind all visible ItemHolders.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "BindAllVisibleItemHolders",
-                    "anchor_index", anchor_info.index_);
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    GRID_LAYOUT_MANAGER_BIND_ALL_VISIBLE_ITEM, "anchor_index",
+                    anchor_info.index_);
   bool should_fill = BindAllVisibleItemHolders();
   while (should_fill) {
     LayoutInvalidItemHolder(0);
@@ -210,7 +214,7 @@ void StaggeredGridLayoutManager::OnLayoutChildrenInternal(
   if (!list_container_->enable_batch_render()) {
     // TODO(dingwang.wxx): If use initial-scroll-index, this may lead to fill
     // from the item 0 to initial-scroll-index. So we can remove this logic.
-    TRACE_EVENT(LYNX_TRACE_CATEGORY, "Fill");
+    TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_FILL);
     layout_state.Reset(span_count_);
     layout_state.layout_direction_ = list::LayoutDirection::kLayoutToStart;
     UpdateStartAndEndLinesStatus(layout_state);
@@ -218,7 +222,8 @@ void StaggeredGridLayoutManager::OnLayoutChildrenInternal(
   }
 
   // step 2. Update content size and content offset.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "UpdateContentSizeAndOffset");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    GRID_LAYOUT_MANAGER_HANDLE_CONTENT_SIZE_AND_OFFSET);
   LayoutInvalidItemHolder(0);
   content_size_ = GetTargetContentSize();
   list_anchor_manager_->AdjustContentOffsetWithAnchor(anchor_info,
@@ -236,7 +241,8 @@ void StaggeredGridLayoutManager::OnLayoutChildrenInternal(
   list_anchor_manager_->MarkScrolledInitialScrollIndex();
 
   // step 3. Handle Preload.
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "HandlePreloadIfNeeded");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
+                    GRID_LAYOUT_MANAGER_HANDLE_PRELOAD_IF_NEED);
   // Note: need update on screen children.
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
@@ -263,7 +269,7 @@ void StaggeredGridLayoutManager::OnLayoutAfter() {
 }
 
 void StaggeredGridLayoutManager::HandleLayoutOrScrollResult(bool is_layout) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "HandleLayoutOrScrollResult",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_HANDLE_LAYOUT_OR_SCROLL,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -322,7 +328,7 @@ void StaggeredGridLayoutManager::Fill(LayoutState& layout_state) {
 }
 
 void StaggeredGridLayoutManager::FillToEnd(LayoutState& layout_state) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "StaggeredGridLayoutManager::FillToEnd");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, STAGGERED_GRID_LAYOUT_MANAGER_FILL_TO_END);
   int next_item_index = *std::max_element(layout_state.end_index.begin(),
                                           layout_state.end_index.end());
   next_item_index += static_cast<int>(layout_state.layout_direction_);
@@ -338,7 +344,7 @@ void StaggeredGridLayoutManager::FillToEnd(LayoutState& layout_state) {
 }
 
 void StaggeredGridLayoutManager::FillToStart(LayoutState& layout_state) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "StaggeredGridLayoutManager::FillToStart");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, STAGGERED_GRID_LAYOUT_MANAGER_FILL_TO_START);
   // If layoutToStart, fill to start then fill to end
   LayoutInvalidItemHolder(0);
   // Fill to start first
@@ -437,8 +443,7 @@ void StaggeredGridLayoutManager::LayoutChunkToEnd(int current_index,
 }
 
 bool StaggeredGridLayoutManager::BindAllVisibleItemHolders() {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "StaggeredGridLayoutManager::BindAllVisibleItemHolders");
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_BIND_ALL_VISIBLE_ITEM);
   // Bind all visible item_holders
   bool should_fill = false;
   list_children_helper_->ForEachChild(
@@ -456,7 +461,7 @@ bool StaggeredGridLayoutManager::BindAllVisibleItemHolders() {
 void StaggeredGridLayoutManager::LayoutInvalidItemHolder(
     int first_invalid_index) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY,
-              "StaggeredGridLayoutManager::LayoutInvalidItemHolder",
+              STAGGERED_GRID_LAYOUT_MANAGER_LAYOUT_INVALID_ITEM,
               "first_invalid_index", first_invalid_index);
   if (list_container_->GetDataCount() == 0) {
     for (auto& column_index : column_indexes_) {
@@ -574,7 +579,7 @@ float StaggeredGridLayoutManager::CalculateCrossAxisPosition(
 void StaggeredGridLayoutManager::ScrollByInternal(float content_offset,
                                                   float original_offset,
                                                   bool from_platform) {
-  TRACE_EVENT(LYNX_TRACE_CATEGORY, "ScrollByInternal",
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_SCROLL_BY_INTERNAL,
               [this](lynx::perfetto::EventContext ctx) {
                 UpdateTraceDebugInfo(ctx.event());
               });
@@ -594,7 +599,7 @@ void StaggeredGridLayoutManager::ScrollByInternal(float content_offset,
   UpdateStartAndEndLinesStatus(layout_state);
   SetContentOffset(content_offset);
   TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY,
-                    "StaggeredGridLayoutManager::ScrollByInternal.Fill");
+                    GRID_LAYOUT_MANAGER_SCROLL_BY_INTERNAL_FILL);
   Fill(layout_state);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
   content_size_ = GetTargetContentSize();
@@ -604,7 +609,7 @@ void StaggeredGridLayoutManager::ScrollByInternal(float content_offset,
   list_children_helper_->UpdateOnScreenChildren(list_orientation_helper_.get(),
                                                 content_offset_);
 
-  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, "OnScrollAfter");
+  TRACE_EVENT_BEGIN(LYNX_TRACE_CATEGORY, GRID_LAYOUT_MANAGER_ON_SCROLL_AFTER);
   OnScrollAfter(original_offset);
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY);
 }
