@@ -621,6 +621,11 @@ void TemplateAssembler::UpdateTemplate(
     const TemplateData& data, const UpdatePageOption& update_page_option,
     PipelineOptions& pipeline_options) {
   if (EnableFiberArch()) {
+    if (update_page_option.reload_template ||
+        pipeline_options.need_timestamps) {
+      tasm::TimingCollector::Instance()->Mark(tasm::timing::kMtsRenderStart);
+    }
+
     auto options = update_page_option.ToLepusValue();
     options.SetProperty(BASE_STATIC_STRING(kPipelineOptions),
                         PipelineOptionsToLepusValue(pipeline_options));
@@ -977,9 +982,6 @@ void TemplateAssembler::LoadTemplateInternal(
   {
     // Trace VM Execute
     TRACE_EVENT(LYNX_TRACE_CATEGORY_VITALS, "VMExecute");
-    if (pipeline_options.need_timestamps) {
-      tasm::TimingCollector::Instance()->Mark(tasm::timing::kMtsRenderStart);
-    }
 
     // Before vm execute template, do some preparation. Only timing actions now.
     OnVMExecute();
@@ -1091,9 +1093,6 @@ void TemplateAssembler::ReloadTemplate(
   // SETUP_SET_INIT_DATA_START, SETUP_SET_INIT_DATA_END
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kParseStart);
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kParseEnd);
-  if (pipeline_options.need_timestamps) {
-    tasm::TimingCollector::Instance()->Mark(tasm::timing::kMtsRenderStart);
-  }
   tasm::TimingCollector::Instance()->MarkFrameworkTiming(
       tasm::timing::kVmExecuteStart);
   tasm::TimingCollector::Instance()->MarkFrameworkTiming(
