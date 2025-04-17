@@ -6,6 +6,7 @@
 #define CORE_RUNTIME_VM_LEPUS_LEPUS_CONTEXT_CELL_H_
 
 #include "base/include/vector.h"
+#include "core/runtime/vm/lepus/lynx_value_extended.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,15 +24,23 @@ class QuickContext;
 class ContextCell {
  public:
   ContextCell(lepus::QuickContext* qctx, LEPUSContext* ctx, LEPUSRuntime* rt)
-      : gc_enable_(false), ctx_(ctx), rt_(rt), qctx_(qctx) {
+      : gc_enable_(false),
+        ctx_(ctx),
+        rt_(rt),
+        qctx_(qctx),
+        env_(lynx_value_api_new_env(ctx)) {
     if (rt_) {
       gc_enable_ = LEPUS_IsGCModeRT(rt_);
     }
   };
+
+  ~ContextCell() { lynx_value_api_delete_env(env_); }
+
   bool gc_enable_;
   LEPUSContext* ctx_;
   LEPUSRuntime* rt_;
   lepus::QuickContext* qctx_;
+  lynx_api_env env_;
 };
 
 class CellManager {

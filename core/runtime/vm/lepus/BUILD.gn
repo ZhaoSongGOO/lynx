@@ -81,7 +81,7 @@ unittest_set("lepus_testset") {
     "function_api_unittest.cc",
     "lepus_error_helper_unittest.cc",
     "lepus_value_unittest.cc",
-    "lynx_value_lepusng_unittest.cc",
+    "lynx_value_extended_unittest.cc",
     "path_parser_unittest.cc",
     "quick_context_pool_unittest.cc",
     "quickjs_promise_unittest.cc",

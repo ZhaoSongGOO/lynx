@@ -23,7 +23,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "base/include/value/lynx_value_api.h"
+#include "base/include/value/lynx_value_types.h"
 #ifdef __cplusplus
 }
 #endif
@@ -142,6 +142,8 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
   explicit Value(void* data);
   explicit Value(CFunction val);
   explicit Value(bool for_nan, bool val);
+  Value(lynx_api_env env, const lynx_value& value);
+  Value(lynx_api_env env, lynx_value&& value);
 
   inline bool IsCDate() const {
     return value_.type == lynx_value_object &&
@@ -213,8 +215,7 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
 
   inline bool IsReference() const {
     return (value_.type >= lynx_value_string &&
-            value_.type <= lynx_value_arraybuffer) ||
-           value_.type == lynx_value_object;
+            value_.type <= lynx_value_object);
   }
   inline void* Ptr() const { return value_.val_ptr; }
 
@@ -435,46 +436,51 @@ class BASE_EXPORT_FOR_DEVTOOL Value {
 #if defined(__aarch64__) && !defined(OS_WIN) && !DISABLE_NANBOX
     return (LEPUSValue){.as_int64 = value_.val_int64};
 #else
-    return LEPUS_MKPTR(value_.tag, value_.val_ptr);
+    return LEPUS_MKPTR(static_cast<int8_t>((value_.tag & 0xff)),
+                       value_.val_ptr);
 #endif
   }
 
   inline bool IsJSCPointer() const {
-    return IsJSValue() && LEPUS_VALUE_IS_LEPUS_CPOINTER(WrapJSValue());
+    return IsJSValue() && (value_.tag >> 16) == lynx_value_external;
   }
 
   inline void* LEPUSCPointer() const {
     DCHECK(IsJSCPointer());
-    return LEPUS_VALUE_GET_CPOINTER(WrapJSValue());
+    void* ret;
+    lynx_value_get_external(cell_->env_, value_, &ret);
+    return ret;
   }
 
   bool IsJSArray() const;
   bool IsJSTable() const;
 
   inline bool IsJSBool() const {
-    return IsJSValue() && LEPUS_VALUE_IS_BOOL(WrapJSValue());
+    return IsJSValue() && (value_.tag >> 16) == lynx_value_bool;
   }
   inline bool LEPUSBool() const {
     if (!IsJSBool()) return false;
-    return LEPUS_VALUE_GET_BOOL(WrapJSValue());
+    bool ret;
+    lynx_value_get_bool(cell_->env_, value_, &ret);
+    return ret;
   }
   inline bool IsJSString() const {
-    return IsJSValue() && LEPUS_IsString(WrapJSValue());
+    return IsJSValue() && (value_.tag >> 16) == lynx_value_string;
   }
 
   inline bool IsJSUndefined() const {
-    return IsJSValue() && LEPUS_VALUE_IS_UNDEFINED(WrapJSValue());
+    return IsJSValue() && (value_.tag >> 16) == lynx_value_undefined;
   }
 
   inline bool IsJSNumber() const {
-    auto value = WrapJSValue();
+    int32_t type = value_.tag >> 16;
     return IsJSValue() &&
-           (LEPUS_VALUE_IS_INT(value) || LEPUS_VALUE_IS_FLOAT64(value) ||
-            LEPUS_VALUE_IS_BIG_INT(value));
+           (type == lynx_value_int32 || type == lynx_value_int64 ||
+            type == lynx_value_double);
   }
 
   inline bool IsJsNull() const {
-    return IsJSValue() && LEPUS_VALUE_IS_NULL(WrapJSValue());
+    return IsJSValue() && (value_.tag >> 16) == lynx_value_null;
   }
 
   double LEPUSNumber() const;

@@ -27,11 +27,8 @@
 
 typedef struct lynx_value_ptr__* lynx_value_ptr;
 typedef struct lynx_api_env__* lynx_api_env;
-typedef struct lynx_api_state__* lynx_api_state;
 
 typedef struct LYNX_VALUE_OPAQUE_STRUCT(api_context) * lynx_api_context;
-typedef struct LYNX_VALUE_OPAQUE_STRUCT(api_runtime) * lynx_api_runtime;
-
 typedef enum {
   lynx_api_ok,
   lynx_api_failed,
@@ -53,11 +50,8 @@ typedef enum {
   lynx_api_handle_scope_mismatch,
 } lynx_api_status;
 
-typedef struct {
-  const char* error_message;
-  uint32_t error_message_length;
-  uint32_t engine_error_code;
-  lynx_api_status error_code;
-} lynx_api_extended_error_info;
+struct lynx_api_env__ {
+  lynx_api_context ctx;
+};
 
 #endif  // BASE_INCLUDE_VALUE_LYNX_API_TYPES_H_

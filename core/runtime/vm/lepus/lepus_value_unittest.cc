@@ -11,7 +11,6 @@
 #include "core/runtime/vm/lepus/js_object.h"
 #include "core/runtime/vm/lepus/jsvalue_helper.h"
 #include "core/runtime/vm/lepus/lepus_date.h"
-#include "core/runtime/vm/lepus/lynx_value_lepusng.h"
 #include "core/runtime/vm/lepus/quick_context.h"
 #include "core/runtime/vm/lepus/regexp.h"
 #include "core/runtime/vm/lepus/table.h"
@@ -31,10 +30,6 @@ class LepusValueTest : public ::testing::Test {
  protected:
   LepusValueTest() : quick_ctx_(QuickContext(false)) {}
   ~LepusValueTest() = default;
-
-  lynx_value ToLynxValue(const LEPUSValue& val) {
-    return MAKE_LYNX_VALUE_FROM_LEPUS_VALUE(val);
-  }
 
   QuickContext quick_ctx_;
 };

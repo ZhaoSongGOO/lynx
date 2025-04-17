@@ -21,8 +21,8 @@ class LynxValueType(IntEnum):
     ARRAY = 10
     DICTIONARY = 11
     ARRAY_BUFFER = 12
-    FUNCTION = 13
-    OBJECT = 14
+    OBJECT = 13
+    FUNCTION = 14
     EXTERNAL = 15
     EXTENDED = 16
 

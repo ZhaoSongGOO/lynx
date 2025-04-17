@@ -40,8 +40,8 @@ typedef enum {
   lynx_value_array,
   lynx_value_map,
   lynx_value_arraybuffer,
-  lynx_value_function,
   lynx_value_object,
+  lynx_value_function,
   lynx_value_external,  // external raw pointer
   lynx_value_extended,
 } lynx_value_type;
