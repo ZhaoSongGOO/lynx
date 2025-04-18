@@ -515,7 +515,7 @@ static void BM_TestCollectLeak(benchmark::State& state) {
     lepus::QuickContext qctx;
     for (int i = 0; i < 10000; i++) {
       value_arr[i] = const_cast<lepus::Value*>(
-          &(obj->GetValue("ele" + std::to_string(i))));
+          &(*obj->GetValue("ele" + std::to_string(i))));
       if (i % 1000 == 0) {
         LEPUSValue obj_ref = value_arr[i]->ToJSValue(qctx.context());
         state.ResumeTiming();
