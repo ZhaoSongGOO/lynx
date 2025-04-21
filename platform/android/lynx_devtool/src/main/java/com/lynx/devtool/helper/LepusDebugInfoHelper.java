@@ -4,8 +4,8 @@
 
 package com.lynx.devtool.helper;
 
-import com.lynx.devtool.network.DownloadCallback;
-import com.lynx.devtool.network.LynxDevToolDownloader;
+import com.lynx.basedevtool.utils.DevToolDownloader;
+import com.lynx.basedevtool.utils.DownloadCallback;
 import com.lynx.tasm.base.LLog;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,7 +48,7 @@ public class LepusDebugInfoHelper {
   }
 
   private void downloadDebugInfo() {
-    new LynxDevToolDownloader(mDebugInfoUrl, new DownloadCallback() {
+    new DevToolDownloader(mDebugInfoUrl, new DownloadCallback() {
       @Override
       public void onResponse(int status, int contentLength) {}
       @Override

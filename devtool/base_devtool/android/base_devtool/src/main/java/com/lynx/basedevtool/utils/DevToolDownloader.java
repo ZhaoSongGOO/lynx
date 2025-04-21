@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-package com.lynx.devtool.network;
+package com.lynx.basedevtool.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class LynxDevToolDownloader implements Runnable {
+public class DevToolDownloader implements Runnable {
   private static final int CONNECTION_TIMEOUT = 1440; // 1.44s
   private static final int READ_TIMEOUT = 120000; // 120s
   private static final int NORMAL_RESPONSE_CODE = 299;
@@ -23,7 +23,7 @@ public class LynxDevToolDownloader implements Runnable {
   private final DownloadCallback mCallback;
   private final ByteArrayOutputStream mBuffer;
 
-  public LynxDevToolDownloader(String url, DownloadCallback callback) {
+  public DevToolDownloader(String url, DownloadCallback callback) {
     this.mUrl = url;
     this.mCallback = callback;
     this.mBuffer = new ByteArrayOutputStream();

@@ -2,6 +2,8 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+#import <BaseDevTool/DevToolDownloader.h>
+#import <BaseDevTool/DevToolToast.h>
 #import <DebugRouter/DebugRouter.h>
 #import <DebugRouter/DebugRouterSlot.h>
 #import <Lynx/LynxBackgroundRuntime.h>
@@ -16,10 +18,8 @@
 #import <LynxDevtool/DevToolPlatformDarwinDelegate.h>
 #import <LynxDevtool/LynxDebugBridge.h>
 #import <LynxDevtool/LynxDevMenu.h>
-#import <LynxDevtool/LynxDevToolDownloader.h>
 #import <LynxDevtool/LynxDevToolErrorUtils.h>
 #import <LynxDevtool/LynxDevToolNGDarwinDelegate.h>
-#import <LynxDevtool/LynxDevToolToast.h>
 #import <LynxDevtool/LynxDevtoolEnv.h>
 #import <LynxDevtool/LynxInspectorOwner+Internal.h>
 #import <LynxDevtool/LynxUITreeHelper.h>
@@ -147,7 +147,7 @@
           withTemplate:(NSString*)templateBin
          fromFragments:(BOOL)fromFragments
               withSize:(int32_t)size {
-  [LynxDevToolToast showToast:@"Start to download & reload..."];
+  [DevToolToast showToast:@"Start to download & reload..."];
   [_reloadHelper reloadLynxView:ignoreCache
                    withTemplate:templateBin
                   fromFragments:fromFragments
@@ -350,7 +350,7 @@
 }
 
 - (void)downloadResource:(NSString* _Nonnull)url callback:(LynxResourceLoadBlock _Nonnull)callback {
-  [LynxDevToolDownloader
+  [DevToolDownloader
           download:url
       withCallback:^(NSData* _Nullable data, NSError* _Nullable error) {
         if (!error) {

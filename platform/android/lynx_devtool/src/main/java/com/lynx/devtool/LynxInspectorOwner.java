@@ -17,12 +17,12 @@ import android.widget.Toast;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
+import com.lynx.basedevtool.utils.DevToolDownloader;
+import com.lynx.basedevtool.utils.DownloadCallback;
 import com.lynx.debugrouter.DebugRouter;
 import com.lynx.devtool.helper.TestbenchDumpFileHelper;
 import com.lynx.devtool.helper.UITreeHelper;
 import com.lynx.devtool.module.DevtoolWebSocketModule;
-import com.lynx.devtool.network.DownloadCallback;
-import com.lynx.devtool.network.LynxDevToolDownloader;
 import com.lynx.devtool.tracing.FrameViewTrace;
 import com.lynx.devtool.utils.ErrorUtils;
 import com.lynx.devtoolwrapper.CDPResultCallback;
@@ -511,7 +511,7 @@ public class LynxInspectorOwner implements LynxBaseInspectorOwnerNG {
 
   @Override
   public void downloadResource(final String url, final LynxResourceCallback<byte[]> callback) {
-    new LynxDevToolDownloader(url, new DownloadCallback() {
+    new DevToolDownloader(url, new DownloadCallback() {
       @Override
       public void onResponse(int status, int contentLength) {}
 

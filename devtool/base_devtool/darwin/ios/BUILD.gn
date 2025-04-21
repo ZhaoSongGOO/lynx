@@ -54,6 +54,10 @@ podspec_target("BaseDevtool_podspec") {
 
 subspec_target("framework") {
   sources = [
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.h",
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.m",
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.h",
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.m",
     "DevToolGlobalSlotIOS.h",
     "DevToolGlobalSlotIOS.mm",
     "DevToolSlotIOS.h",
@@ -62,6 +66,8 @@ subspec_target("framework") {
   public_header_files = [
     "DevToolGlobalSlotIOS.h",
     "DevToolSlotIOS.h",
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.h",
+    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.h",
   ]
   deps = [
     "//lynx/devtool/base_devtool/native/js_inspect:base_devtool_js_inspect",

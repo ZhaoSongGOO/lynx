@@ -3,11 +3,11 @@
 // LICENSE file in the root directory of this source tree.
 
 #import "LynxLogBox.h"
+#import <BaseDevTool/DevToolDownloader.h>
+#import <BaseDevTool/DevToolToast.h>
 #import <Lynx/LynxEventReporter.h>
 #import <Lynx/LynxLog.h>
 #import <Lynx/LynxUIKitAPIAdapter.h>
-#import <LynxDevtool/LynxDevToolDownloader.h>
-#import <LynxDevtool/LynxDevToolToast.h>
 #import <LynxDevtool/LynxDevtoolEnv.h>
 #import <TargetConditionals.h>
 #import <WebKit/WebKit.h>
@@ -150,7 +150,7 @@ NSString *const BRIDGE_JS =
         },
         @"toast": ^(NSDictionary *params, NSNumber *callbackId) {
             NSString *message = params ? params[@"message"] : nil;
-            [LynxDevToolToast showToast:message];
+            [DevToolToast showToast:message];
         },
         @"queryResource": ^(NSDictionary *params, NSNumber *callbackId) {
             NSString *name = params ? params[@"name"] : nil;
@@ -447,7 +447,7 @@ NSString *const BRIDGE_JS =
 
 - (void)download:(NSString *)url withCallbackId:(NSNumber *)callbackId {
   if (url) {
-    [LynxDevToolDownloader
+    [DevToolDownloader
             download:url
         withCallback:^(NSData *_Nullable data, NSError *_Nullable error) {
           NSDictionary *msg = nil;

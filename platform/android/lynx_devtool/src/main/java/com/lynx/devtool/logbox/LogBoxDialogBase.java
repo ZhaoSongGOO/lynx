@@ -21,8 +21,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
-import com.lynx.devtool.network.DownloadCallback;
-import com.lynx.devtool.network.LynxDevToolDownloader;
+import com.lynx.basedevtool.utils.DevToolDownloader;
+import com.lynx.basedevtool.utils.DownloadCallback;
 import com.lynx.tasm.base.LLog;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -177,7 +177,7 @@ abstract public class LogBoxDialogBase extends Dialog {
 
     public void download(String url, DownloadCallback callback) {
       if (callback != null && !TextUtils.isEmpty(url) && url.startsWith("http")) {
-        LynxDevToolDownloader downloader = new LynxDevToolDownloader(url, callback);
+        DevToolDownloader downloader = new DevToolDownloader(url, callback);
       }
     }
 

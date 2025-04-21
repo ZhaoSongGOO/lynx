@@ -9,12 +9,12 @@
 #include <memory>
 #include <unordered_map>
 
+#import <BaseDevTool/DevToolToast.h>
 #import <Lynx/LynxEnv.h>
 #import <Lynx/LynxEventReporter.h>
 #import <Lynx/LynxLog.h>
 #import <LynxDevtool/DevToolMonitorView.h>
 #import <LynxDevtool/LynxDebugBridge.h>
-#import <LynxDevtool/LynxDevToolToast.h>
 #import <LynxDevtool/LynxDeviceInfoHelper.h>
 #import <LynxDevtool/LynxDevtoolEnv.h>
 #import <LynxDevtool/LynxInspectorOwner.h>
@@ -74,7 +74,7 @@ typedef LynxInspectorOwner DevToolAgentDispatcher;
 - (BOOL)enable:(NSURL *)url withOptions:(NSDictionary *)options {
   if (!LynxEnv.sharedInstance.devtoolEnabled &&
       !LynxEnv.sharedInstance.devtoolEnabledForDebuggableView) {
-    [LynxDevToolToast showToast:@"DevTool not enabled, turn on the switch!"];
+    [DevToolToast showToast:@"DevTool not enabled, turn on the switch!"];
     return NO;
   }
 

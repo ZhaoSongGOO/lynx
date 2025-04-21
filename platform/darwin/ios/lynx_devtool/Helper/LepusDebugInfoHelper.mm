@@ -2,9 +2,9 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+#import <BaseDevTool/DevToolDownloader.h>
 #import <Lynx/LynxLog.h>
 #import <LynxDevtool/LepusDebugInfoHelper.h>
-#import <LynxDevtool/LynxDevToolDownloader.h>
 
 @implementation LepusDebugInfoHelper {
   BOOL _waitFlag;
@@ -35,23 +35,23 @@
 
 - (void)downloadDebugInfo {
   __weak typeof(self) weakSelf = self;
-  [LynxDevToolDownloader download:_debugInfoUrl
-                     withCallback:^(NSData* _Nullable data, NSError* _Nullable error) {
-                       __strong typeof(weakSelf) strongSelf = weakSelf;
-                       if (strongSelf == nil) {
-                         LLogError(@"lepus debug: LepusDebugInfoHelper has been destroyed!");
-                         return;
-                       }
-                       if (error != nil) {
-                         strongSelf->_debugInfo = @"";
-                         LLogError(@"lepus debug: download debug info failed, the reason is: %@",
-                                   [error localizedFailureReason]);
-                       } else {
-                         strongSelf->_debugInfo =
-                             [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                       }
-                       strongSelf->_waitFlag = NO;
-                     }];
+  [DevToolDownloader download:_debugInfoUrl
+                 withCallback:^(NSData* _Nullable data, NSError* _Nullable error) {
+                   __strong typeof(weakSelf) strongSelf = weakSelf;
+                   if (strongSelf == nil) {
+                     LLogError(@"lepus debug: LepusDebugInfoHelper has been destroyed!");
+                     return;
+                   }
+                   if (error != nil) {
+                     strongSelf->_debugInfo = @"";
+                     LLogError(@"lepus debug: download debug info failed, the reason is: %@",
+                               [error localizedFailureReason]);
+                   } else {
+                     strongSelf->_debugInfo = [[NSString alloc] initWithData:data
+                                                                    encoding:NSUTF8StringEncoding];
+                   }
+                   strongSelf->_waitFlag = NO;
+                 }];
 }
 
 @end

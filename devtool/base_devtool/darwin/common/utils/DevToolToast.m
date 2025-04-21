@@ -2,10 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
+#import <BaseDevTool/DevToolToast.h>
 #import <Lynx/LynxUIKitAPIAdapter.h>
-#import <LynxDevtool/LynxDevToolToast.h>
 
-@interface LynxDevToolToast ()
+@interface DevToolToast ()
 
 #if OS_IOS
 @property(readwrite, nonatomic) UIAlertController* alert;
@@ -15,7 +15,7 @@
 
 @end
 
-@implementation LynxDevToolToast
+@implementation DevToolToast
 
 - (instancetype)initWithMessage:(NSString*)message {
   if (self = [super init]) {
@@ -51,17 +51,17 @@
 
 + (void)showToast:(NSString*)message {
   if ([NSThread isMainThread]) {
-    [LynxDevToolToast showToastOnMainThread:message];
+    [DevToolToast showToastOnMainThread:message];
   } else {
     dispatch_async(dispatch_get_main_queue(), ^{
-      [LynxDevToolToast showToastOnMainThread:message];
+      [DevToolToast showToastOnMainThread:message];
     });
   }
 }
 
 + (void)showToastOnMainThread:(NSString*)message {
   if (message && [message length] > 0) {
-    LynxDevToolToast* toast = [[LynxDevToolToast alloc] initWithMessage:message];
+    DevToolToast* toast = [[DevToolToast alloc] initWithMessage:message];
     [toast show];
   }
 }

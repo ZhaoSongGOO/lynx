@@ -4,11 +4,11 @@
 #import <LynxDevtool/DevToolPlatformDarwinDelegate.h>
 #include <vector>
 
+#import <BaseDevTool/DevToolToast.h>
 #import <Lynx/LynxPageReloadHelper+Internal.h>
 #import <Lynx/LynxTemplateData+Converter.h>
 #import <LynxDevtool/ConsoleDelegateManager.h>
 #import <LynxDevtool/LepusDebugInfoHelper.h>
-#import <LynxDevtool/LynxDevToolToast.h>
 #import <LynxDevtool/LynxDeviceInfoHelper.h>
 #import <LynxDevtool/LynxDevtoolEnv.h>
 #import <LynxDevtool/LynxEmulateTouchHelper.h>
@@ -564,7 +564,7 @@ class DevToolPlatformDarwin : public DevToolPlatformFacade {
           withTemplate:(NSString*)templateBin
          fromFragments:(BOOL)fromFragments
               withSize:(int32_t)size {
-  [LynxDevToolToast showToast:@"Start to download & reload..."];
+  [DevToolToast showToast:@"Start to download & reload..."];
   [_reloadHelper reloadLynxView:ignoreCache
                    withTemplate:templateBin
                   fromFragments:fromFragments
