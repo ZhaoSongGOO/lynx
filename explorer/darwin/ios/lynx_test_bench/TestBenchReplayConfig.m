@@ -52,6 +52,23 @@
       _delayEndInterval = 3500;
     }
 
+    CGFloat colorValues[4] = {255, 255, 255, 255};
+
+    NSString* rgba = [TestBenchURLAnalyzer getQueryStringParameter:baseURL
+                                                            forKey:@"backgroundColor"];
+
+    if (rgba != nil) {
+      NSArray* values = [rgba componentsSeparatedByString:@"_"];
+      for (int i = 0; i < values.count && i < 4; i++) {
+        colorValues[i] = [values[i] doubleValue];
+      }
+    }
+
+    _backgroundColor = [UIColor colorWithRed:colorValues[0]
+                                       green:colorValues[1]
+                                        blue:colorValues[2]
+                                       alpha:colorValues[3] / 255];
+
     _canMockFuncName = [[NSSet alloc]
         initWithObjects:@"setGlobalProps", @"initialLynxView", @"loadTemplate", @"sendEventDarwin",
                         @"updateDataByPreParsedData", @"sendGlobalEvent", @"reloadTemplate",

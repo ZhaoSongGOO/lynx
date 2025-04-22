@@ -7,6 +7,7 @@ package com.lynx.testbench;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -168,6 +169,7 @@ public class TestBenchActionManager {
   private boolean mSSRLoaded;
   private boolean mDisableUpdateViewport;
   private boolean mCreateWhenReload;
+  private int mBackgroundColor;
   private boolean mLandScape;
   private boolean mEnableAirStrictMode;
   private LynxGroup mLynxGroup;
@@ -466,6 +468,24 @@ public class TestBenchActionManager {
     mDisableUpdateViewport = queryMap.getBoolean("disableUpdateViewport", false);
 
     mCreateWhenReload = queryMap.getBoolean("createWhenReload", false);
+
+    int[] colorValues = {255, 255, 255, 255};
+
+    String rgba = queryMap.getString("backgroundColor");
+
+    if (rgba != null) {
+      try {
+        String[] values = rgba.split("_");
+        for (int i = 0; i < values.length && i < 4; i++) {
+          colorValues[i] = Integer.parseInt(values[i]);
+        }
+      } catch (IllegalArgumentException e) {
+        Log.e(TAG, "set background color failed:" + e.toString());
+      }
+    }
+
+    mBackgroundColor = Color.argb(colorValues[3], colorValues[0], colorValues[1], colorValues[2]);
+    mViewGroup.setBackgroundColor(mBackgroundColor);
 
     create();
   }

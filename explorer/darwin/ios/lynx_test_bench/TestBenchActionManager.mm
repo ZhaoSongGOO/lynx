@@ -194,6 +194,7 @@ static const int kVirtual = 1 << 2;
         replayConfig:(TestBenchReplayConfig*)replayConfig {
   [self setReplayConfig:replayConfig];
   _parentUI = parentView;
+  [_parentUI setBackgroundColor:self.replayConfig.backgroundColor];
   _origin = point;
   _stateView = [[TestBenchStateReplayView alloc] init];
   _startTime = 0;

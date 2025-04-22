@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) BOOL createWhenReload;
 
+// rgba : red_green_blue_alpha
+@property(nonatomic, readonly) UIColor* backgroundColor;
+
 // Record file and source file requestCachePolicy, default is
 // NSURLRequestReloadIgnoringLocalCacheData
 @property(nonatomic) NSURLRequestCachePolicy requestCachePolicy;
