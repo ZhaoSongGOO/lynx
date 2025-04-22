@@ -36,3 +36,9 @@ checker-config:
       - '^lynx/third_party/(aes|double-conversion|modp_b64|rapidjson|binding|quickjs|napi)/*'
       - '^lynx/explorer/darwin/ios/Lynx_explorer/LynxExplorer/Resource/'
       - '^base/include/boost/*'
+
+  api-checker:
+    api-dirs:
+      android: 'platform/android/lynx_android/src/main'
+      ios: 'platform/darwin/ios/lynx'
+      ios-common: 'platform/darwin/common/lynx'
