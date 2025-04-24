@@ -6,6 +6,8 @@ from core.utils.git_helper import GitHelper
 from core.utils.log import Log
 from core.utils.operation import Intersection, Difference
 from core.utils.xml_reader import XmlReader
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class AndroidCoverageChecker(CoverageChecker):
@@ -54,7 +56,10 @@ class AndroidCoverageChecker(CoverageChecker):
         self.job = args.job
         inputs = args.inputs
         if len(inputs) != 1:
-            Log.fatal(f"please support coverage.xml file by --inputs!")
+            return Err(
+                Constants.COVERAGE_CHECKER_RUN_ERR,
+                f"please support coverage.xml file by --inputs!",
+            )
         file_2_changed_lines = self.__get_file_to_changed_map(args.count)
         root = XmlReader(inputs[0])
         result = []
@@ -117,4 +122,4 @@ class AndroidCoverageChecker(CoverageChecker):
             else 1
         )
 
-        self.summary(result, cur_all_coverage_rate, args.threshold)
+        return self.summary(result, cur_all_coverage_rate, args.threshold)

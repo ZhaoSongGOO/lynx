@@ -12,6 +12,8 @@ from core.target.observer import LogObserver, CrashObserverFactory, OwnersObserv
 from core.target.target import Target
 from core.target.target_factory import TargetFactory
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class NativeUTContainer(Container):
@@ -19,8 +21,12 @@ class NativeUTContainer(Container):
         super().__init__()
         self.parallel_queue = []
         self.serial_queue = []
-        self.builder_manager: BuilderManager = BuilderManager(builder)
-        self.coverage: Coverage = CoverageFactory(coverage)
+        self.builder_manager_init_params = builder
+        self.coverage_init_params = coverage
+        self.builder_manager: BuilderManager = BuilderManager(
+            self.builder_manager_init_params
+        )
+        self.coverage: Coverage = None
         self.test_type = test_type
         self.observers = [LogObserver()]
         crash_observer = CrashObserverFactory()
@@ -29,11 +35,22 @@ class NativeUTContainer(Container):
         self.observers.append(OwnersObserver())
 
     def before_test(self, targets, filter: str):
-        self.builder_manager.pre_action()
+        coverage = CoverageFactory(self.coverage_init_params)
+        if coverage.is_err():
+            return coverage
+
+        self.coverage = coverage.get_value()
+
+        result = self.builder_manager.pre_action()
+        if result.is_err():
+            return result
         for t in targets.keys():
             if filter != "all" and t != filter:
                 continue
-            target = TargetFactory(self.test_type, targets[t], t)
+            result = TargetFactory(self.test_type, targets[t], t)
+            if result.is_err():
+                return result
+            target = result.get_value()
             if not target.enable:
                 continue
             enable_parallel = (
@@ -43,12 +60,17 @@ class NativeUTContainer(Container):
             )
             self.add_targets(target, enable_parallel)
         for target in self.serial_queue:
-            self.builder_manager.build(target)
+            result = self.builder_manager.build(target)
+            if result.is_err():
+                return result
         for target in self.parallel_queue:
-            self.builder_manager.build(target)
+            result = self.builder_manager.build(target)
+            if result.is_err():
+                return result
+        return Ok()
 
     def after_test(self):
-        self.coverage.gen_report(self.serial_queue + self.parallel_queue)
+        return self.coverage.gen_report(self.serial_queue + self.parallel_queue)
 
     def kill_all_process(self):
         for target in self.parallel_queue:
@@ -80,7 +102,10 @@ class NativeUTContainer(Container):
                             for observer in self.observers:
                                 observer.update(target)
                             self.kill_all_process()
-                            return target.process.returncode
+                            return Err(
+                                Constants.TARGET_RUN_ERR,
+                                f"{target.name} has error with code {target.process.returncode}",
+                            )
                     elif target.name not in over_processes_list:
                         over_processes_list.append(target.name)
                         only_run_process.remove(target.name)
@@ -98,33 +123,47 @@ class NativeUTContainer(Container):
                 else:
                     all_processes_stop = False
             if all_processes_stop:
-                return 0
+                return Ok()
             time.sleep(2)
         for target in self.parallel_queue:
             if not target.is_end():
                 Log.error(f"{target.name} timeout!")
                 target.print_log()
         self.kill_all_process()
-        return -1
+        return Err(Constants.TARGET_RUN_TIMEOUT_ERR, "Target run timeout.")
 
     def test(self):
         for target in self.serial_queue:
-            target.run().wait()
+            result = target.run_pre_actions()
+            if result.is_err():
+                return result
+            result = target.run()
+            if result.is_err():
+                return result
+            target.wait()
             if target.has_error():
                 Log.error(f"{target.name} has error!")
                 for observer in self.observers:
                     observer.update(target)
-                Log.fatal(f"Test Failed with ret-code {target.process.returncode}")
+                return Err(
+                    Constants.TARGET_RUN_ERR,
+                    f"Test Failed with ret-code {target.process.returncode}",
+                )
             else:
                 Log.success(f"{target.name} run success!")
 
         for target in self.parallel_queue:
-            target.run_pre_actions()
-            target.run()
+            result = target.run_pre_actions()
+            if result.is_err():
+                return result
+            result = target.run()
+            if result.is_err():
+                return result
 
-        ret_code = self.wait_for_execution_finish()
-        if ret_code != 0:
-            Log.fatal(f"Test Failed with ret-code {ret_code}")
+        result = self.wait_for_execution_finish()
+        if result.is_err():
+            return result
+        return Ok()
 
     def add_targets(self, target: Target, parallel=False):
         if parallel:

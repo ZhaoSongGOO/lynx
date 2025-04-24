@@ -4,14 +4,18 @@
 from core.target.android_target_factory import AndroidTargetFactory
 from core.target.fuzzer_test_target import FuzzerTestTarget
 from core.target.native_ut_target import NativeUTTarget
+from core.base.result import Ok, Err
+from core.base.constants import Constants
 
 
 def TargetFactory(target_type: str, params, name: str):
+    target = None
     if target_type == "native-ut":
-        return NativeUTTarget(params, name)
+        target = NativeUTTarget(params, name)
     elif target_type == "android-ut":
-        return AndroidTargetFactory(params, name)
+        target = AndroidTargetFactory(params, name)
     elif target_type == "fuzzer-test":
-        return FuzzerTestTarget(params, name)
-    else:
-        return None
+        target = FuzzerTestTarget(params, name)
+    if target is None:
+        return Err(Constants.TARGET_BUILD_ERR, f"Unsupport target_type :{target_type}")
+    return Ok(target)

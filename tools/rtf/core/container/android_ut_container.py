@@ -11,6 +11,8 @@ from core.target.observer import LogObserver, OwnersObserver
 from core.target.target_factory import TargetFactory
 from core.utils.emu_env_setup import EmulatorEnv
 from core.utils.log import Log
+from core.base.result import Ok, Err
+from core.base.constants import Constants
 
 
 class AndroidUTContainer(Container):
@@ -19,7 +21,8 @@ class AndroidUTContainer(Container):
         self.targets = []
         self.test_type = "android-ut"
         self.builder_manager: BuilderManager = BuilderManager(builder)
-        self.coverage: Coverage = CoverageFactory(coverage)
+        self.coverage_init_params = coverage
+        self.coverage: Coverage = None
         self.emulator = EmulatorEnv()
         self.observers = [LogObserver(), OwnersObserver()]
         self.device_log = "device.log"
@@ -28,23 +31,43 @@ class AndroidUTContainer(Container):
         self.clean = True
 
     def before_test(self, targets, filter: str):
-        self.emulator.prepare_android_emulator(use_real_device=self.use_real_device)
+        result = self.emulator.prepare_android_emulator(
+            use_real_device=self.use_real_device
+        )
+
+        if result.is_err():
+            return result
+
+        coverage = CoverageFactory(self.coverage_init_params)
+        if coverage.is_err():
+            return coverage
+
+        self.coverage = coverage.get_value()
 
         def skip():
             return not self.clean
 
-        self.builder_manager.pre_action(skip=skip)
+        result = self.builder_manager.pre_action(skip=skip)
+        if result.is_err():
+            return result
         for t in targets.keys():
             if filter != "all" and t != filter:
                 continue
-            target = TargetFactory(self.test_type, targets[t], t)
+            result = TargetFactory(self.test_type, targets[t], t)
+            if result.is_err():
+                return result
+            target = result.get_value()
             if not target.enable:
                 continue
             self.targets.append(target)
 
         for target in self.targets:
-            self.builder_manager.build(target)
+            result = self.builder_manager.build(target)
+            if result.is_err():
+                return result
             target.insert_global_info("device_name", self.emulator.device)
+
+        return Ok()
 
     def after_test(self):
         try:
@@ -59,6 +82,7 @@ class AndroidUTContainer(Container):
         finally:
             self.emulator.close()
             self.log_process.kill()
+            return Ok()
 
     def test(self):
         log_file = open(self.device_log, "w")
@@ -66,10 +90,14 @@ class AndroidUTContainer(Container):
             ["adb", "logcat", "-v", "time"], stdout=log_file, stderr=subprocess.STDOUT
         )
         for target in self.targets:
-            target.run()
+            result = target.run()
+            if result.is_err():
+                return result
+            target.wait()
             if target.has_error():
                 for observer in self.observers:
                     observer.update(target)
-                Log.fatal(f"{target.name} has error!")
+                return Err(Constants.TARGET_RUN_ERR, f"{target.name} has error!")
             else:
                 Log.success(f"{target.name} success!")
+        return Ok()

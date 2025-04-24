@@ -153,7 +153,6 @@ class RobotMessageLog(BaseLog):
     def fatal(self, msg):
         self.result = "red"
         self.contents.append(f"❌{msg}")
-        self.save()
         Log.fatal(msg)
 
     def success(self, msg):

@@ -3,6 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 import os.path
 import subprocess
+from datetime import datetime
+import enum
 from core.env.env import RTFEnv
 from core.utils.log import Log
 
@@ -18,6 +20,8 @@ class Target:
         self.coverage_data_path = None
         self.enable = self.params["enable"] if "enable" in self.params else True
         self.start_time = None
+        self.end_time = None
+        self.is_aborted = False
         self.process = None
         self.global_info = {}
         self.log_file = os.path.join(
@@ -45,6 +49,8 @@ class Target:
 
     def kill(self):
         if self.process:
+            self.end_time = datetime.timestamp(datetime.now())
+            self.is_aborted = True
             self.process.terminate()
 
     def is_end(self):

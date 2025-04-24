@@ -6,6 +6,8 @@ from core.utils.git_helper import GitHelper
 from core.utils.lcov_reader import LCovReader
 from core.utils.log import Log
 from core.utils.operation import Intersection
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class NativeCoverageChecker(CoverageChecker):
@@ -64,7 +66,10 @@ class NativeCoverageChecker(CoverageChecker):
     def check(self, args):
         self.job = args.job
         if len(args.inputs) != 1:
-            Log.fatal(f"please support lcov.txt file by --inputs!")
+            return Err(
+                Constants.COVERAGE_CHECKER_RUN_ERR,
+                f"please support lcov.txt file by --inputs!",
+            )
         content = LCovReader(args.inputs[0])
         file_2_change_lines = self.__get_file_to_changed_map(args.count)
         # ignore some files which not in content
@@ -116,4 +121,4 @@ class NativeCoverageChecker(CoverageChecker):
             if cur_all_need_covered_lines != 0
             else 1
         )
-        self.summary(result, cur_all_coverage_rate, args.threshold)
+        return self.summary(result, cur_all_coverage_rate, args.threshold)

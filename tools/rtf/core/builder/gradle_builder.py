@@ -9,6 +9,8 @@ from core.builder.builder import Builder
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class GradleBuilder(Builder):
@@ -18,9 +20,13 @@ class GradleBuilder(Builder):
         self.workspace = workspace
 
     def pre_action(self, skip: Callable[[], bool] = None):
-        if skip is None or not skip():
-            command = "./gradlew clean"
-            subprocess.check_call(command, shell=True, cwd=self.workspace)
+        try:
+            if skip is None or not skip():
+                command = "./gradlew clean"
+                subprocess.check_call(command, shell=True, cwd=self.workspace)
+            return Ok()
+        except Exception as e:
+            return Err(Constants.CALL_COMMAND_ERR, f"run {command} failed : {e}")
 
     def build(self, target: Target):
         for task in target.build_tasks:
@@ -32,5 +38,6 @@ class GradleBuilder(Builder):
                     RTFEnv.get_project_root_path(), target.params["apk"]
                 )
                 Log.success(f"{task} build success!")
+                return Ok()
             except Exception as e:
-                Log.fatal(f"{task} build failed!\n{e}")
+                return Err(Constants.CALL_COMMAND_ERR, f"{task} build failed!\n{e}")

@@ -7,6 +7,8 @@ from datetime import datetime
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class NativeUTTarget(Target):
@@ -62,11 +64,14 @@ class NativeUTTarget(Target):
         self.process = subprocess.Popen(
             [run_cmd], shell=True, cwd=self.cwd, stderr=log_file, stdout=log_file
         )
-        return self
+        return Ok()
 
     def run_pre_actions(self):
         for action in self.pre_actions:
             Log.info(f"Run pre action {action} for {self.name}")
             result = subprocess.check_call(action, shell=True, cwd=self.cwd)
             if result != 0:
-                Log.fatal(f"Run pre action {action} failed!")
+                return Err(
+                    Constants.CALL_COMMAND_ERR, f"Run pre action ({action}) failed"
+                )
+        return Ok()

@@ -10,6 +10,8 @@ from core.coverage.coverage import Coverage
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+from core.base.constants import Constants
+from core.base.result import Err, Ok
 
 
 class LLVMCoverage(Coverage):
@@ -116,5 +118,8 @@ class LLVMCoverage(Coverage):
             self.__gen_html_report(targets)
             self.__gen_json_summary(targets)
             self.__gen_lcov_summary(targets)
+            return Ok()
         except Exception as e:
-            Log.fatal(f"Generate coverage report failed! {e}")
+            return Err(
+                Constants.COVERAGE_GENERATE_ERR, f"Generate coverage report failed! {e}"
+            )
