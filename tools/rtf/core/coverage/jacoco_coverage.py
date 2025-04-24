@@ -11,6 +11,8 @@ from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
 from core.utils.xml_reader import XmlReader
+from core.base.constants import Constants
+from core.base.result import Err, Ok
 
 
 class JaCoCoCoverage(Coverage):
@@ -126,5 +128,8 @@ class JaCoCoCoverage(Coverage):
                 return
             self.__gen_coverage_summary_json(xml_file_path)
             self.__gen_jacoco_html_report(targets)
+            return Ok()
         except Exception as e:
-            Log.fatal(f"Generate coverage report failed! {e}")
+            return Err(
+                Constants.COVERAGE_GENERATE_ERR, f"Generate coverage report failed! {e}"
+            )

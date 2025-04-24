@@ -8,6 +8,8 @@ import subprocess
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class AndroidTargetType(enum.Enum):
@@ -80,11 +82,17 @@ class AndroidUTTarget(Target):
         )
         try:
             subprocess.check_call(install_cmd, shell=True)
+            return Ok()
         except Exception as e:
-            Log.fatal(f"adb install failed for {self.name} \n: {e}")
+            return Err(
+                Constants.ANDROID_APK_INSTALL_ERR,
+                f"adb install failed for {self.name} \n: {e}",
+            )
 
     def run(self):
-        self.install_apk()
+        result = self.install_apk()
+        if result.is_err():
+            return result
         run_command = (
             f"adb -s {self.global_info['device_name']} shell am instrument -w -e package "
             f"com -e debug false -e coverage true -e coverageFile /sdcard/coverage_{self.name}.ec "
@@ -95,12 +103,13 @@ class AndroidUTTarget(Target):
         self.process = subprocess.Popen(
             run_command, shell=True, stdout=log_file, stderr=log_file
         )
-        self.__wait()
+        return Ok()
 
-    def __wait(self):
-        self.process.wait()
-        self.pull_resource()
-        self.uninstall_apk()
+    def wait(self):
+        if self.process:
+            self.process.wait()
+            self.pull_resource()
+            self.uninstall_apk()
 
 
 class AndroidUTApplicationTarget(AndroidUTTarget):
@@ -129,7 +138,9 @@ class AndroidUTApplicationTarget(AndroidUTTarget):
         subprocess.check_call(uninstall_cmd, shell=True)
 
     def install_apk(self):
-        super().install_apk()
+        result = super().install_apk()
+        if result.is_err():
+            return result
         Log.info(f"Installing application apk for {self.name}")
         application_apk_path = os.path.join(
             RTFEnv.get_project_root_path(), self.application_apk
@@ -137,5 +148,9 @@ class AndroidUTApplicationTarget(AndroidUTTarget):
         install_cmd = f"adb -s {self.global_info['device_name']} install -g {application_apk_path}"
         try:
             subprocess.check_call(install_cmd, shell=True)
+            return Ok()
         except Exception as e:
-            Log.fatal(f"adb install failed for {self.name} \n: {e}")
+            return Err(
+                Constants.ANDROID_APK_INSTALL_ERR,
+                f"adb install failed for {self.name} \n: {e}",
+            )

@@ -3,6 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 from core.checker.check import Checker
 from core.utils.log import RobotMessageLog
+from core.base.constants import Constants
+from core.base.result import Err, Ok
 
 
 class CoverageChecker(Checker):
@@ -39,8 +41,10 @@ class CoverageChecker(Checker):
                     f"In this change {result['source_file']}'s coverage({result['cur_file_coverage_rate'] * 100:.2f}%) check "
                     f"passed!"
                 )
+        local_log.save()
         if not has_error:
             local_log.success("Coverage check passed!")
-            local_log.save()
+            return Ok()
         else:
-            local_log.fatal("Coverage check failed!")
+            local_log.error("Coverage check failed!")
+            return Err(Constants.COVERAGE_CHECKER_FAILED, "Coverage check failed!")

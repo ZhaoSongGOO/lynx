@@ -10,6 +10,7 @@ from core.env.env import RTFEnv
 from core.env.trait_template import TraitTemplate
 from core.options.options import Options
 from core.utils.log import Log
+from core.base.result import Ok
 from plugins.plugin import Plugin
 
 
@@ -59,9 +60,9 @@ class NativeUTPlugin(Plugin):
                 exec(template_file.read(), context.export())
                 template = TraitTemplate.trait_from_context(context)
             if args.command == "run":
-                self.__handle_run_command(template, args)
+                return self.__handle_run_command(template, args)
             elif args.command == "list":
-                self.__handle_list_command(template_name, template)
+                return self.__handle_list_command(template_name, template)
 
     def __handle_list_command(self, template_name, template):
         Log.info(f"Targets list for {template_name}")
@@ -73,12 +74,13 @@ class NativeUTPlugin(Plugin):
                 owners = ",".join(targets[target]["owners"])
                 Log.info(f"[{index}]: {target}  owners:({owners})")
                 index += 1
+        return Ok()
 
     def __handle_run_command(self, template, args):
         container = NativeUTContainer(
             template["builder"], template["coverage"], "native-ut"
         )
-        container.run(template["targets"], args.target)
+        return container.run(template["targets"], args.target)
 
     def help(self):
         return "run targets of native-ut"

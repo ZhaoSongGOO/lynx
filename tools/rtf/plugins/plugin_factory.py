@@ -7,18 +7,24 @@ from plugins.coverage_check_plugin import CoverageCheckerPlugin
 from plugins.fuzzer_test_plugin import FuzzerTestPlugin
 from plugins.native_ut_plugin import NativeUTPlugin
 from plugins.project_init_plugin import InitPlugin
+from core.base.result import Ok, Err
+from core.base.constants import Constants
 
 
 def PluginFactory(plugin_name):
+    plugin = None
     if plugin_name == "NativeUT":
-        return NativeUTPlugin()
+        plugin = NativeUTPlugin()
     elif plugin_name == "Init":
-        return InitPlugin()
+        plugin = InitPlugin()
     elif plugin_name == "CoverageChecker":
-        return CoverageCheckerPlugin()
+        plugin = CoverageCheckerPlugin()
     elif plugin_name == "AndroidUT":
-        return AndroidUTPlugin()
+        plugin = AndroidUTPlugin()
     elif plugin_name == "FuzzerTest":
-        return FuzzerTestPlugin()
-    else:
-        Log.fatal(f"{plugin_name} not found!")
+        plugin = FuzzerTestPlugin()
+
+    if plugin is None:
+        return Err(Constants.PLUGIN_BUILD_ERR, f"Unsupported plugin type {plugin_name}")
+
+    return Ok(plugin)

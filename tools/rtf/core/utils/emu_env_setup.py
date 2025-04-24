@@ -6,6 +6,8 @@ import subprocess
 from time import sleep
 
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class EmulatorEnv:
@@ -31,27 +33,46 @@ class EmulatorEnv:
         if use_real_device:
             devices = self.get_real_devices()
             if len(devices) == 0:
-                Log.fatal("No real device resources found!")
+                return Err(
+                    Constants.ANDROID_REAL_DEVICE_PREPARE_ERR,
+                    "No real device resources found!",
+                )
             self.device = devices[0]
             if use_root:
-                self.start_real_device_use_root()
+                result = self.start_real_device_use_root()
+                if result.is_err():
+                    Log.warning(
+                        f"Restart real device with root role {self.device} failed!"
+                    )
+                return Ok()
         else:
             devices = self.get_simulator_devices()
             if len(devices) == 0:
-                devices = self.try_start_emulator()
+                result = self.try_start_emulator()
+                if result.is_err():
+                    return result
+                devices = result.get_value()
                 if len(devices) == 0:
                     self.close()
-                    Log.fatal("No simulator device resources found!")
+                    return Err(
+                        Constants.ANDROID_EMULATOR_PREPARE_ERR,
+                        "No simulator device resources found!",
+                    )
             self.device = devices[0]
             if use_root:
-                self.start_simulator_use_root()
+                result = self.start_simulator_use_root()
+                if result.is_err():
+                    Log.warning(
+                        f"Restart Simulator with root role {self.device} failed!"
+                    )
+        return Ok()
 
     def start_real_device_use_root(self):
         # TODO(zhaosong.lmm):
         # On a physical device, you can use 'adb pull'
         # to fetch files and generate coverage without needing root permissions.
         self.is_root_rule = True
-        return
+        return Ok()
         # check_root_cmd = f"adb -s {self.device} shell which su"
         # try:
         #     output = subprocess.check_output(check_root_cmd, shell=True, env=self.env)
@@ -84,10 +105,13 @@ class EmulatorEnv:
                 sleep(10)
                 Log.success(f"Restart Simulator with root role {self.device} success!")
                 self.is_root_rule = True
-                return
+                return Ok()
             else:
                 sleep(5)
-        Log.warning(f"Restart Simulator with root role {self.device} failed!")
+        return Err(
+            Constants.ANDROID_EMULATOR_PREPARE_ERR,
+            f"Restart Simulator with root role {self.device} failed!",
+        )
 
     def get_real_devices(self):
         return self.get_devices_list(True)
@@ -119,7 +143,7 @@ class EmulatorEnv:
         )
         images = output.decode("utf-8").strip().split("\n")
         if len(images) == 0:
-            Log.fatal("No simulator resources found!")
+            return Ok([])
         start_simulator_device_cmd = (
             f"emulator -no-window -writable-system -avd {images[0]}"
         )
@@ -134,5 +158,5 @@ class EmulatorEnv:
             if len(devices) == 0:
                 sleep(5)
             else:
-                return devices
-        return []
+                return Ok(devices)
+        return Ok([])

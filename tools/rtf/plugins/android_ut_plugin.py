@@ -60,13 +60,13 @@ class AndroidUTPlugin(Plugin):
                 exec(template_file.read(), context.export())
                 template = TraitTemplate.trait_from_context(context)
             if args.command == "run":
-                self.__handle_run_command(template, args)
+                return self.__handle_run_command(template, args)
 
     def __handle_run_command(self, local_env, args):
         container = AndroidUTContainer(local_env["builder"], local_env["coverage"])
         container.use_real_device = args.rmd
         container.clean = not args.no_clean
-        container.run(local_env["targets"], filter=args.target)
+        return container.run(local_env["targets"], filter=args.target)
 
     def help(self):
         return "run targets of android-ut"

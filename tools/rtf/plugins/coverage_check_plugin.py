@@ -12,10 +12,11 @@ class CoverageCheckerPlugin(Plugin):
         super().__init__("coverage-check")
 
     def accept(self, args):
-        checker = CheckerFactory(args.check_type)
-        if checker is None:
-            Log.fatal(f"check type `{args.check_type}` is not supported!")
-        checker.check(args)
+        result = CheckerFactory(args.check_type)
+        if result.is_err():
+            return result
+        checker = result.get_value()
+        return checker.check(args)
 
     def help(self):
         return "check coverage"

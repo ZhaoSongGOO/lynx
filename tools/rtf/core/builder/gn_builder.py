@@ -9,6 +9,8 @@ from core.builder.builder import Builder
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+from core.base.result import Err, Ok
+from core.base.constants import Constants
 
 
 class GnBuilder(Builder):
@@ -18,8 +20,12 @@ class GnBuilder(Builder):
         self.output = output
 
     def pre_action(self, skip: Callable[[], bool] = None):
-        gn_gen_cmd = f'gn gen {self.output} --args="{" ".join(self.args)}"'
-        subprocess.check_call(gn_gen_cmd, shell=True)
+        try:
+            gn_gen_cmd = f'gn gen {self.output} --args="{" ".join(self.args)}"'
+            subprocess.check_call(gn_gen_cmd, shell=True)
+            return Ok()
+        except Exception as e:
+            return Err(Constants.CALL_COMMAND_ERR, f"run {gn_gen_cmd} failed : {e}")
 
     def build(self, target: Target):
         Log.info(f"{target.name} start build!")
@@ -39,5 +45,6 @@ class GnBuilder(Builder):
                         RTFEnv.get_project_root_path(), self.output, task
                     )
                 Log.success(f"{task} build success!")
+                return Ok()
             except Exception as e:
-                Log.fatal(f"{task} build failed!\n{e}")
+                return Err(Constants.CALL_COMMAND_ERR, f"{task} build failed!\n{e}")

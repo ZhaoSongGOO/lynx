@@ -3,16 +3,23 @@
 # LICENSE file in the root directory of this source tree.
 from core.coverage.jacoco_coverage import JaCoCoCoverage
 from core.coverage.llvm_coverage import LLVMCoverage
+from core.base.constants import Constants
+from core.base.result import Err, Ok
 
 
 def CoverageFactory(coverage_params):
     coverage_type = coverage_params["type"]
+    coverage = None
     if coverage_type == "llvm":
-        return LLVMCoverage(coverage_params["ignores"], coverage_params["output"])
+        coverage = LLVMCoverage(coverage_params["ignores"], coverage_params["output"])
     elif coverage_type == "jacoco":
-        return JaCoCoCoverage(
+        coverage = JaCoCoCoverage(
             coverage_params["output"],
             coverage_params["jacoco_cli"],
         )
-    else:
-        return None
+
+    if coverage is None:
+        return Err(
+            Constants.COVERAGE_BUILD_ERR, f"Unsupported coverage_type {coverage_type}"
+        )
+    return Ok(coverage)
