@@ -67,6 +67,29 @@ TEST(PageConfigTest, EnableSignalAPI1) {
   EXPECT_EQ(page_config.GetEnableSignalAPI(), TernaryBool::FALSE_VALUE);
 }
 
+TEST(PageConfigTest, GetEnableParallelElement) {
+  PageConfig page_config;
+  page_config.pipeline_scheduler_config_ = 0;
+  page_config.enable_parallel_element_ = false;
+  EXPECT_EQ(page_config.GetEnableParallelElement(), false);
+
+  page_config.pipeline_scheduler_config_ = 0;
+  page_config.enable_parallel_element_ = true;
+  EXPECT_EQ(page_config.GetEnableParallelElement(), true);
+
+  page_config.pipeline_scheduler_config_ = kEnableParallelElementMask;
+  page_config.enable_parallel_element_ = false;
+  EXPECT_EQ(page_config.GetEnableParallelElement(), true);
+
+  page_config.pipeline_scheduler_config_ = kEnableParallelElementMask;
+  page_config.enable_parallel_element_ = true;
+  EXPECT_EQ(page_config.GetEnableParallelElement(), true);
+
+  page_config.pipeline_scheduler_config_ = kDisableParallelElementMask;
+  page_config.enable_parallel_element_ = true;
+  EXPECT_EQ(page_config.GetEnableParallelElement(), false);
+}
+
 #undef CHECK_CONFIG_VALUE
 
 }  // namespace test

@@ -36,13 +36,17 @@ enum class TernaryBool { TRUE_VALUE, FALSE_VALUE, UNDEFINE_VALUE };
 // 32 ~ 39 bit: Reserved for execute UI OP stage in Pixel Pipeline.
 // 40 ~ 47 bit: Reserved for paint stage in Pixel Pipeline.
 // 48 ~ 63 bit: Flexible bits for extensibility.
+// Use 2-bits for each feature flag to represent three states:
+// true/false/undefine 00: represents undefine 01: represents enable feature
+// flag 10: represents disable feature flag
 // TODO: Need to add a TS definition for PipelineSchedulerConfig.
 constexpr static uint64_t kEnableParallelParseElementTemplate = 1;
 constexpr static uint64_t kEnableListBatchRenderMask = 1 << 8;
 constexpr static uint64_t kEnableParallelElementMask = 1 << 16;
+constexpr static uint64_t kDisableParallelElementMask = 1 << 17;
 constexpr static uint64_t kEnableListBatchRenderAsyncResolvePropertyMask =
-    1 << 17;
-constexpr static uint64_t kEnableListBatchRenderAsyncResolveTreeMask = 1 << 18;
+    1 << 18;
+constexpr static uint64_t kEnableListBatchRenderAsyncResolveTreeMask = 1 << 20;
 
 // TODO(nihao.royal) unify parameters of different types.
 // constexpr static int32_t kTernaryInt32UndefinedValue = 0x7fffffff;
@@ -871,9 +875,7 @@ class PageConfig final : public EntryConfig {
     return pipeline_scheduler_config_ & kEnableParallelParseElementTemplate;
   }
 
-  inline bool GetEnableParallelElement() const {
-    return enable_parallel_element_;
-  }
+  bool GetEnableParallelElement() const;
 
   inline void SetEnableParallelElement(bool enable) {
     enable_parallel_element_ = enable;

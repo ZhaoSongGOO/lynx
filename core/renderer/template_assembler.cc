@@ -374,11 +374,7 @@ void TemplateAssembler::DidDecodeTemplate(
       page_config_->GetEnableFiberElementForRadonDiff());
 
   if (page_config_) {
-    bool enableParallelElementConfig =
-        (page_config_->GetPipelineSchedulerConfig() &
-         kEnableParallelElementMask) > 0;
-    if ((enableParallelElementConfig ||
-         page_config_->GetEnableParallelElement()) &&
+    if (page_config_->GetEnableParallelElement() &&
         page_proxy()
             ->element_manager()
             ->painting_context()

@@ -63,5 +63,17 @@ const PageConfig::PageConfigMap<uint64_t>& PageConfig::GetFuncUint64Map() {
   return *kPageConfigFuncUint64Map;
 }
 
+bool PageConfig::GetEnableParallelElement() const {
+  bool enableParallelElementFromSchedulerConfig =
+      (GetPipelineSchedulerConfig() & kEnableParallelElementMask) > 0;
+  bool isParallelElementConfigUndefined =
+      ((GetPipelineSchedulerConfig() & kDisableParallelElementMask) == 0) &&
+      !enableParallelElementFromSchedulerConfig;
+  // enableParallelElement from pipelineSchedulerConfig would override
+  // enableParallelElement encode option
+  return (enableParallelElementFromSchedulerConfig ||
+          (isParallelElementConfigUndefined && enable_parallel_element_));
+}
+
 }  // namespace tasm
 }  // namespace lynx
