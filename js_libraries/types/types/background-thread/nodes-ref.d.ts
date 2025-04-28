@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { AnyObject } from '../common';
+import { AnimationV2 } from './animation';
 
 export enum NODE_REF_INVOKE_ERROR_CODE {
   SUCCESS = 0,
@@ -73,6 +74,14 @@ export interface NodesRef {
       status: { data: string; code: number }
     ) => void
   ): SelectorQuery;
+
+  animate(animations: AnimationV2[] | AnimationV2): SelectorQuery;
+
+  playAnimation(ids: string[] | string): SelectorQuery;
+
+  pauseAnimation(ids: string[] | string): SelectorQuery;
+
+  cancelAnimation(ids: string[] | string): SelectorQuery;
 
   setNativeProps(nativeProps: Record<string, any>): SelectorQuery;
 }

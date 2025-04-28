@@ -254,6 +254,19 @@ void RuntimeMediator::ElementAnimate(const std::string& component_id,
   });
 }
 
+void RuntimeMediator::ElementAnimateV2(const std::string& component_id,
+                                       const std::string& id_selector,
+                                       const lepus::Value& args) {
+  if (runtime_standalone_mode_) {
+    REPORT_JSI_NATIVE_EXCEPTION(
+        "ElementAnimate not supported on runtime standalone mode");
+    return;
+  }
+  engine_actor_->ActAsync([component_id, id_selector, args](auto& engine) {
+    engine->ElementAnimateV2(component_id, id_selector, args);
+  });
+}
+
 void RuntimeMediator::OnCoreJSUpdated(std::string core_js) {
   // TODO(huzhanbo.luc): support devtool
   if (runtime_standalone_mode_) {

@@ -530,6 +530,12 @@ void LynxEngine::ElementAnimate(const std::string& component_id,
   tasm_->ElementAnimate(component_id, id_selector, args);
 }
 
+void LynxEngine::ElementAnimateV2(const std::string& component_id,
+                                  const std::string& id_selector,
+                                  const lepus::Value& args) {
+  tasm_->ElementAnimateV2(component_id, id_selector, args);
+}
+
 void LynxEngine::GetComponentContextDataAsync(const std::string& component_id,
                                               const std::string& key,
                                               piper::ApiCallBack callback) {

@@ -16,6 +16,7 @@
 - Add some missing types of built-in element `list`
 - Add some missing types of built-in element `image`
 - Add more events like `LayoutChangeEvent` into `MainThread` namespace
+- Add animate operate function in selectorQuery
 
 In this commit, we add `AnimationEvent`, `TransitionEvent`, `LayoutChangeEvent`, `UIAppearanceEvent` into `MainThread` namespace.
 Now you can use like this:

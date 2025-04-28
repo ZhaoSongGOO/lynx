@@ -15,6 +15,7 @@ import {
   SelectorQueryNativeProxy,
 } from './interface';
 import { InvokeError, reportError } from '../report';
+import { AnimationOperation, AnimationV2 } from '../animation';
 
 /**
  * SelectorQuery is a query object that can be used to select nodes in the Virtual DOM tree.
@@ -325,6 +326,71 @@ export class NodesRef implements INodesRef {
       );
     };
     return this._selectorQuery.commitTask(task);
+  }
+
+  animate(animations: AnimationV2[] | AnimationV2): ISelectorQuery {
+    let animationsArray = [];
+    if (Array.isArray(animations)) {
+      animationsArray = animations;
+    } else {
+      animationsArray.push(animations);
+    }
+    let task = (proxy: SelectorQueryNativeProxy) => {
+      animationsArray.forEach((animation) => {
+        proxy.nativeApp.animate(
+          this._nodeSelectToken.type,
+          this._nodeSelectToken.identifier,
+          this._nodeSelectToken.component_id,
+          AnimationOperation.START,
+          animation?.id,
+          animation?.effect?.keyframes,
+          animation?.effect?.options
+        );
+      });
+    };
+    return this._selectorQuery.commitTask(task);
+  }
+
+  animationOperate(
+    operation: AnimationOperation,
+    ids: string[] | string
+  ): ISelectorQuery {
+    let idArray = [];
+    if (Array.isArray(ids)) {
+      idArray = ids;
+    } else {
+      idArray.push(ids);
+    }
+    let task = (proxy: SelectorQueryNativeProxy) => {
+      idArray.forEach((id) => {
+        proxy.nativeApp.animate(
+          this._nodeSelectToken.type,
+          this._nodeSelectToken.identifier,
+          this._nodeSelectToken.component_id,
+          operation,
+          id,
+          null,
+          null
+        );
+      });
+    };
+    return this._selectorQuery.commitTask(task);
+  }
+
+  playAnimation(ids: string[] | string): ISelectorQuery {
+    return this.animationOperate(AnimationOperation.PLAY, ids);
+  }
+
+  pauseAnimation(ids: string[]): ISelectorQuery {
+    return this.animationOperate(AnimationOperation.PAUSE, ids);
+  }
+
+  cancelAnimation(ids: string[]): ISelectorQuery {
+    return this.animationOperate(AnimationOperation.CANCEL, ids);
+  }
+
+  finishAnimation(ids: string[]): ISelectorQuery {
+    return this.animationOperate(AnimationOperation.FINISH, ids);
   }
 
   setNativeProps(nativeProps: Record<string, unknown>) {

@@ -968,6 +968,52 @@ Value AppProxy::get(Runtime* rt, const PropNameID& name) {
                               std::move(*lepus_value_opt));
           return piper::Value::undefined();
         });
+  } else if (methodName == "animate") {
+    return Function::createFromHostFunction(
+        *rt, PropNameID::forAscii(*rt, "animate"), 5,
+        [this](Runtime& rt, const piper::Value& this_val,
+               const piper::Value* args,
+               size_t count) -> base::expected<Value, JSINativeException> {
+          auto ptr = native_app_.lock();
+          if (!ptr || ptr->IsDestroying()) {
+            return piper::Value::undefined();
+          }
+          std::string identifier = args[1].getString(rt).utf8(rt);
+          std::string component_id = args[2].getString(rt).utf8(rt);
+          auto props = lepus::CArray::Create();
+          auto maybe_operation = args[3].asNumber(rt);
+          if (!maybe_operation) {
+            return base::unexpected(
+                BUILD_JSI_NATIVE_EXCEPTION("Args[0] must be a number."));
+          }
+          int32_t operation = static_cast<int32_t>(*maybe_operation);
+          props->emplace_back(operation);
+
+          if (args[4].isString()) {
+            props->emplace_back(args[4].getString(rt).utf8(rt));
+          }
+
+          if (operation == AnimationOperation::START && args[5].isObject()) {
+            auto value = ptr->ParseJSValueToLepusValue(args[5], component_id);
+            if (!value) {
+              return base::unexpected(BUILD_JSI_NATIVE_EXCEPTION(
+                  "ParseJSValueToLepusValue error in animate args[5]"));
+            }
+            props->emplace_back(std::move(*value));
+          }
+
+          if (operation == AnimationOperation::START && args[6].isObject()) {
+            auto value = ptr->ParseJSValueToLepusValue(args[6], component_id);
+            if (!value) {
+              return base::unexpected(BUILD_JSI_NATIVE_EXCEPTION(
+                  "ParseJSValueToLepusValue error in animate args[6]"));
+            }
+            props->emplace_back(std::move(*value));
+          }
+          ptr->ElementAnimateV2(component_id, identifier,
+                                lepus::Value(std::move(props)));
+          return piper::Value::undefined();
+        });
   } else if (methodName == "getSessionStorageItem") {
     return Function::createFromHostFunction(
         *rt, PropNameID::forAscii(*rt, "getSessionStorageItem"), 2,
@@ -1687,6 +1733,7 @@ std::vector<PropNameID> AppProxy::getPropertyNames(Runtime& rt) {
       "invokeUIMethod",
       "getFields",
       "setNativeProps",
+      "animate",
       "callLepusMethod",
       "markTiming",
       "triggerWorkletFunction",
@@ -3172,6 +3219,14 @@ void App::ElementAnimate(const std::string& component_id,
   LOGI(" element " << id_selector << " in " << component_id
                    << " exec element.Animate " << this);
   delegate_->ElementAnimate(component_id, id_selector, args);
+}
+
+void App::ElementAnimateV2(const std::string& component_id,
+                           const std::string& id_selector,
+                           const lepus::Value& args) {
+  LOGI(" element v2 " << id_selector << " in " << component_id
+                      << " exec element.Animate " << this);
+  delegate_->ElementAnimateV2(component_id, id_selector, args);
 }
 
 void App::ReportException(common::JSErrorInfo error_info) {

@@ -216,6 +216,9 @@ class LynxEngine {
 
   void ElementAnimate(const std::string& component_id,
                       const std::string& id_selector, const lepus::Value& args);
+  void ElementAnimateV2(const std::string& component_id,
+                        const std::string& id_selector,
+                        const lepus::Value& args);
 
   void UpdateCoreJS(std::string core_js);
 

@@ -16,6 +16,7 @@ import {
   sourceMapReleaseObj,
 } from '../modules/report';
 import { TraceOption } from '@lynx-js/types/types/common/performance';
+import { AnimationOperation, AnimationV2 } from '../';
 
 /**
  * The enum values should be sync with `lynx_env.h`.
@@ -216,6 +217,16 @@ export interface NativeApp {
     first_only: boolean,
     native_props: object,
     root_unique_id?: number
+  ) => void;
+
+  animate: (
+    type: IdentifierType,
+    identifier: string,
+    component_id: string,
+    operation: AnimationOperation,
+    id: string,
+    keyframes?: Record<string, any>[],
+    timingOptions?: Record<string, any>
   ) => void;
 
   invokeUIMethod: (

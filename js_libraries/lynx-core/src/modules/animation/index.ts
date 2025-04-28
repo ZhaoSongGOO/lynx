@@ -3,4 +3,5 @@
 // LICENSE file in the root directory of this source tree.
 
 export * from './animation';
+export * from './animationV2';
 export * from './effect';

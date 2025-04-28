@@ -403,6 +403,87 @@ TEST_F(ElementTest, Animate_Table) {
       CSSValuePattern::ENUM);
 }
 
+TEST_F(ElementTest, Animate_v2_Table) {
+  auto element = manager->CreateNode("view", nullptr);
+  element->enable_new_animator_ = true;
+  auto array1 = lepus::CArray::Create();
+  array1->set(0, lepus_value(0));
+
+  auto table1 = lepus::Dictionary::Create();
+  auto table2 = lepus::Dictionary::Create();
+  table2->SetValue("left", lepus_value("10px"));
+  lepus::Value test_keyframe_table_1(std::move(table2));
+  table1->SetValue("0%", test_keyframe_table_1);
+  auto table3 = lepus::Dictionary::Create();
+  table3->SetValue("left", lepus_value("55px"));
+  lepus::Value test_keyframe_table_2(std::move(table3));
+  table1->SetValue("50%", test_keyframe_table_2);
+  auto table4 = lepus::Dictionary::Create();
+  table4->SetValue("left", lepus_value("100px"));
+  lepus::Value test_keyframe_table_3(std::move(table4));
+  table1->SetValue("100%", test_keyframe_table_3);
+  lepus::Value test_keyframes_table(table1);
+  array1->set(2, test_keyframes_table);
+
+  auto table5 = lepus::Dictionary::Create();
+  table5->SetValue("name", lepus::Value("name1"));
+  table5->SetValue("duration", lepus::Value(2000));
+  table5->SetValue("iteration", lepus::Value(2));
+  table5->SetValue("fill", lepus::Value("forwards"));
+  table5->SetValue("play-state", lepus::Value("running"));
+  lepus::Value test_data_table(std::move(table5));
+  array1->set(3, test_data_table);
+
+  // 1.Check that the keyframe table was passed in correctly.
+  lepus::Value test_animate_args{array1};
+  element->AnimateV2(test_animate_args);
+  auto iter = element->keyframes_map_.find("name1");
+  EXPECT_EQ(iter != element->keyframes_map_.end(), true);
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(0)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetValue(),
+            lepus::Value(10));
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(0)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetPattern(),
+            CSSValuePattern::PX);
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(0.5)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetValue(),
+            lepus::Value(55));
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(0.5)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetPattern(),
+            CSSValuePattern::PX);
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(1)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetValue(),
+            lepus::Value(100));
+  EXPECT_EQ(iter->second->GetKeyframesContent()
+                .find(1)
+                ->second->find(kPropertyIDLeft)
+                ->second.GetPattern(),
+            CSSValuePattern::PX);
+
+  // 2.Check that the animation_data were passed in correctly.
+  auto target_name = "name1";
+  auto animation_data = element->computed_css_style()->animation_data_;
+  auto ani_iter =
+      std::find_if(animation_data->begin(), animation_data->end(),
+                   [&target_name](const starlight::AnimationData& data) {
+                     return data.name == target_name;
+                   });
+  EXPECT_EQ(ani_iter != animation_data->end(), true);
+  EXPECT_EQ(ani_iter->duration, 2000);
+  EXPECT_EQ(static_cast<int>(ani_iter->fill_mode), 1);
+  EXPECT_EQ(static_cast<int>(ani_iter->play_state), 1);
+}
+
 }  // namespace testing
 }  // namespace tasm
 }  // namespace lynx

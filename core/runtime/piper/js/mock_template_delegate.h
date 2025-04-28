@@ -75,6 +75,9 @@ class MockTemplateDelegate : public runtime::TemplateDelegate {
   void ElementAnimate(const std::string& component_id,
                       const std::string& id_selector,
                       const lepus::Value& args) override {}
+  void ElementAnimateV2(const std::string& component_id,
+                        const std::string& id_selector,
+                        const lepus::Value& args) override{};
   void TriggerComponentEvent(const std::string& event_name,
                              const lepus::Value& msg) override {}
   void TriggerLepusGlobalEvent(const std::string& event_name,

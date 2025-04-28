@@ -26,6 +26,8 @@ import { LynxErrorLevel } from '../modules/report';
 import { MessageEventType, MessageEvent } from './interface';
 import Performance from '../modules/performance';
 import SelectorQuery from '../modules/selectorQuery/SelectorQuery';
+import { KeyframeEffectV2 } from '../modules/animation/effect';
+import { AnimationV2 } from '../modules/animation/animationV2';
 
 interface LynxModuleLoader {
   load(moduleName: string): any;
@@ -458,5 +460,13 @@ export class Lynx {
 
   getModuleLoader = (): LynxModuleLoader => {
     return nativeGlobal['napiRestrictedLoader' + this.getApp().nativeAppId];
+  };
+
+  createAnimation = (
+    id: string,
+    keyframes: Array<Record<string, any>>,
+    options: Record<string, any>
+  ) => {
+    return new AnimationV2(id, keyframes, options);
   };
 }

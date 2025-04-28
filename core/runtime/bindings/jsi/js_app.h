@@ -54,6 +54,7 @@ class AppProxy : public HostObject {
   virtual void set(Runtime*, const PropNameID& name,
                    const Value& value) override;
   virtual std::vector<PropNameID> getPropertyNames(Runtime& rt) override;
+  enum AnimationOperation : int32_t { START = 0, PLAY, PAUSE, CANCEL, FINISH };
 
  protected:
   std::weak_ptr<Runtime> rt_;
@@ -143,6 +144,9 @@ class App : public std::enable_shared_from_this<App> {
                                const ApiCallBack& callback);
   void ElementAnimate(const std::string& component_id,
                       const std::string& id_selector, const lepus::Value& args);
+  void ElementAnimateV2(const std::string& component_id,
+                        const std::string& id_selector,
+                        const lepus::Value& args);
   void triggerComponentEvent(const std::string& event_name, lepus_value&& msg);
 
   void triggerLepusGlobalEvent(const std::string& event_name,

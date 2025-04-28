@@ -2,7 +2,10 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { KeyframeEffect as IKeyframeEffect } from '@lynx-js/types';
+import {
+  KeyframeEffect as IKeyframeEffect,
+  KeyframeEffectV2 as IKeyframeEffectV2,
+} from '@lynx-js/types';
 import Element from '../element';
 
 export class KeyframeEffect implements IKeyframeEffect {
@@ -16,6 +19,20 @@ export class KeyframeEffect implements IKeyframeEffect {
     options: Record<string, any>
   ) {
     this.target = target;
+    this.keyframes = keyframes;
+    this.options = options;
+  }
+}
+
+export class KeyframeEffectV2 implements IKeyframeEffectV2 {
+  public readonly target?: Element;
+  public readonly keyframes: Array<Record<string, any>>;
+  public readonly options: Record<string, any>;
+
+  constructor(
+    keyframes: Array<Record<string, any>>,
+    options: Record<string, any>
+  ) {
     this.keyframes = keyframes;
     this.options = options;
   }

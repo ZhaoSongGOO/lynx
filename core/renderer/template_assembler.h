@@ -422,6 +422,10 @@ class TemplateAssembler final
   void ElementAnimate(const std::string& component_id,
                       const std::string& id_selector, const lepus::Value& args);
 
+  void ElementAnimateV2(const std::string& component_id,
+                        const std::string& id_selector,
+                        const lepus::Value& args);
+
   void GetComponentContextDataAsync(const std::string& component_id,
                                     const std::string& key,
                                     piper::ApiCallBack callback);

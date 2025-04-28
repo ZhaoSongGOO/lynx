@@ -535,6 +535,66 @@ bool ComputedCSSStyle::SetValue(tasm::CSSPropertyID id,
   return false;
 }
 
+bool ComputedCSSStyle::AppendAnimatedAnimationValue(tasm::StyleMap animate_data,
+                                                    bool reset) {
+  auto name =
+      animate_data[tasm::CSSPropertyID::kPropertyIDAnimationName].AsString();
+  auto temp_animate_data = AnimationData();
+  if (!animation_data_) {
+    animation_data_.emplace();
+  }
+
+  auto iter = std::find_if(animation_data_->begin(), animation_data_->end(),
+                           [&](const AnimationData& animation_data) {
+                             return animation_data.name == name;
+                           });
+
+  bool new_animation_data = (iter == animation_data_->end());
+  AnimationData* target_animation_data =
+      new_animation_data ? &temp_animate_data : &(*iter);
+
+  for (auto [id, value] : animate_data) {
+    switch (id) {
+      case tasm::kPropertyIDAnimationName:
+        target_animation_data->name = value.AsString();
+        break;
+      case tasm::kPropertyIDAnimationDuration:
+        target_animation_data->duration = value.AsNumber();
+        break;
+      case tasm::kPropertyIDAnimationDelay:
+        target_animation_data->delay = value.AsNumber();
+        break;
+      case tasm::kPropertyIDAnimationFillMode:
+        target_animation_data->fill_mode =
+            static_cast<AnimationFillModeType>(value.AsNumber());
+        break;
+      case tasm::kPropertyIDAnimationIterationCount:
+        target_animation_data->iteration_count = value.AsNumber();
+        break;
+      case tasm::kPropertyIDAnimationTimingFunction:
+        CSSStyleUtils::ComputeTimingFunction(
+            value.GetValue().Array().get()->get(0), reset,
+            target_animation_data->timing_func, parser_configs_);
+        break;
+      case tasm::kPropertyIDAnimationDirection:
+        target_animation_data->direction =
+            static_cast<AnimationDirectionType>(value.AsNumber());
+        break;
+      case tasm::kPropertyIDAnimationPlayState:
+        target_animation_data->play_state =
+            static_cast<AnimationPlayStateType>(value.AsNumber());
+        break;
+      default:
+        break;
+    }
+  }
+
+  if (new_animation_data) {
+    animation_data_->emplace_back(temp_animate_data);
+  }
+
+  return true;
+}
 void ComputedCSSStyle::ResetValue(tasm::CSSPropertyID id) {
   const auto* funcMap = FuncMap();
   if (id > tasm::CSSPropertyID::kPropertyStart &&

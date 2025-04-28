@@ -126,6 +126,9 @@ class TemplateDelegate : public ContextProxy::Delegate {
   virtual void ElementAnimate(const std::string& component_id,
                               const std::string& id_selector,
                               const lepus::Value& args) = 0;
+  virtual void ElementAnimateV2(const std::string& component_id,
+                                const std::string& id_selector,
+                                const lepus::Value& args) = 0;
   virtual void TriggerComponentEvent(const std::string& event_name,
                                      const lepus::Value& msg) = 0;
   virtual void TriggerLepusGlobalEvent(const std::string& event_name,

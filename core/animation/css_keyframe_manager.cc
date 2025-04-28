@@ -159,8 +159,12 @@ void CSSKeyframeManager::SetAnimationDataAndPlay(
     if (animation != animations_map_.end()) {
       // Update an existing animation, add it to temp_active_animations_map_ and
       // delete it from animations_map_;
-      animation->second->UpdateAnimationData(data);
-      temp_active_animations_map_[data.name] = animation->second;
+      if (animation->second->get_animation_data() != data) {
+        animation->second->UpdateAnimationData(data);
+        temp_active_animations_map_[data.name] = animation->second;
+      } else {
+        temp_keep_animations_map_[data.name] = animation->second;
+      }
       animations_map_.erase(animation);
     } else {
       // Create a new animation, add it to temp_active_animations_map_;
@@ -168,7 +172,7 @@ void CSSKeyframeManager::SetAnimationDataAndPlay(
       temp_active_animations_map_[data.name] = new_animation;
     }
   }
-  // 2. All animations remaining in animations_map_ need to be destroyed.
+  //   2. All animations remaining in animations_map_ need to be destroyed.
   for (auto& ani_iter : animations_map_) {
     ani_iter.second->Destroy();
   }
@@ -183,6 +187,8 @@ void CSSKeyframeManager::SetAnimationDataAndPlay(
   }
   // 3. Swap active animations to animations_map_.
   animations_map_.swap(temp_active_animations_map_);
+  animations_map_.merge(temp_keep_animations_map_);
+  temp_keep_animations_map_.clear();
   temp_active_animations_map_.clear();
 }
 

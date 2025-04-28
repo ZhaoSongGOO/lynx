@@ -45,3 +45,13 @@ export interface Animation {
 
   play(): void;
 }
+
+export interface KeyframeEffectV2 {
+  readonly keyframes: Array<Record<string, any>>;
+  readonly options: Record<string, any>;
+}
+
+export interface AnimationV2 {
+  readonly effect: KeyframeEffectV2;
+  readonly id: string;
+}

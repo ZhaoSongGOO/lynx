@@ -1564,6 +1564,20 @@ void TemplateAssembler::ElementAnimate(const std::string& component_id,
   elements[0]->Animate(args);
 }
 
+void TemplateAssembler::ElementAnimateV2(const std::string& component_id,
+                                         const std::string& id_selector,
+                                         const lepus::Value& args) {
+  NodeSelectRoot root = NodeSelectRoot::ByComponentId(component_id);
+  NodeSelectOptions options(NodeSelectOptions::IdentifierType::CSS_SELECTOR,
+                            id_selector);
+  options.only_current_component = false;
+  auto elements = page_proxy_.SelectElements(root, options);
+  if (elements.empty() || elements[0] == nullptr) {
+    return;
+  }
+  elements[0]->AnimateV2(args);
+}
+
 void TemplateAssembler::GetComponentContextDataAsync(
     const std::string& component_id, const std::string& key,
     piper::ApiCallBack callback) {

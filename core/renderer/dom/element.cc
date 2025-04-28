@@ -781,6 +781,120 @@ void Element::Animate(const lepus::Value& args) {
   OnPatchFinish(options);
 }
 
+void Element::AnimateV2(const lepus::Value& args) {
+  // AnimateV2 only work on NewAnimator.
+  if (!enable_new_animator()) {
+    return;
+  }
+  // animate's args: operation, js_name, keyframes, animation_data.
+  if (!args.IsArrayOrJSArray()) {
+    LOGE("Element::Animate's para must be array");
+    return;
+  }
+  if (args.GetLength() < 2) {
+    LOGE("Element::Animate's para size must >= 2");
+    return;
+  }
+  const auto& op = static_cast<piper::JavaScriptElement::AnimationOperation>(
+      args.GetProperty(0).Int32());
+  StyleMap styles;
+  auto& parser_configs = element_manager()->GetCSSParserConfigs();
+  switch (op) {
+    case piper::JavaScriptElement::AnimationOperation::START: {
+      if (args.GetLength() != 4) {
+        LOGE("When start Element::Animate, the para size must be 4");
+        return;
+      }
+      lepus::Value lepus_name;
+      std::string animate_name;
+      const auto& table = args.GetProperty(3).Table();
+      BASE_STATIC_STRING_DECL(kName, "name");
+      auto iter = table->find(kName);
+      if (iter == table->end()) {
+        // If the user has not set animation_name, the system-generated
+        // autoincrement key animation_name is used, and it is logged and
+        // removed when overridden.
+        animate_name = args.GetProperty(1).StdString();
+      } else {
+        // If the user has set animation_name, it is used.
+        animate_name = iter->second.StdString();
+      }
+
+      starlight::CSSStyleUtils::UpdateCSSKeyframes(
+          keyframes_map_, animate_name, args.GetProperty(2), parser_configs);
+      lepus_name = lepus::Value(animate_name);
+      UnitHandler::Process(kPropertyIDAnimationName, lepus_name, styles,
+                           parser_configs);
+      for (auto& [key, value] : *table) {
+        const auto& id = CSSProperty::GetTimingOptionsPropertyID(key);
+        if (id == kPropertyEnd) {
+          continue;
+        }
+        if (id == kPropertyIDAnimationIterationCount && value.IsNumber()) {
+          if (isinf(value.Number()) == 1) {
+            BASE_STATIC_STRING_DECL(kInf, "infinite");
+            value = lepus::Value(kInf);
+          } else {
+            value = lepus::Value(std::to_string(value.Number()));
+          }
+        }
+        UnitHandler::Process(id, value, styles, parser_configs);
+      }
+      break;
+    }
+    case piper::JavaScriptElement::AnimationOperation::PAUSE: {
+      if (args.GetLength() != 2) {
+        LOGE("Element::Animate Pause, unexpected param size.");
+        return;
+      }
+      BASE_STATIC_STRING_DECL(kPaused, "paused");
+      UnitHandler::Process(kPropertyIDAnimationPlayState, lepus::Value(kPaused),
+                           styles, parser_configs);
+      UnitHandler::Process(kPropertyIDAnimationName,
+                           lepus::Value(args.GetProperty(1).StdString()),
+                           styles, parser_configs);
+      break;
+    }
+    case piper::JavaScriptElement::AnimationOperation::PLAY: {
+      if (args.GetLength() != 2) {
+        LOGE("Element::Animate Play, unexpected param size.");
+        return;
+      }
+      BASE_STATIC_STRING_DECL(kRunning, "running");
+      UnitHandler::Process(kPropertyIDAnimationPlayState,
+                           lepus::Value(kRunning), styles, parser_configs);
+      UnitHandler::Process(kPropertyIDAnimationName,
+                           lepus::Value(args.GetProperty(1).StdString()),
+                           styles, parser_configs);
+      break;
+      break;
+    }
+    case piper::JavaScriptElement::AnimationOperation::CANCEL: {
+      BASE_STATIC_STRING_DECL(kRunning, "running");
+      UnitHandler::Process(kPropertyIDAnimationPlayState,
+                           lepus::Value(kRunning), styles, parser_configs);
+      base::InlineVector<CSSPropertyID, 8> reset_names{
+          kPropertyIDAnimationDuration,       kPropertyIDAnimationDelay,
+          kPropertyIDAnimationIterationCount, kPropertyIDAnimationFillMode,
+          kPropertyIDAnimationTimingFunction, kPropertyIDAnimationDirection,
+          kPropertyIDAnimationName,           kPropertyIDAnimationPlayState,
+      };
+      DCHECK(reset_names.is_static_buffer());
+      ResetStyle(reset_names);
+      break;
+    }
+    default:
+      break;
+  }
+  if (!styles.empty()) {
+    computed_css_style()->AppendAnimatedAnimationValue(styles);
+    has_keyframe_props_changed_ = true;
+  }
+  auto options = std::make_shared<PipelineOptions>();
+  element_manager_->OnFinishUpdateProps(this, options);
+  OnPatchFinish(options);
+}
+
 void Element::PreparePropBundleIfNeed() {
   if (!prop_bundle_) {
     bool use_map_buffer = element_manager_->GetEnableUseMapBuffer();

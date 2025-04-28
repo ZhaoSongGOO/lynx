@@ -203,6 +203,9 @@ class Element : public lepus::RefCounted {
   // For Animation API
   void Animate(const lepus::Value& args);
 
+  // For Animation API
+  void AnimateV2(const lepus::Value& args);
+
   // For JS API setNativeProps
   virtual void SetNativeProps(
       const lepus::Value& args,

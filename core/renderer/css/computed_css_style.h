@@ -85,6 +85,9 @@ class ComputedCSSStyle {
   BASE_EXPORT bool SetValue(tasm::CSSPropertyID id, const tasm::CSSValue& value,
                             bool reset = false);
 
+  bool AppendAnimatedAnimationValue(tasm::StyleMap animate_data,
+                                    bool reset = false);
+
   double GetFontSize() const { return length_context_.cur_node_font_size_; }
 
   double GetRootFontSize() const {
