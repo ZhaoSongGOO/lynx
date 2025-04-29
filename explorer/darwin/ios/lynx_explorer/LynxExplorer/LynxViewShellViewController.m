@@ -125,7 +125,6 @@ NSString *const kBackButtonImageDark = @"back_dark";
   [globalProps updateBool:[self isNotchScreen] forKey:@"isNotchScreen"];
   [globalProps updateDouble:screenHeight forKey:@"screenHeight"];
   [globalProps updateDouble:screenWidth forKey:@"screenWidth"];
-  [globalProps updateObject:@"iOS" forKey:@"platform"];
   NSString *theme = @"Light";
   if ([UIScreen mainScreen].traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
     theme = @"Dark";
