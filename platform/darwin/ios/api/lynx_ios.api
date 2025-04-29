@@ -1704,7 +1704,7 @@ public class LynxGroup : NSObject {
   public NSString * LynxGroup()::jsThreadNameForLynxGroupOrDefault:(LynxGroup *group);
   public nonnull instancetype LynxGroup::initWithName:(nonnull NSString *name);
   public nonnull instancetype LynxGroup::initWithName:withPreloadScript:(nonnull NSString *name,[withPreloadScript] nullable NSArray *extraJSPaths);
-  public nonnull instancetype LynxGroup::initWithName:withLynxGroupOption:(nonnull NSString *name,[withLynxGroupOption] nullable LynxGroup *option);
+  public nonnull instancetype LynxGroup::initWithName:withLynxGroupOption:(nonnull NSString *name,[withLynxGroupOption] nullable LynxGroupOption *option);
   public void LynxGroup::addLynxView:(nonnull LynxView *view);
   public bool LynxGroup::enableJSGroupThread();
   public nullable NSString * LynxGroup::getStringConfig:(nonnull NSString *key);

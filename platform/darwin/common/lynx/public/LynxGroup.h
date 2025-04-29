@@ -55,7 +55,7 @@
  * Init LynxGroup with name and the option of group.
  */
 - (nonnull instancetype)initWithName:(nonnull NSString *)name
-                 withLynxGroupOption:(nullable LynxGroup *)option;
+                 withLynxGroupOption:(nullable LynxGroupOption *)option;
 
 /**
  * Add LynxView to this group.

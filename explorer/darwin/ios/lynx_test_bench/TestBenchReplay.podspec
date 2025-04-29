@@ -21,6 +21,7 @@ Pod::Spec.new do |spec|
   spec.pod_target_xcconfig = {
     "CLANG_ENABLE_MODULES" => "NO",
     "DEFINES_MODULE" => "YES",
+    "HEADER_SEARCH_PATHS" => "\"${PODS_TARGET_SRCROOT}/../../../../..\""
   }
   spec.ios.deployment_target = "10.0"
   spec.dependency  "Lynx"

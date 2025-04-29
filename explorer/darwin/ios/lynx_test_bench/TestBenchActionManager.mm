@@ -8,8 +8,8 @@
 #import <Lynx/LynxResourceProvider.h>
 #import <Lynx/LynxTemplateBundle.h>
 #import <Lynx/LynxTemplateBundleOption.h>
-#import <Lynx/third_party/zlib/zlib.h>
 #import <LynxDevtool/LynxInspectorOwner.h>
+#import <third_party/zlib/zlib.h>
 #import "TestBenchDynamicComponentFetcher.h"
 #import "TestBenchEmulateTouchHelper.h"
 #import "TestBenchEntranceViewController.h"
