@@ -37,6 +37,8 @@ target 'LynxExplorer' do
     'Http',
   ]
 
+  pod 'TestBenchReplay', :path => '../lynx_test_bench'
+
   pod 'PrimJS', '2.11.1-rc.5', :subspecs => ['quickjs', 'napi']
 
   pod 'SDWebImage','5.15.5'

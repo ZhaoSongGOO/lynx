@@ -31,7 +31,8 @@
 
       <activity
         android:name="com.lynx.testbench.TestBenchActivity"
-        android:exported="true">
+        android:exported="true"
+        android:theme="@style/LynxShellTheme">
       </activity>
     </application>
 

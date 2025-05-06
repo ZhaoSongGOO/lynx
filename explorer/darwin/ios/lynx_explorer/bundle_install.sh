@@ -18,8 +18,6 @@ usage() {
 }
 
 build_card_resources() {
-    mkdir -p $root_dir/explorer/darwin/ios/lynx_explorer/LynxExplorer/Resource
-
     # build home page card
     pushd $root_dir/explorer/homepage
     pnpm install

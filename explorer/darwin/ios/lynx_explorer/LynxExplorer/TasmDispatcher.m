@@ -3,9 +3,11 @@
 // LICENSE file in the root directory of this source tree.
 
 #import "TasmDispatcher.h"
+#import <TestBenchReplay/TestBenchViewController.h>
 #import "AppDelegate.h"
 #import "DemoTemplateResourceFetcher.h"
 #import "LynxViewShellViewController.h"
+#import "TestBenchDefaultActionCallback.h"
 
 @implementation TasmDispatcher {
   NSString *_latestQuery;
@@ -55,6 +57,8 @@ static NSMapTable<NSString *, __kindof UIViewController *> *_dispatchedViewContr
     data = localRes.data;
     url = localRes.url;
     _latestQuery = localRes.query;
+  } else if (localRes.isTestBenchSchema) {
+    url = localRes.url;
   } else {
     NSURL *source = [NSURL URLWithString:sourceUrl];
     if ([source.scheme isEqualToString:@"http"] || [source.scheme isEqualToString:@"https"]) {
@@ -73,12 +77,19 @@ static NSMapTable<NSString *, __kindof UIViewController *> *_dispatchedViewContr
     UINavigationController *vc =
         ((AppDelegate *)([UIApplication sharedApplication].delegate)).navigationController;
 
-    LynxViewShellViewController *shellVC = [LynxViewShellViewController new];
-    shellVC.navigationController = (UINavigationController *)vc;
-    shellVC.url = url;
-    shellVC.data = data;
-    shellVC.params = self->_latestParams;
-    [vc pushViewController:shellVC animated:animated];
+    if (localRes.isTestBenchSchema) {
+      TestBenchViewController *tbVC = [[TestBenchViewController alloc] init];
+      tbVC.url = url;
+      [tbVC registerTestBenchActionCallback:[[TestBenchDefaultActionCallback alloc] init]];
+      [vc pushViewController:tbVC animated:animated];
+    } else {
+      LynxViewShellViewController *shellVC = [LynxViewShellViewController new];
+      shellVC.navigationController = (UINavigationController *)vc;
+      shellVC.url = url;
+      shellVC.data = data;
+      shellVC.params = self->_latestParams;
+      [vc pushViewController:shellVC animated:animated];
+    }
   });
 }
 

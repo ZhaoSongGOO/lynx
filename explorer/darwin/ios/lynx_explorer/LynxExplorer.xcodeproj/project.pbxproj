@@ -25,6 +25,7 @@
 		2B948FB02C2D9FDC00535C96 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B948FAE2C2D9FDC00535C96 /* LaunchScreen.storyboard */; };
 		2B948FB32C2D9FDC00535C96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B948FB22C2D9FDC00535C96 /* main.m */; };
 		2B948FBA2C2DA16A00535C96 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 2B948FB92C2DA16A00535C96 /* Resource */; };
+		2BA4E43B2DC9ED6500BC82CC /* TestBenchDefaultActionCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA4E43A2DC9ED6500BC82CC /* TestBenchDefaultActionCallback.m */; };
 		2BB78AD32D1D18FA00060E1C /* LynxSettingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB78AD22D1D18FA00060E1C /* LynxSettingManager.m */; };
 		715E9111F5BD9968F288142B /* libPods-LynxExplorerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52BDDC63FC853041D48069D1 /* libPods-LynxExplorerTests.a */; };
 		C03CFDDE6225C8D95685642C /* libPods-LynxExplorer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E5A5DF1C016437FADA2D842 /* libPods-LynxExplorer.a */; };
@@ -75,6 +76,8 @@
 		2B948FB12C2D9FDC00535C96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2B948FB22C2D9FDC00535C96 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2B948FB92C2DA16A00535C96 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
+		2BA4E4392DC9ED6500BC82CC /* TestBenchDefaultActionCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestBenchDefaultActionCallback.h; sourceTree = "<group>"; };
+		2BA4E43A2DC9ED6500BC82CC /* TestBenchDefaultActionCallback.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestBenchDefaultActionCallback.m; sourceTree = "<group>"; };
 		2BB78AD12D1D18FA00060E1C /* LynxSettingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LynxSettingManager.h; sourceTree = "<group>"; };
 		2BB78AD22D1D18FA00060E1C /* LynxSettingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LynxSettingManager.m; sourceTree = "<group>"; };
 		52BDDC63FC853041D48069D1 /* libPods-LynxExplorerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LynxExplorerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -199,6 +202,7 @@
 		2B948F9F2C2D9FD900535C96 /* LynxExplorer */ = {
 			isa = PBXGroup;
 			children = (
+				2BA4E4382DC9ED3200BC82CC /* testbench */,
 				2B06C8412D34FF7C008D40DD /* input */,
 				2B382D872D17C09800C67770 /* utils */,
 				2B382D832D17BFB100C67770 /* provider */,
@@ -222,7 +226,16 @@
 			path = LynxExplorer;
 			sourceTree = "<group>";
 		};
-		5FE2DD600F18A4933F389A6A /* Frameworks */ = {
+		2BA4E4382DC9ED3200BC82CC /* testbench */ = {
+			isa = PBXGroup;
+			children = (
+				2BA4E4392DC9ED6500BC82CC /* TestBenchDefaultActionCallback.h */,
+				2BA4E43A2DC9ED6500BC82CC /* TestBenchDefaultActionCallback.m */,
+			);
+			path = testbench;
+			sourceTree = "<group>";
+		};
+		6831BBE35BC9F468521CAF68 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				7E5A5DF1C016437FADA2D842 /* libPods-LynxExplorer.a */,
@@ -415,6 +428,7 @@
 				2B590A4C2D635CF00041DE80 /* DemoTemplateResourceFetcher.m in Sources */,
 				2B590A452D633F3A0041DE80 /* DemoGenericResourceFetcher.m in Sources */,
 				2B382D812D17BDC500C67770 /* UIHelper.m in Sources */,
+				2BA4E43B2DC9ED6500BC82CC /* TestBenchDefaultActionCallback.m in Sources */,
 				2B06C8442D34FF7D008D40DD /* LynxExplorerInput.m in Sources */,
 				2B590A492D635BEB0041DE80 /* DemoMeidaResourceFetcher.m in Sources */,
 				2B948FB32C2D9FDC00535C96 /* main.m in Sources */,

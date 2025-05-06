@@ -68,7 +68,8 @@ explorer/android/.idea/
 explorer/android/build/
 explorer/android/gradle/wrapper/gradle-6.7.1-all.zip
 explorer/android/local.properties
-explorer/android/lynx_explorer/src/main/assets/
+explorer/android/lynx_explorer/src/main/assets/*
+!explorer/android/lynx_explorer/src/main/assets/testBench/
 core/runtime/jsi/v8/CMakeLists_impl/
 
 explorer/darwin/ios/lynx_explorer/Podfile.lock
@@ -79,7 +80,8 @@ explorer/darwin/ios/lynx_explorer/LynxExplorer.xcodeproj/**
 !explorer/darwin/ios/lynx_explorer/LynxExplorer.xcodeproj/project.pbxproj
 !explorer/darwin/ios/lynx_explorer/LynxExplorer.xcodeproj/xcshareddata/
 !explorer/darwin/ios/lynx_explorer/LynxExplorer.xcodeproj/xcshareddata/**
-explorer/darwin/ios/lynx_explorer/LynxExplorer/Resource
+explorer/darwin/ios/lynx_explorer/LynxExplorer/Resource/*
+!explorer/darwin/ios/lynx_explorer/LynxExplorer/Resource/testBench
 explorer/darwin/ios/lynx_explorer/iOSCoreBuild/
 explorer/darwin/ios/lynx_explorer/results_bundle
 explorer/darwin/ios/lynx_explorer/xctestrunner

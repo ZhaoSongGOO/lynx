@@ -3,12 +3,13 @@
 // LICENSE file in the root directory of this source tree.
 
 #import "DemoTemplateResourceFetcher.h"
+#import <TestBenchReplay/TestBenchEnv.h>
 
 @implementation DemoTemplateResourceFetcher
 
 // scheme: file://lynx?local://
 + (LocalBundleResult)readLocalBundleFromResource:(NSString *)url {
-  LocalBundleResult res = {NO, nil, nil, nil};
+  LocalBundleResult res = {NO, NO, nil, nil, nil};
   NSURL *source = [NSURL URLWithString:url];
   if ([source.scheme isEqualToString:@"file"]) {
     NSURL *subSourceUrl = [NSURL URLWithString:source.query];
@@ -28,6 +29,9 @@
                                    ofType:@"bundle"];
       }
       res.data = [NSData dataWithContentsOfFile:res.url];
+    } else if ([url hasPrefix:[TestBenchEnv sharedInstance].testBenchUrlPrefix]) {
+      res.isTestBenchSchema = YES;
+      res.url = url;
     }
   }
   return res;
