@@ -62,6 +62,7 @@ public class LynxView extends UIBodyView {
   private final static String TAG = "LynxView";
   private boolean mIsAccessibilityDisabled = false;
   private KeyboardEvent mKeyboardEvent;
+  ILynxUIRenderer mLynxUIRender;
 
   private String mUrl;
   private volatile boolean mHasReportedAccessFromNonUiThread = false;
@@ -93,16 +94,15 @@ public class LynxView extends UIBodyView {
    * @param builder
    */
   public void initWithLynxViewBuilder(LynxViewBuilder builder) {
+    mLynxUIRender = builder.uiRenderCreator.createLynxUIRender();
+    builder.threadStrategy = mLynxUIRender.getSupportedThreadStrategy(builder.threadStrategy);
     if (builder.lynxBackgroundRuntime != null) {
       initLynxViewWithRuntime(getContext(), builder);
       return;
     }
-    builder.threadStrategy =
-        builder.lynxUIRenderer().getSupportedThreadStrategy(builder.threadStrategy);
 
     LLog.i(TAG, "new lynxview detail " + this.toString());
-    builder.lynxUIRenderer().onInitLynxView(
-        this, getContext(), builder.lynxRuntimeOptions.getLynxGroup());
+    mLynxUIRender.onInitLynxView(this, getContext(), builder.lynxRuntimeOptions.getLynxGroup());
     initialize(getContext(), builder);
   }
 
@@ -147,7 +147,7 @@ public class LynxView extends UIBodyView {
     }
 
     // isAccessibilityDisabled() is called when init LynxTemplateRender
-    mIsAccessibilityDisabled = builder.lynxUIRenderer().isAccessibilityDisabled();
+    mIsAccessibilityDisabled = mLynxUIRender.isAccessibilityDisabled();
     mLynxTemplateRender = new LynxTemplateRender(context, this, builder);
   }
 

@@ -8,13 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import com.lynx.jsbridge.LynxModule;
-import com.lynx.tasm.EmbeddedMode;
 import com.lynx.tasm.base.TraceEvent;
 import com.lynx.tasm.base.trace.TraceEventDef;
 import com.lynx.tasm.behavior.Behavior;
 import com.lynx.tasm.behavior.BehaviorRegistry;
-import com.lynx.tasm.behavior.ILynxUIRenderer;
-import com.lynx.tasm.behavior.LynxUIRenderer;
+import com.lynx.tasm.behavior.LynxUIRenderCreator;
 import com.lynx.tasm.component.DynamicComponentFetcher;
 import com.lynx.tasm.image.model.LynxImageFetcher;
 import com.lynx.tasm.loader.LynxFontFaceLoader;
@@ -93,7 +91,7 @@ public class LynxViewBuilder {
   LynxBackgroundRuntimeOptions lynxRuntimeOptions;
   LynxBackgroundRuntime lynxBackgroundRuntime;
 
-  private ILynxUIRenderer lynxUIRenderer;
+  IUIRenderCreator uiRenderCreator;
 
   EmbeddedMode embeddedMode = EmbeddedMode.UNSET;
 
@@ -106,7 +104,7 @@ public class LynxViewBuilder {
     if (defaultDensity != null) {
       densityOverride = defaultDensity;
     }
-    lynxUIRenderer = new LynxUIRenderer();
+    uiRenderCreator = new LynxUIRenderCreator();
   }
 
   @Deprecated
@@ -142,6 +140,15 @@ public class LynxViewBuilder {
   public LynxViewBuilder addBehavior(@NonNull Behavior bundle) {
     behaviorRegistry.addBehavior(bundle);
     return this;
+  }
+
+  public LynxViewBuilder setUIRenderCreator(@NonNull IUIRenderCreator uiRenderCreator) {
+    this.uiRenderCreator = uiRenderCreator;
+    return this;
+  }
+
+  public IUIRenderCreator getUIRenderCreator() {
+    return uiRenderCreator;
   }
 
   @Deprecated
@@ -583,15 +590,6 @@ public class LynxViewBuilder {
   public LynxViewBuilder setLynxViewConfig(Map<String, String> map) {
     lynxViewConfig = map;
     return this;
-  }
-
-  public LynxViewBuilder setLynxUIRenderer(ILynxUIRenderer renderer) {
-    lynxUIRenderer = renderer;
-    return this;
-  }
-
-  public ILynxUIRenderer lynxUIRenderer() {
-    return lynxUIRenderer;
   }
 
   /**

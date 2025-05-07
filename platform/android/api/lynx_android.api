@@ -2503,6 +2503,10 @@ public interface com::lynx::tasm::EventEmitter::ITestTapTrack {
   public void com.lynx.tasm.EventEmitter.ITestTapTrack.onTap();
 }
 
+public interface com::lynx::tasm::IUIRenderCreator {
+  public ILynxUIRenderer com.lynx.tasm.IUIRenderCreator.createLynxUIRender();
+}
+
 public interface com::lynx::tasm::behavior::ui::text::IUIText {
   public Layout com.lynx.tasm.behavior.ui.text.IUIText.getTextLayout();
 }
@@ -5846,6 +5850,10 @@ public class com::lynx::tasm::behavior::LynxUIOwner :  {
   public void com.lynx.tasm.behavior.LynxUIOwner.setAttachLynxPageUICallback(UIBodyView.attachLynxPageUICallback callback);
 }
 
+public class com::lynx::tasm::behavior::LynxUIRenderCreator : com.lynx.tasm.IUIRenderCreator {
+  public ILynxUIRenderer com.lynx.tasm.behavior.LynxUIRenderCreator.createLynxUIRender();
+}
+
 public class com::lynx::tasm::behavior::LynxUIRenderer : com.lynx.tasm.behavior.ILynxUIRenderer {
   public static synchronized void com.lynx.tasm.behavior.LynxUIRenderer.startPixelCopyHandlerThreadIfNecessary();
   public void com.lynx.tasm.behavior.LynxUIRenderer.onInitLynxView(LynxView lynxView, Context context, LynxGroup group);
@@ -6043,6 +6051,8 @@ public class com::lynx::tasm::LynxViewBuilder :  {
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setBehaviors(@Nullable List< Behavior > bundle);
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.addBehaviors(@NonNull List< Behavior > bundle);
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.addBehavior(@NonNull Behavior bundle);
+  public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setUIRenderCreator(@NonNull IUIRenderCreator uiRenderCreator);
+  public IUIRenderCreator com.lynx.tasm.LynxViewBuilder.getUIRenderCreator();
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setUIRunningMode(boolean ui);
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setPresetMeasuredSpec(int widthMeasureSpec, int heightMeasureSpec);
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setScreenSize(int width, int height);
@@ -6091,8 +6101,6 @@ public class com::lynx::tasm::LynxViewBuilder :  {
   public void com.lynx.tasm.LynxViewBuilder.setTemplateResourceFetcher(@NonNull LynxTemplateResourceFetcher fetcher);
   public void com.lynx.tasm.LynxViewBuilder.setEnableGenericResourceFetcher(LynxBooleanOption enabled);
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setLynxViewConfig(Map< String, String > map);
-  public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setLynxUIRenderer(ILynxUIRenderer renderer);
-  public ILynxUIRenderer com.lynx.tasm.LynxViewBuilder.lynxUIRenderer();
   public LynxViewBuilder com.lynx.tasm.LynxViewBuilder.setEmbeddedMode(EmbeddedMode embeddedMode);
   public static void com.lynx.tasm.LynxViewBuilder.setDefaultDensity(Float density);
 }

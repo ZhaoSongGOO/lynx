@@ -167,6 +167,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   private static final boolean VSYNC_ALIGNED_FLUSH_EXP_SWITCH =
       LynxEnv.getBooleanFromExternalEnv(LynxEnvKey.VSYNC_ALIGNED_FLUSH_EXP_KEY, false);
 
+  private ILynxUIRenderer mLynxUIRender;
+
   private LynxInfoReportHelper mReportHelper = new LynxInfoReportHelper();
 
   private TimingCollector mTimingCollector = new TimingCollector();
@@ -255,6 +257,12 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
 
   private void init(@Nullable Context context, LynxView lynxView, LynxViewBuilder builder) {
     TraceEvent.beginSection(TraceEventDef.TEMPLATE_RENDER_INIT);
+    mInitStart = System.currentTimeMillis();
+    mContext = context;
+    mLynxView = lynxView;
+    mLynxViewBuilder = builder;
+
+    mLynxUIRender = lynxUIRenderer();
     mRuntime = builder.lynxBackgroundRuntime;
     mTemplateProvider = builder.templateProvider;
     mEnableSyncFlush = builder.enableSyncFlush;
@@ -263,11 +271,9 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
         checkEnableGenericResourceFetcher(builder.enableGenericResourceFetcher);
     mEnableAirStrictMode = builder.enableAirStrictMode;
     builder.lynxBackgroundRuntime = null;
-    mInitStart = System.currentTimeMillis();
-    mContext = context;
-    mLynxView = lynxView;
+
     if (mLynxView != null) {
-      mLynxView.setTimingCollector(mTimingCollector, builder.lynxUIRenderer());
+      mLynxView.setTimingCollector(mTimingCollector, lynxUIRenderer());
     }
     mGenericInfo = new LynxGenericInfo(mLynxView);
     mLynxRuntimeOptions = builder.lynxRuntimeOptions;
@@ -293,7 +299,6 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
 
     mGenericInfo.updateThreadStrategy(mThreadStrategyForRendering);
 
-    mLynxViewBuilder = builder;
     mHasEnvPrepared = LynxEnv.inst().isNativeLibraryLoaded();
     mVsyncAlignedFlushEnabled = VSYNC_ALIGNED_FLUSH_EXP_SWITCH
         && LynxEnv.inst().getVsyncAlignedFlushGlobalSwitch()
@@ -2382,6 +2387,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     LLog.i(TAG, "LynxTemplateRender(" + this + ") is attached on lynxView:" + lynxView);
     ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
     mLynxView = lynxView;
+    mLynxView.mLynxUIRender = lynxUIRenderer;
     mLynxView.setTimingCollector(mTimingCollector, lynxUIRenderer);
 
     if (mDevTool != null) {
@@ -3277,7 +3283,15 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   }
 
   public ILynxUIRenderer lynxUIRenderer() {
-    return mLynxViewBuilder == null ? null : mLynxViewBuilder.lynxUIRenderer();
+    if (mLynxUIRender == null) {
+      if (mLynxView != null) {
+        mLynxUIRender = mLynxView.mLynxUIRender;
+      } else {
+        // for context free.
+        mLynxUIRender = mLynxViewBuilder.uiRenderCreator.createLynxUIRender();
+      }
+    }
+    return mLynxUIRender;
   }
 
   void dispatchMessageEvent(ReadableMap event) {
