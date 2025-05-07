@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include "devtool/base_devtool/native/public/base_devtool_export.h"
 #include "devtool/base_devtool/native/public/message_sender.h"
 
 namespace lynx {
@@ -17,7 +18,7 @@ namespace devtool {
  * and add it to DevToolAgent. You can implement it specifically referring to
  *  CDPDomainAgentExample.
  */
-class CDPDomainAgentBase {
+class BASE_DEVTOOL_EXPORT CDPDomainAgentBase {
  public:
   virtual ~CDPDomainAgentBase() = default;
   virtual void CallMethod(const std::shared_ptr<MessageSender>& sender,
