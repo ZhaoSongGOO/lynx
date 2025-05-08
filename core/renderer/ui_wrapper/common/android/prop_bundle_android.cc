@@ -246,20 +246,39 @@ void PropBundleAndroid::SetGestureDetector(const GestureDetector& detector) {
   jni_gesture_detector_map_->PushMap(std::move(jni_map.get()));
 }
 
-void PropBundleAndroid::SetPropsByID(CSSPropertyID id,
-                                     const std::vector<uint32_t>& value) {
+void PropBundleAndroid::SetPropsByID(CSSPropertyID id, const uint8_t* data,
+                                     size_t size) {
   if (!use_map_buffer_) {
     const auto& property_name = CSSProperty::GetPropertyName(id);
 
     auto jni_array = std::make_unique<base::android::JavaOnlyArray>();
-    for (const auto& number : value) {
-      jni_array->PushInt(number);
+    for (size_t i = 0; i < size; ++i) {
+      jni_array->PushInt(data[i]);
     }
     jni_map_->PushArray(property_name.c_str(), jni_array.get());
   } else {
     base::android::MapBufferBuilder buffer_builder{};
-    for (auto i = 0; i < value.size(); ++i) {
-      buffer_builder.putInt(i, value[i]);
+    for (size_t i = 0; i < size; ++i) {
+      buffer_builder.putInt(i, data[i]);
+    }
+    style_buffer_builder_.putMapBuffer(id, buffer_builder.build());
+  }
+}
+
+void PropBundleAndroid::SetPropsByID(CSSPropertyID id, const uint32_t* data,
+                                     size_t size) {
+  if (!use_map_buffer_) {
+    const auto& property_name = CSSProperty::GetPropertyName(id);
+
+    auto jni_array = std::make_unique<base::android::JavaOnlyArray>();
+    for (size_t i = 0; i < size; ++i) {
+      jni_array->PushInt(data[i]);
+    }
+    jni_map_->PushArray(property_name.c_str(), jni_array.get());
+  } else {
+    base::android::MapBufferBuilder buffer_builder{};
+    for (size_t i = 0; i < size; ++i) {
+      buffer_builder.putInt(i, data[i]);
     }
     style_buffer_builder_.putMapBuffer(id, buffer_builder.build());
   }

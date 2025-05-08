@@ -69,9 +69,10 @@ class PropBundleMock : public PropBundle {
     auto property_name = CSSProperty::GetPropertyNameCStr(id);
     SetProps(property_name, value);
   };
-  void SetPropsByID(CSSPropertyID id,
-                    const std::vector<uint32_t>& value) override;
-
+  void SetPropsByID(CSSPropertyID id, const uint8_t* data,
+                    size_t size) override;
+  void SetPropsByID(CSSPropertyID id, const uint32_t* data,
+                    size_t size) override;
   std::unique_ptr<PropBundle> ShallowCopy() override { return nullptr; }
 
   static std::unique_ptr<PropBundle> CreateForMock();

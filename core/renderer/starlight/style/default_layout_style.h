@@ -8,11 +8,8 @@
 #include <vector>
 
 #include "base/include/no_destructor.h"
-#include "core/renderer/starlight/style/box_data.h"
 #include "core/renderer/starlight/style/css_type.h"
-#include "core/renderer/starlight/style/flex_data.h"
-#include "core/renderer/starlight/style/linear_data.h"
-#include "core/renderer/starlight/style/relative_data.h"
+#include "core/renderer/starlight/types/nlength.h"
 
 #define CSS_UNDEFINED 0x7FFFFFF
 static constexpr float UNDEFINED = 10E20;

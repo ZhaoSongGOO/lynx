@@ -11,14 +11,17 @@
 #include "base/include/flex_optional.h"
 #include "base/include/vector.h"
 #include "core/renderer/starlight/style/css_type.h"
+#include "core/renderer/starlight/style/default_layout_style.h"
 #include "core/renderer/starlight/types/nlength.h"
 #include "core/runtime/vm/lepus/lepus_value.h"
+#include "core/style/color.h"
+#include "core/style/default_computed_style.h"
 #include "core/style/shadow_data.h"
 
 namespace lynx {
 namespace starlight {
 
-enum TextPropertyID {
+enum class TextPropertyID : uint8_t {
   kTextProperIDFontSize = 1,
   kTextProperIDColor = 2,
   kTextProperIDWhiteSpace = 3,
@@ -47,41 +50,47 @@ enum TextPropertyID {
 
 class TextAttributes {
  public:
-  TextAttributes(float default_font_size);
+  TextAttributes(float default_font_size) : font_size{default_font_size} {}
 
-  float font_size;
-  unsigned int color;
-  unsigned int decoration_color;
-  lepus::Value text_gradient;
-  // TODO(linxs) this type has changed.
-  starlight::WhiteSpaceType white_space;
-  starlight::TextOverflowType text_overflow;
-  starlight::FontWeightType font_weight;
-  starlight::FontStyleType font_style;
-  base::String font_family;
-  float computed_line_height;
-  float line_height_factor;
-  bool enable_font_scaling;
-  float letter_spacing;
-  float line_spacing;
-  starlight::TextAlignType text_align;
-  starlight::WordBreakType word_break;
-  bool underline_decoration;
-  bool line_through_decoration;
-  uint32_t text_decoration_color;
-  uint32_t text_decoration_style;
-  float text_stroke_width;
-  unsigned int text_stroke_color;
   base::flex_optional<base::InlineVector<ShadowData, 1>> text_shadow;
-  starlight::VerticalAlignType vertical_align;
-  double vertical_align_length;
-  NLength text_indent;
-  bool is_auto_font_size;
-  float auto_font_size_min_size;
-  float auto_font_size_max_size;
-  float auto_font_size_step_granularity;
   base::flex_optional<base::InlineVector<float, 4>> auto_font_size_preset_sizes;
-  starlight::HyphensType hyphens;
+  NLength text_indent{DefaultLayoutStyle::SL_DEFAULT_ZEROLENGTH()};
+  double vertical_align_length{DefaultComputedStyle::DEFAULT_FLOAT};
+  float font_size;
+  float computed_line_height{DefaultComputedStyle::DEFAULT_LINE_HEIGHT};
+  float line_height_factor{DefaultComputedStyle::DEFAULT_LINE_HEIGHT_FACTOR};
+  float letter_spacing{DefaultComputedStyle::DEFAULT_LETTER_SPACING};
+  float line_spacing{DefaultComputedStyle::DEFAULT_LINE_SPACING};
+  float text_stroke_width{DefaultComputedStyle::DEFAULT_FLOAT};
+  float auto_font_size_min_size{DefaultComputedStyle::DEFAULT_FLOAT};
+  float auto_font_size_max_size{DefaultComputedStyle::DEFAULT_FLOAT};
+  float auto_font_size_step_granularity{
+      DefaultComputedStyle::DEFAULT_AUTO_FONT_SIZE_STEP_GRANULARITY};
+  uint32_t text_stroke_color{DefaultColor::DEFAULT_COLOR};
+  uint32_t color{DefaultColor::DEFAULT_TEXT_COLOR};
+  uint32_t decoration_color{DefaultColor::DEFAULT_TEXT_COLOR};
+  uint32_t text_decoration_color{DefaultColor::DEFAULT_COLOR};
+  base::String font_family;
+  lepus::Value text_gradient;
+  uint32_t text_decoration_style{
+      DefaultComputedStyle::DEFAULT_TEXT_DECORATION_STYLE};
+  // TODO(linxs) this type has changed.
+  starlight::WhiteSpaceType white_space{
+      DefaultComputedStyle::DEFAULT_WHITE_SPACE};
+  starlight::TextOverflowType text_overflow{
+      DefaultComputedStyle::DEFAULT_TEXT_OVERFLOW};
+  starlight::FontWeightType font_weight{
+      DefaultComputedStyle::DEFAULT_FONT_WEIGHT};
+  starlight::FontStyleType font_style{DefaultComputedStyle::DEFAULT_FONT_STYLE};
+  starlight::VerticalAlignType vertical_align{
+      DefaultComputedStyle::DEFAULT_VERTICAL_ALIGN};
+  starlight::TextAlignType text_align{DefaultComputedStyle::DEFAULT_TEXT_ALIGN};
+  starlight::WordBreakType word_break{DefaultComputedStyle::DEFAULT_WORD_BREAK};
+  starlight::HyphensType hyphens{DefaultComputedStyle::DEFAULT_HYPHENS};
+  bool enable_font_scaling{DefaultComputedStyle::DEFAULT_BOOLEAN};
+  bool underline_decoration{DefaultComputedStyle::DEFAULT_BOOLEAN};
+  bool line_through_decoration{DefaultComputedStyle::DEFAULT_BOOLEAN};
+  bool is_auto_font_size{DefaultComputedStyle::DEFAULT_AUTO_FONT_SIZE};
 
   void Reset() {}
 

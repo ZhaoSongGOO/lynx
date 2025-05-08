@@ -4,6 +4,7 @@
 
 #include "core/renderer/utils/prop_bundle_style_writer.h"
 
+#include <cstdint>
 #include <vector>
 
 #include "base/include/algorithm.h"
@@ -198,8 +199,7 @@ void PropBundleStyleWriter::WriteBackgroundClip(
     PropBundle* bundle, starlight::ComputedCSSStyle* style) {
   auto& data = style->GetBackgroundData();
   if (data.has_value()) {
-    bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundClip,
-                         reinterpret_cast<std::vector<uint32_t>&>(data->clip));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundClip, data->clip);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundClip,
                          std::vector<uint32_t>());
@@ -221,12 +221,11 @@ void PropBundleStyleWriter::WriteBackgroundOrigin(
     PropBundle* bundle, starlight::ComputedCSSStyle* style) {
   auto& data = style->GetBackgroundData();
   if (data.has_value()) {
-    bundle->SetPropsByID(
-        CSSPropertyID::kPropertyIDBackgroundOrigin,
-        reinterpret_cast<std::vector<uint32_t>&>(data->origin));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundOrigin,
+                         data->origin);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundOrigin,
-                         std::vector<uint32_t>());
+                         std::vector<uint8_t>());
   }
 }
 
@@ -234,12 +233,11 @@ void PropBundleStyleWriter::WriteBackgroundRepeat(
     PropBundle* bundle, starlight::ComputedCSSStyle* style) {
   auto& data = style->GetBackgroundData();
   if (data.has_value()) {
-    bundle->SetPropsByID(
-        CSSPropertyID::kPropertyIDBackgroundRepeat,
-        reinterpret_cast<std::vector<uint32_t>&>(data->repeat));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundRepeat,
+                         data->repeat);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDBackgroundRepeat,
-                         std::vector<uint32_t>());
+                         std::vector<uint8_t>());
   }
 }
 
@@ -247,12 +245,10 @@ void PropBundleStyleWriter::WriteMaskOrigin(
     PropBundle* bundle, starlight::ComputedCSSStyle* style) {
   auto& data = style->GetMaskData();
   if (data) {
-    bundle->SetPropsByID(
-        CSSPropertyID::kPropertyIDMaskOrigin,
-        reinterpret_cast<std::vector<uint32_t>&>(data->origin));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskOrigin, data->origin);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskOrigin,
-                         std::vector<uint32_t>());
+                         std::vector<uint8_t>());
   }
 }
 
@@ -260,11 +256,10 @@ void PropBundleStyleWriter::WriteMaskClip(PropBundle* bundle,
                                           starlight::ComputedCSSStyle* style) {
   auto& data = style->GetMaskData();
   if (data) {
-    bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskClip,
-                         reinterpret_cast<std::vector<uint32_t>&>(data->clip));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskClip, data->clip);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskClip,
-                         std::vector<uint32_t>());
+                         std::vector<uint8_t>());
   }
 }
 
@@ -272,12 +267,10 @@ void PropBundleStyleWriter::WriteMaskRepeat(
     PropBundle* bundle, starlight::ComputedCSSStyle* style) {
   auto& data = style->GetMaskData();
   if (data) {
-    bundle->SetPropsByID(
-        CSSPropertyID::kPropertyIDMaskRepeat,
-        reinterpret_cast<std::vector<uint32_t>&>(data->repeat));
+    bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskRepeat, data->repeat);
   } else {
     bundle->SetPropsByID(CSSPropertyID::kPropertyIDMaskRepeat,
-                         std::vector<uint32_t>());
+                         std::vector<uint8_t>());
   }
 }
 

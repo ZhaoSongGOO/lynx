@@ -18,13 +18,13 @@ struct TimingFunctionData {
   static constexpr int INDEX_Y2 = 4;
   static constexpr int INDEX_STEPS_TYPE = 2;
 
-  starlight::TimingFunctionType timing_func;
-  float x1;
-  float y1;
-  float x2;
-  float y2;
-  starlight::StepsType steps_type;
-  TimingFunctionData();
+  float x1{0.0f};
+  float y1{0.0f};
+  float x2{0.0f};
+  float y2{0.0f};
+  starlight::TimingFunctionType timing_func{TimingFunctionType::kLinear};
+  starlight::StepsType steps_type{StepsType::kInvalid};
+  TimingFunctionData() = default;
   ~TimingFunctionData() = default;
   void Reset();
   bool operator==(const TimingFunctionData& rhs) const {

@@ -163,10 +163,21 @@ void PropBundleDarwin::SetGestureDetector(const GestureDetector& gestureDetector
 #endif
 }
 
-void PropBundleDarwin::SetPropsByID(CSSPropertyID key_id, const std::vector<uint32_t>& value) {
+void PropBundleDarwin::SetPropsByID(CSSPropertyID key_id, const uint8_t* data, size_t size) {
   NSMutableArray* array = [[NSMutableArray alloc] init];
-  for (const auto& number : value) {
-    [array addObject:[NSNumber numberWithDouble:number]];
+  for (size_t i = 0; i < size; ++i) {
+    [array addObject:[NSNumber numberWithUnsignedChar:data[i]]];
+  }
+
+  auto key = CSSProperty::GetPropertyNameCStr(key_id);
+
+  [propMap setObject:array forKey:[[NSString alloc] initWithUTF8String:key]];
+}
+
+void PropBundleDarwin::SetPropsByID(CSSPropertyID key_id, const uint32_t* data, size_t size) {
+  NSMutableArray* array = [[NSMutableArray alloc] init];
+  for (size_t i = 0; i < size; ++i) {
+    [array addObject:[NSNumber numberWithUnsignedInt:data[i]]];
   }
 
   auto key = CSSProperty::GetPropertyNameCStr(key_id);

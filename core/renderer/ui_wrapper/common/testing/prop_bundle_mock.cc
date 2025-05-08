@@ -68,11 +68,21 @@ void PropBundleMock::SetGestureDetector(const GestureDetector& detector) {}
 
 void PropBundleMock::ResetEventHandler() {}
 
-void PropBundleMock::SetPropsByID(CSSPropertyID id,
-                                  const std::vector<uint32_t>& value) {
+void PropBundleMock::SetPropsByID(CSSPropertyID id, const uint8_t* data,
+                                  size_t size) {
   auto array = lepus::Value(lepus::CArray::Create());
-  for (size_t i = 0; i < value.size(); ++i) {
-    array.SetProperty(i, lepus::Value(value[i]));
+  for (size_t i = 0; i < size; ++i) {
+    array.SetProperty(i, lepus::Value(data[i]));
+  }
+  auto property_name = CSSProperty::GetPropertyNameCStr(id);
+  SetProps(property_name, pub::ValueImplLepus(lepus::Value(std::move(array))));
+}
+
+void PropBundleMock::SetPropsByID(CSSPropertyID id, const uint32_t* data,
+                                  size_t size) {
+  auto array = lepus::Value(lepus::CArray::Create());
+  for (size_t i = 0; i < size; ++i) {
+    array.SetProperty(i, lepus::Value(data[i]));
   }
   auto property_name = CSSProperty::GetPropertyNameCStr(id);
   SetProps(property_name, pub::ValueImplLepus(lepus::Value(std::move(array))));

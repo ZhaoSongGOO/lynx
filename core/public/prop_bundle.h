@@ -9,9 +9,11 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
+#include "base/include/vector.h"
 #include "core/public/pub_value.h"
 
 namespace lynx {
@@ -48,8 +50,20 @@ class PropBundle {
   virtual void SetPropsByID(CSSPropertyID id, bool value) = 0;
   virtual void SetPropsByID(CSSPropertyID id, double value) = 0;
   virtual void SetPropsByID(CSSPropertyID id, const pub::Value& value) = 0;
-  virtual void SetPropsByID(CSSPropertyID id,
-                            const std::vector<uint32_t>& value) = 0;
+  virtual void SetPropsByID(CSSPropertyID id, const uint8_t* data,
+                            size_t size) = 0;
+  virtual void SetPropsByID(CSSPropertyID id, const uint32_t* data,
+                            size_t size) = 0;
+
+  template <typename T>
+  void SetPropsByID(CSSPropertyID id, const base::Vector<T>& value) {
+    SetPropsByIDInner(id, value);
+  }
+
+  template <typename T>
+  void SetPropsByID(CSSPropertyID id, const std::vector<T>& value) {
+    SetPropsByIDInner(id, value);
+  }
 
   // TODO(wujintian): Currently, the copy of the element depends on the shallow
   // copy optimization of the prop bundle to improve performance. In the future,
@@ -68,6 +82,20 @@ class PropBundle {
  private:
   // TODO: remove the friend later
   friend class RichTextNode;
+
+  template <typename T>
+  void SetPropsByIDInner(CSSPropertyID id, const T& value) {
+    if constexpr (std::is_same_v<typename T::value_type, uint8_t> ||
+                  std::is_same_v<typename T::value_type, uint32_t>) {
+      SetPropsByID(id, value.data(), value.size());
+    } else {
+      uint32_t buffer[value.size()];
+      for (size_t i = 0; i < value.size(); i++) {
+        buffer[i] = static_cast<uint32_t>(value[i]);
+      }
+      SetPropsByID(id, buffer, value.size());
+    }
+  }
 };
 
 class PropBundleCreator {

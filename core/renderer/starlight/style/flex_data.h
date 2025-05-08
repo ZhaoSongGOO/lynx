@@ -7,6 +7,7 @@
 
 #include "base/include/fml/memory/ref_counted.h"
 #include "core/renderer/starlight/style/css_type.h"
+#include "core/renderer/starlight/style/default_layout_style.h"
 #include "core/renderer/starlight/types/nlength.h"
 
 namespace lynx {
@@ -21,20 +22,23 @@ class FlexData : public fml::RefCountedThreadSafeStorage {
   fml::RefPtr<FlexData> Copy() const {
     return fml::AdoptRef(new FlexData(*this));
   }
-  FlexData();
+  FlexData() = default;
   FlexData(const FlexData& data);
   ~FlexData() = default;
   void Reset();
-  float flex_grow_;
-  float flex_shrink_;
-  NLength flex_basis_;
-  FlexDirectionType flex_direction_;
-  FlexWrapType flex_wrap_;
-  JustifyContentType justify_content_;
-  FlexAlignType align_items_;
-  FlexAlignType align_self_;
-  AlignContentType align_content_;
-  float order_;
+
+  NLength flex_basis_{DefaultLayoutStyle::SL_DEFAULT_FLEX_BASIS()};
+  float flex_grow_{DefaultLayoutStyle::SL_DEFAULT_FLEX_GROW};
+  float flex_shrink_{DefaultLayoutStyle::SL_DEFAULT_FLEX_SHRINK};
+  float order_{DefaultLayoutStyle::SL_DEFAULT_ORDER};
+  FlexDirectionType flex_direction_{
+      DefaultLayoutStyle::SL_DEFAULT_FLEX_DIRECTION};
+  FlexWrapType flex_wrap_{DefaultLayoutStyle::SL_DEFAULT_FLEX_WRAP};
+  JustifyContentType justify_content_{
+      DefaultLayoutStyle::SL_DEFAULT_JUSTIFY_CONTENT};
+  FlexAlignType align_items_{DefaultLayoutStyle::SL_DEFAULT_ALIGN_ITEMS};
+  FlexAlignType align_self_{DefaultLayoutStyle::SL_DEFAULT_ALIGN_SELF};
+  AlignContentType align_content_{DefaultLayoutStyle::SL_DEFAULT_ALIGN_CONTENT};
 };
 
 }  // namespace starlight
