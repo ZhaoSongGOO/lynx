@@ -1,6 +1,3 @@
-# 0.0.8
-* support new css properties: `offset-path`, `offset-distance`, `offset-rotate`.
-
 # 0.0.7
 * support `decode_wasm` to resolve a tasm file.
 

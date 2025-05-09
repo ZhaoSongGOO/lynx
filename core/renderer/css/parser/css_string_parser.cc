@@ -594,25 +594,13 @@ CSSValue CSSStringParser::ParseCursor() {
   return CSSValue(std::move(result));
 }
 
-lepus::Value CSSStringParser::ParseShapePath() {
+lepus::Value CSSStringParser::ParseClipPath() {
   Advance();
   if (BasicShape()) {
     auto shape = PopValue().value;
     return shape.value_or(lepus::Value());
   }
   return lepus::Value();
-}
-
-lepus::Value CSSStringParser::ParseOffsetRotate() {
-  Advance();
-  Token angle_token;
-  if (ConsumeAndSave(TokenType::AUTO, angle_token)) {
-    return lepus::Value(ANGLE_AUTO);
-  } else if (AngleValue(angle_token) && angle_token.type == TokenType::DEG) {
-    return lepus::Value(TokenToAngleValue(angle_token));
-  } else {
-    return lepus::Value();
-  }
 }
 
 bool CSSStringParser::BasicShape() {
@@ -1602,8 +1590,6 @@ bool CSSStringParser::ColorStopList(
 
   return true;
 }
-
-// bool CSSStringParser::
 
 bool CSSStringParser::AngleValue(Token &token) {
   if (NumberValue(token)) {

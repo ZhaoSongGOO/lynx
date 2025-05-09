@@ -18,17 +18,14 @@ HANDLER_IMPL() {
                           STRING_TYPE)
 
   CSSStringParser parser = CSSStringParser::FromLepusString(input, configs);
-  lepus::Value result = parser.ParseShapePath();
+  lepus::Value result = parser.ParseClipPath();
   CSS_HANDLER_FAIL_IF_NOT(result.IsArray(), configs.enable_css_strict_mode,
                           "clip path format error.")
   output.emplace_or_assign(key, result.Array());
   return true;
 }
 
-HANDLER_REGISTER_IMPL() {
-  array[kPropertyIDClipPath] = &Handle;
-  array[kPropertyIDOffsetPath] = &Handle;
-}
+HANDLER_REGISTER_IMPL() { array[kPropertyIDClipPath] = &Handle; }
 }  // namespace ClipPathHandler
 }  // namespace tasm
 }  // namespace lynx
