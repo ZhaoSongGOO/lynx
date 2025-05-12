@@ -472,8 +472,10 @@
 }
 
 - (void)resumeExposure {
-  _isStopExposure = NO;
-  [self addExposureToRunLoop];
+  if ([_exposedLynxUIMap count] != 0) {
+    _isStopExposure = NO;
+    [self addExposureToRunLoop];
+  }
 }
 
 - (void)sendEvent:(NSMutableSet<LynxUIExposureDetail *> *)uiSet eventName:(NSString *)eventName {
