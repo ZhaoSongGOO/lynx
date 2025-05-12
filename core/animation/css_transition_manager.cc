@@ -106,6 +106,8 @@ std::string ConvertAnimationPropertyTypeToString(
       return "padding";
     case starlight::AnimationPropertyType::kFilter:
       return "filter";
+    case starlight::AnimationPropertyType::kOffsetDistance:
+      return "offset-distance";
     case starlight::AnimationPropertyType::kBoxShadow:
       return "box-shadow";
   }
@@ -334,7 +336,8 @@ bool CSSTransitionManager::IsValueValid(starlight::AnimationPropertyType type,
       }
       return true;
     }
-    case starlight::AnimationPropertyType::kFlexGrow: {
+    case starlight::AnimationPropertyType::kFlexGrow:
+    case starlight::AnimationPropertyType::kOffsetDistance: {
       if (!value.IsNumber()) {
         return false;
       }

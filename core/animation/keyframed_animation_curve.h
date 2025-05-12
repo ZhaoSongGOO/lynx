@@ -176,7 +176,7 @@ class KeyframedColorAnimationCurve : public ColorAnimationCurve {
 //====Float keyframe ====
 class FloatKeyframe : public Keyframe {
  public:
-  constexpr static float kDefaultFloatValue = 1.0f;
+  constexpr static float kDefaultFloatValue = 0.0f;
   static float GetFloatKeyframeValue(FloatKeyframe*, tasm::CSSPropertyID id,
                                      tasm::Element*);
   static std::unique_ptr<FloatKeyframe> Create(

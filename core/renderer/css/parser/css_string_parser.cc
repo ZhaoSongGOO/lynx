@@ -2461,6 +2461,8 @@ starlight::AnimationPropertyType CSSStringParser::TokenToTransitionType(
       return starlight::AnimationPropertyType::kPadding;
     case TokenType::FILTER:
       return starlight::AnimationPropertyType::kFilter;
+    case TokenType::OFFSET_DISTANCE:
+      return starlight::AnimationPropertyType::kOffsetDistance;
     default:
       UnitHandler::CSSWarning(false, configs.enable_css_strict_mode,
                               "Unsupported value: %s in transition-property "

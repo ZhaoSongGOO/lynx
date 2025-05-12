@@ -341,6 +341,7 @@ enum class TokenType {
   PADDING,              // padding
   MARGIN,               // margin
   FILTER,               // filter
+  OFFSET_DISTANCE,      // offset-distance
   /* transition end*/
 
   /* timing function begin */

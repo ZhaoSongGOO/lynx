@@ -294,6 +294,7 @@ TEST(CSSKeywords, TokenTypeCheck) {
       {"margin", TokenType::MARGIN},
       {"padding", TokenType::PADDING},
       {"filter", TokenType::FILTER},
+      {"offset-distance", TokenType::OFFSET_DISTANCE},
       {"linear", TokenType::LINEAR},
       {"ease-in", TokenType::EASE_IN},
       {"ease-out", TokenType::EASE_OUT},

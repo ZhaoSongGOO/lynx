@@ -58,7 +58,8 @@ static constexpr PseudoState kPseudoStateSelection = 1 << 11;
       tasm::kPropertyIDMaxWidth, tasm::kPropertyIDMinWidth,                \
       tasm::kPropertyIDMaxHeight, tasm::kPropertyIDMinHeight,              \
       tasm::kPropertyIDFlexGrow, tasm::kPropertyIDFlexBasis,               \
-      tasm::kPropertyIDFilter, tasm::kPropertyIDTransform
+      tasm::kPropertyIDFilter, tasm::kPropertyIDTransform,                 \
+      tasm::kPropertyIDOffsetDistance
 
 #define FOREACH_NEW_ANIMATOR_PROPERTY(V)              \
   V(kPropertyIDLeft, kLeft)                           \
@@ -93,7 +94,8 @@ static constexpr PseudoState kPseudoStateSelection = 1 << 11;
   V(kPropertyIDFlexGrow, kFlexGrow)                   \
   V(kPropertyIDFlexBasis, kFlexBasis)                 \
   V(kPropertyIDFilter, kFilter)                       \
-  V(kPropertyIDTransform, kTransform)
+  V(kPropertyIDTransform, kTransform)                 \
+  V(kPropertyIDOffsetDistance, kOffsetDistance)
 
 // Define macro for direction aware property, {css_id, is_logic_style, css_id in
 // ltr mode, css_id in rtl mode}

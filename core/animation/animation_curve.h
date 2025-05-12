@@ -126,6 +126,7 @@ class AnimationCurve {
     FLEX_BASIS = tasm::kPropertyIDFlexBasis,
     FLEX_GROW = tasm::kPropertyIDFlexGrow,
     FILTER = tasm::kPropertyIDFilter,
+    OFFSET_DISTANCE = tasm::kPropertyIDOffsetDistance,
   };
 
   virtual ~AnimationCurve() = default;

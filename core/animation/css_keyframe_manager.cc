@@ -94,7 +94,8 @@ bool CSSKeyframeManager::InitCurveAndModelAndKeyframe(
     }
     keyframe = ColorKeyframe::Create(fml::TimeDelta::FromSecondsF(offset),
                                      std::move(timing_function));
-  } else if (type == AnimationCurve::CurveType::FLEX_GROW) {
+  } else if (type == AnimationCurve::CurveType::FLEX_GROW ||
+             type == AnimationCurve::CurveType::OFFSET_DISTANCE) {
     if (!has_model) {
       new_curve = KeyframedFloatAnimationCurve::Create();
     }

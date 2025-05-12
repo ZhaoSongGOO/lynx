@@ -1671,6 +1671,8 @@ std::string CSSDecoder::ToAnimationPropertyType(
       return "padding";
     case starlight::AnimationPropertyType::kFilter:
       return "filter";
+    case starlight::AnimationPropertyType::kOffsetDistance:
+      return "offset-distance";
     case starlight::AnimationPropertyType::kBoxShadow:
       return "box-shadow";
   }
