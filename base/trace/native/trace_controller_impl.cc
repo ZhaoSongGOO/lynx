@@ -231,8 +231,6 @@ TraceController* TraceController::Instance() {
 }
 
 TraceControllerImpl::TraceControllerImpl() : TraceController() {
-  hook_systrace_ = std::make_unique<HookSystemTrace>();
-
   ::perfetto::TracingInitArgs args;
   // #if OS_ANDROID
   //   // only android support system backend
@@ -308,7 +306,10 @@ int TraceControllerImpl::StartTracing(
     }
   }
   if (config->enable_systrace) {
-    hook_systrace_->Install();
+    if (!hook_systrace_) {
+      hook_systrace_ = std::make_unique<HookSystemTrace>();
+      hook_systrace_->Install();
+    }
   }
 
   // status
@@ -367,7 +368,7 @@ bool TraceControllerImpl::StopTracing(int session_id) {
     output.flush();
   }
 
-  if (session->config->enable_systrace) {
+  if (session->config->enable_systrace && hook_systrace_) {
     hook_systrace_->Uninstall();
   }
 
