@@ -11,6 +11,7 @@
 #include "core/renderer/tasm/i18n/i18n.h"
 #include "core/renderer/template_assembler.h"
 #include "core/renderer/trace/renderer_trace_event_def.h"
+#include "core/renderer/utils/base/tasm_utils.h"
 #include "core/runtime/bindings/lepus/renderer.h"
 #include "core/runtime/profile/lepusng/lepusng_profiler.h"
 #include "core/runtime/vm/lepus/quick_context.h"
@@ -306,6 +307,34 @@ lepus::Value TemplateEntry::ProcessBinaryEvalResult() {
   }
   return binary_eval_result_;
 }
+
+void TemplateEntry::RegisterLynx() {
+  if (!vm_context_) {
+    return;
+  }
+  BASE_STATIC_STRING_DECL(kPostDataBeforeUpdate, "postDataBeforeUpdate");
+  BASE_STATIC_STRING_DECL(kTriggerReadyWhenReload, "triggerReadyWhenReload");
+  const auto enable_signal_api =
+      template_bundle_.page_configs_
+          ? template_bundle_.page_configs_->GetEnableSignalAPIBoolValue()
+          : false;
+
+  vm_context_->SetPropertyToLynx(BASE_STATIC_STRING(kSystemInfo),
+                                 tasm::GenerateSystemInfo(nullptr));
+  vm_context_->SetPropertyToLynx(kTriggerReadyWhenReload, lepus::Value(true));
+  if (LynxEnv::GetInstance().EnablePostDataBeforeUpdateTemplate()) {
+    vm_context_->SetPropertyToLynx(kPostDataBeforeUpdate, lepus::Value(true));
+  }
+  vm_context_->SetPropertyToLynx(BASE_STATIC_STRING(kEnableSignalAPI),
+                                 lepus::Value(enable_signal_api));
+}
+
+void TemplateEntry::UpdateGlobalPropsToContext(const lepus::Value& props) {
+  if (!vm_context_) {
+    return;
+  }
+  vm_context_->SetPropertyToLynx(BASE_STATIC_STRING(kGlobalPropsKey), props);
+};
 
 void TemplateEntry::ApplyConfigsToLepusContext(
     const std::shared_ptr<PageConfig>& page_config) {

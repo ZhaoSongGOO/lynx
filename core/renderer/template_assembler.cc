@@ -296,35 +296,9 @@ void TemplateAssembler::UpdateGlobalPropsWithDefaultProps(
 }
 
 void TemplateAssembler::UpdateGlobalPropsToContext(const lepus::Value& props) {
-  auto kGlobalPropsKey_str = BASE_STATIC_STRING(kGlobalPropsKey);
-  auto kSystemInfo_str = BASE_STATIC_STRING(kSystemInfo);
-  static constexpr const char kPostDataBeforeUpdate[] = "postDataBeforeUpdate";
-  auto kPostDataBeforeUpdateLepusStr =
-      BASE_STATIC_STRING(kPostDataBeforeUpdate);
-  static constexpr const char kTriggerReadyWhenReload[] =
-      "triggerReadyWhenReload";
-  auto kTriggerReadyWhenReloadStr = BASE_STATIC_STRING(kTriggerReadyWhenReload);
-
-  ForEachEntry([&kGlobalPropsKey_str, &kSystemInfo_str,
-                &kTriggerReadyWhenReloadStr, &kPostDataBeforeUpdateLepusStr,
-                &props,
-                enable_signal_api =
-                    page_config_ ? page_config_->GetEnableSignalAPIBoolValue()
-                                 : false](const auto& entry) {
-    auto context = entry->GetVm();
-    if (context == nullptr) {
-      return;
-    }
-    context->SetPropertyToLynx(kGlobalPropsKey_str, props);
-    context->SetPropertyToLynx(kSystemInfo_str,
-                               tasm::GenerateSystemInfo(nullptr));
-    context->SetPropertyToLynx(kTriggerReadyWhenReloadStr, lepus::Value(true));
-    if (LynxEnv::GetInstance().EnablePostDataBeforeUpdateTemplate()) {
-      context->SetPropertyToLynx(kPostDataBeforeUpdateLepusStr,
-                                 lepus::Value(true));
-    }
-    context->SetPropertyToLynx(BASE_STATIC_STRING(kEnableSignalAPI),
-                               lepus::Value(enable_signal_api));
+  ForEachEntry([&props](const auto& entry) {
+    entry->RegisterLynx();
+    entry->UpdateGlobalPropsToContext(props);
   });
 }
 
