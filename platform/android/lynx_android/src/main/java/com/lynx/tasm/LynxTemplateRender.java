@@ -3072,10 +3072,9 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       LLog.i(TAG, "useQuickJSEngine is false");
     }
 
-    final int runtimeFlags = LynxBackgroundRuntimeOptions.calcRuntimeFlags(
-        forceReloadJSCore, useQuickJSEngine, enablePendingJsTask, enableUserBytecode, null, null);
     nativeInitRuntime(mNativePtr, resourceLoader, moduleFactory, getGroupID(), getPreloadJSPath(),
-        bytecodeSourceUrl, runtimeFlags, lynxUIRenderer.getUIDelegatePtr());
+        forceReloadJSCore, useQuickJSEngine, enablePendingJsTask, enableUserBytecode,
+        bytecodeSourceUrl, lynxUIRenderer.getUIDelegatePtr());
     String jsGroupThreadName = getJSGroupThreadNameIfNeed();
     WeakReference<LynxContext> weakContext = mNativeFacade.getLynxContext();
     if (mNativeFacade.getEnableJSRuntime()) {
@@ -3403,7 +3402,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
 
   private static native void nativeInitRuntime(long ptr, LynxResourceLoader resourceLoader,
       LynxModuleFactory moduleFactory, String groupId, String[] preloadJSPaths,
-      String bytecodeSourceUrl, int runtimeFlags, long uiDelegate);
+      boolean forceReloadJSCore, boolean useQuickJSEngine, boolean enablePendingJsTask,
+      boolean enableUserBytecode, String bytecodeSourceUrl, long uiDelegate);
 
   private static native void nativeStartRuntime(long ptr, long lifecycle);
 

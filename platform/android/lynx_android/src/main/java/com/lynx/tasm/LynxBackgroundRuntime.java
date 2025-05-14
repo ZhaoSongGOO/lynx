@@ -109,12 +109,10 @@ public class LynxBackgroundRuntime implements ILynxErrorReceiver {
     // same life-span as LynxBackgroundRuntime Java Object. `Destroy` will not modify
     // this wrapper, its release will be handled by mCleanupReference on UI Thread when
     // LynxBackgroundRuntime has no reference on it.
-    final int runtimeFlags =
-        LynxBackgroundRuntimeOptions.calcRuntimeFlags(false, options.useQuickJSEngine(), false,
-            options.isEnableUserBytecode(), enableJSGroupThread, options.isPendingCoreJsLoad());
     mNativePtr = nativeCreateBackgroundRuntimeWrapper(mResourceLoader, mModuleFactory,
-        mInspectorObserverPtr, whiteBoard, groupId, groupName, preloadJSPaths,
-        options.getBytecodeSourceUrl(), runtimeFlags);
+        mInspectorObserverPtr, whiteBoard, groupId, groupName, preloadJSPaths, false, false,
+        options.useQuickJSEngine(), false, options.isEnableUserBytecode(),
+        options.getBytecodeSourceUrl(), enableJSGroupThread, options.isPendingCoreJsLoad());
     mInspectorObserverPtr = 0;
 
     TemplateData presetData = options.getPresetData();
@@ -385,8 +383,10 @@ public class LynxBackgroundRuntime implements ILynxErrorReceiver {
 
   private native long nativeCreateBackgroundRuntimeWrapper(LynxResourceLoader resourceLoader,
       LynxModuleFactory moduleFactory, long inspectorObserverPtr, long whiteBoardPtr,
-      String groupId, String groupName, String[] preloadJSPaths, String bytecodeSourceUrl,
-      int runtimeFlags);
+      String groupId, String groupName, String[] preloadJSPaths, boolean useProviderJsEnv,
+      boolean forceReloadJSCore, boolean forceUseLightweightJSEngine, boolean enablePendingJsTask,
+      boolean enableUserBytecode, String bytecodeSourceUrl, boolean enableJSGroupThread,
+      boolean pendingCoreJsLoad);
 
   private native void nativeSetPresetData(long nativePtr, boolean readOnly, long presetData);
 

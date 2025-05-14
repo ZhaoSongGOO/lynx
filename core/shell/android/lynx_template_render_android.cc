@@ -324,8 +324,10 @@ void AttachRuntime(JNIEnv* env, jclass jcaller, jlong ptr, jlong lifecycle,
 void InitRuntime(JNIEnv* env, jclass jcaller, jlong ptr,
                  jobject resource_loader, jobject java_module_factory,
                  jstring java_group_id, jobjectArray preload_js_paths,
-                 jstring bytecode_source_url, jint runtime_flag,
-                 jlong ui_delegate_ptr) {
+                 jboolean force_reload_js_core,
+                 jboolean force_use_light_weight_js_engine,
+                 jboolean enable_pending_js_task, jboolean enable_user_bytecode,
+                 jstring bytecode_source_url, jlong ui_delegate_ptr) {
   auto* shell = reinterpret_cast<LynxShell*>(ptr);
   auto module_manager = std::make_shared<lynx::piper::LynxModuleManager>();
   module_manager->SetPlatformModuleFactory(
@@ -359,7 +361,8 @@ void InitRuntime(JNIEnv* env, jclass jcaller, jlong ptr,
   };
   shell->InitRuntime(group_id, loader, module_manager,
                      std::move(on_runtime_actor_created), std::move(paths),
-                     runtime_flag, source_url);
+                     force_reload_js_core, force_use_light_weight_js_engine,
+                     enable_pending_js_task, enable_user_bytecode, source_url);
 }
 
 void StartRuntime(JNIEnv* env, jclass jcaller, jlong ptr, jlong lifecycle) {
