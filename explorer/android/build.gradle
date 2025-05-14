@@ -98,9 +98,23 @@ ext.writeGnArgs = { String gnArgs ->
 if (buildLynxDebugSo) {
     // force Gradle to evaluate the child build.gradle files before the parent
     evaluationDependsOnChildren()
-
     Project lynxTrace = project(':LynxTrace')
     Project lynxAndroid = project(':LynxAndroid')
+    Project lynxDevtool = project(':LynxDevtool')
+    lynxDevtool.android.libraryVariants.each {
+        String flavorName = it.flavorName.capitalize()
+        String buildTypeName = it.buildType.name.capitalize()
+        Task jniLibFoldersTask = lynxDevtool.tasks["merge${flavorName.capitalize()}${buildTypeName}JniLibFolders"]
+        Task lynxTraceNativeBuild = lynxTrace.tasks["externalNativeBuildDebugMode${buildTypeName}"]
+        Task lynxAndroidNativeBuild = lynxAndroid.tasks["externalNativeBuildDebugMode${buildTypeName}"]
+        // lynx will use lynxtrace.so created by externalNativeBuildDebugMode
+        lynxAndroidNativeBuild.dependsOn(lynxTraceNativeBuild)
+        // devtool will use lynx.so created by externalNativeBuildDebugMode
+        jniLibFoldersTask.dependsOn(lynxAndroidNativeBuild)
+        // make sure always run generateJsonModel
+        Task generateJsonModelTask = lynxAndroid.tasks["generateJsonModelDebugMode${buildTypeName}"]
+        generateJsonModelTask.outputs.upToDateWhen { false }
+    }
 }
 
 

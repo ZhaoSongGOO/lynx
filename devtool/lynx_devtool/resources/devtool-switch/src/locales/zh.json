@@ -18,7 +18,7 @@
   "LogBox desc": "开启后运行出错时会弹出错误提示",
   "Highlight Touch": "高亮触摸",
   "Highlight Touch desc": "开启后触摸时高亮触摸区域,并且输出事件相关日志",
-  "Performance Tool": "性能工具",
-  "Performance Tool desc": "开启后支持 Trace、TestBench 等\n开关后需重启 app",
+  "TestBench": "TestBench",
+  "TestBench desc": "Lynx 页面录制工具\n开关后需重启",
   "Current JS Engine": "当前 JS 引擎"
 }

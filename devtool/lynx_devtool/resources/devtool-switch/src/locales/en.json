@@ -18,7 +18,7 @@
   "LogBox desc": "Displays error prompts when errors occur.",
   "Highlight Touch": "Hightlight Touch",
   "Highlight Touch desc": "Highlights the touch area and logs event-related messages.",
-  "Performance Tool": "Performance Tool",
-  "Performance Tool desc": "Supports Trace, TestBench, and more. \nRequires an app restart after toggling.",
+  "TestBench": "TestBench",
+  "TestBench desc": "Lynx Page Recording Tool\nRequires an app restart after toggling.",
   "Current JS Engine": "Current JS engine"
 }

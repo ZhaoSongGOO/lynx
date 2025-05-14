@@ -8,7 +8,7 @@ import { LongPress } from './sections/LongPress';
 import { Header } from './sections/Header';
 import { HighlightTouch } from './sections/HighlightTouch';
 import { LogBox } from './sections/LogBox';
-import { PerformanceTool } from './sections/PerformanceTool';
+import { TestBench } from './sections/TestBench';
 import { PixelCopy } from './sections/PixelCopy';
 import { CurrentJSEngine } from './sections/CurrentJSEngine';
 
@@ -34,22 +34,12 @@ export function LynxDebug(props: Props) {
   if (!enableLynxDebug) {
     return null;
   }
-
-  if (props.experimental) {
-    return (
-      <>
-        <DevTool />
-        <LynxDevTool experimental={props.experimental} />
-        <LogBox />
-      </>
-    );
-  }
   return (
     <>
       <DevTool />
       <LynxDevTool experimental={props.experimental} />
       <LogBox />
-      <PerformanceTool />
+      <TestBench />
     </>
   );
 }

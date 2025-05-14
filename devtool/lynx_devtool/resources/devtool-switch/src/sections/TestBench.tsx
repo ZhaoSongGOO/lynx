@@ -1,11 +1,11 @@
 import { useAtom, useAtomValue } from 'jotai';
 
-import { performanceTool, platform } from '../atoms';
+import { testBench, platform } from '../atoms';
 import { Switch } from '../components/Switch';
 import { i18n } from '../i18n';
 
-export function PerformanceTool() {
-  const [enable, setEnable] = useAtom(performanceTool);
+export function TestBench() {
+  const [enable, setEnable] = useAtom(testBench);
 
   const currentPlatform = useAtomValue(platform);
 
@@ -15,8 +15,8 @@ export function PerformanceTool() {
 
   return (
     <Switch
-      title={i18n.t('Performance Tool')}
-      description={i18n.t('Performance Tool desc')}
+      title={i18n.t('TestBench')}
+      description={i18n.t('TestBench desc')}
       on={enable}
       onChange={() => setEnable((prev) => !prev)}
     />

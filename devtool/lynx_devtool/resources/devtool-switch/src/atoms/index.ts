@@ -67,7 +67,7 @@ export const logBox = atomWithStorage('logbox', false, {
   removeItem() {},
 });
 
-export const performanceTool = atomWithStorage('performance-tool', false, {
+export const testBench = atomWithStorage('testbench', false, {
   getItem() {
     'background-only';
     return NativeModules.LynxDevToolSetModule.isDebugModeEnabled?.() ?? false;

@@ -62,6 +62,7 @@ platform/android/lynx_android/.cxx/
 platform/android/lynx_processor/bin/
 platform/android/lynx_android/CMakeLists_impl/
 platform/android/lynx_android/libs/
+platform/android/lynx_devtool/src/main/jniLibs/
 explorer/android/lynx_explorer/build/
 explorer/android/.gradle/
 explorer/android/.idea/
