@@ -483,14 +483,18 @@ std::shared_ptr<piper::Runtime> RuntimeManager::MakeRuntime(
 #endif  // OS_WIN
 
 #if ENABLE_JSVM
+#if JS_ENGINE_TYPE != 3
   if (tasm::LynxEnv::GetInstance().EnableJSVMRuntime()) {
+#endif  // JS_ENGINE_TYPE != 3
 #if ENABLE_NAPI_BINDING
     static piper::NapiRuntimeProxyJSVMFactoryImpl factory;
     RegisterJSVMRuntimeProxyFactory(&factory);
 #endif  // ENABLE_NAPI_BINDING
     LOGI("make jsvm runtime");
     return piper::makeJSVMRuntime();
+#if JS_ENGINE_TYPE != 3
   }
+#endif  // JS_ENGINE_TYPE != 3
 #endif  // ENABLE_JSVM
 
 // Fit compile on other unknown platforms such as Linux.
