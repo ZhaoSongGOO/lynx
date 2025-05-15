@@ -118,9 +118,6 @@ class NodeManager {
  */
 class ComponentManager {
  public:
-  ComponentManager() = default;
-  ~ComponentManager() = default;
-
   inline void Record(const std::string &id, Element *node) {
     component_map_[id] = node;
   }
@@ -198,6 +195,7 @@ class AirNodeManager {
   }
 
  private:
+  // TODO, choose proper map type.
   std::unordered_map<int, std::shared_ptr<AirElement>> air_node_map_;
   std::unordered_map<int, std::map<uint64_t, fml::RefPtr<AirLepusRef>>>
       air_lepus_id_map_;
@@ -663,14 +661,6 @@ class ElementManager : public ElementContextDelegate {
     return config_ ? config_->GetCompileRender() : false;
   }
 
-  void InsertPlug(Element *plug) {
-    current_insert_plug_vector_.push_back(plug);
-  }
-
-  std::vector<Element *> &GetCurrentInsertPlugVector() {
-    return current_insert_plug_vector_;
-  }
-
   virtual bool IsDomTreeEnabled() { return dom_tree_enabled_; }
   bool GetEnableZIndex() { return config_ && config_->GetEnableZIndex(); }
 
@@ -749,7 +739,8 @@ class ElementManager : public ElementContextDelegate {
   void SetGlobalBindElementId(const base::String &name,
                               const base::String &type, const int node_id);
 
-  std::set<int> GetGlobalBindElementIds(const std::string &name) const;
+  const std::set<int32_t> &GetGlobalBindElementIds(
+      const std::string &name) const;
 
   void EraseGlobalBindElementId(const EventMap &global_event_map,
                                 const int node_id);
@@ -1091,7 +1082,7 @@ class ElementManager : public ElementContextDelegate {
   std::unique_ptr<AirNodeManager> air_node_manager_;
   std::unique_ptr<ComponentManager> component_manager_;
   std::unique_ptr<Catalyzer> catalyzer_;
-  Element *root_;
+  Element *root_{nullptr};
   AirPageElement *air_root_{nullptr};
   std::weak_ptr<HierarchyObserver> hierarchy_observer_;
   std::shared_ptr<InspectorElementObserver> inspector_element_observer_;
@@ -1113,77 +1104,35 @@ class ElementManager : public ElementContextDelegate {
   ElementManager &operator=(const ElementManager &) = delete;
   void OnListComponentUpdated(const std::shared_ptr<PipelineOptions> &options);
   void DispatchLayoutUpdates(const std::shared_ptr<PipelineOptions> &options);
-  CSSFragment *preresolving_style_sheet_ = nullptr;
-  bool devtool_flag_ = false;
-  bool dom_tree_enabled_ = true;
+
   const int instance_id_;
-  std::shared_ptr<PageConfig> config_;
+  int32_t element_id_{kInitialImplId};
 
-  starlight::LayoutConfigs layout_configs_;
+  // Current thread strategy
+  int thread_strategy_;
 
-  std::vector<Element *> current_insert_plug_vector_;
-  bool enable_layout_only_{true};
-  std::unordered_set<ElementContainer *> dirty_stacking_contexts_;
-  LynxEnvConfig lynx_env_config_;
-  Delegate *delegate_{nullptr};
-  std::shared_ptr<base::VSyncMonitor> vsync_monitor_{nullptr};
-  std::unordered_map<base::String, int> node_type_recorder_;
-  // <page>,<wrapper>,<none> is a special tag and must be COMMON.
-  std::unordered_map<base::String, int32_t> node_info_recorder_{
-      {BASE_STATIC_STRING(kElementPageTag), LayoutNodeType::COMMON},
-      {BASE_STATIC_STRING(kElementWrapperElementTag), LayoutNodeType::COMMON},
-      {BASE_STATIC_STRING(kElementNoneElementTag), LayoutNodeType::COMMON}};
-  std::unordered_map<std::string, std::set<int32_t>> global_bind_name_to_ids_;
-  std::shared_ptr<tasm::PropBundleCreator> prop_bundle_creator_ =
-      std::make_shared<lynx::tasm::PropBundleCreatorDefault>();
+  // Internal timeout in threaded element flush mode to enable force running on
+  // thread-pool in unittests
+  int32_t task_wait_timeout_{0};
 
-  // This set holds the unique_id of the already flushed keyframes to ensure
-  // that they are not flushed repeatedly.
-  std::unordered_set<std::string> resolved_keyframes_set_;
+  std::atomic_int element_count_{0};
+  std::atomic_int layout_only_element_count_{0};
+  std::atomic_int layout_only_transition_count_{0};
 
-  // Animation proxy class
-  std::shared_ptr<ElementVsyncProxy> element_vsync_proxy_;
-  // Animation pause flag
-  bool animations_paused_ = false;
-  // Save paused Animation Elements.
-  std::unordered_set<tasm::Element *> paused_animation_element_set_;
-
-  bool enable_opt_push_style_to_bundle_ = false;
+  bool devtool_flag_{false};
 
   // If it has been set to 'true', OnPatchFinish will not trigger layout
   // anymore, platform must trigger layout manually.
-  bool enable_diff_without_layout_ = false;
+  bool enable_diff_without_layout_;
   // If this flag is true, it indicates that when exec the next patchfinish
   // operation, additional information related to pseudo-class will be pushed to
   // the platform.
   bool push_touch_pseudo_flag_{false};
 
-  // Indicate if need to do layout for current OnPatchFinish process
-  bool need_layout_{false};
-  // Current thread strategy
-  int thread_strategy_;
-
-  PageOptions page_options_;
-
-  // Enable new animator for current lynx view by default for radon/fiber, the
-  // initial values here are defined to show the default values and serve as a
-  // backend. Use ElementManager::GetEnableNewAnimatorForRadon/Fiber() to read
-  // enable_new_animator_radon/fiber_ when need its value.
-  bool enable_new_animator_radon_{false};
-  bool enable_new_animator_fiber_{true};
-
   bool enable_native_list_{false};
   // Indicate whether in parallel-element mode with sync layout(ALL_ON_UI,
   // MOST_ON_TASM) strategy
   bool parallel_with_sync_layout_{false};
-
-  ALLOW_UNUSED_TYPE int64_t record_id_ = 0;
-
-  fml::RefPtr<PageElement> fiber_page_{};
-
-  int32_t element_id_{kInitialImplId};
-  std::unique_ptr<starlight::ComputedCSSStyle> platform_computed_css_;
-  std::unordered_set<tasm::Element *> animation_element_set_;
 
   bool enable_dump_element_tree_{false};
 
@@ -1193,30 +1142,72 @@ class ElementManager : public ElementContextDelegate {
 
   bool enable_fiber_element_for_radon_diff_{false};
 
-  std::list<base::OnceTaskRefptr<ParallelFlushReturn>> parallel_task_queue_{};
+  bool settings_enable_use_mapbuffer_for_ui_op_;
+
+  bool enable_opt_push_style_to_bundle_{false};
+
+  // Indicate if need to do layout for current OnPatchFinish process
+  bool need_layout_{false};
+
+  bool animations_paused_{false};
+
+  // Enable new animator for current lynx view by default for radon/fiber, the
+  // initial values here are defined to show the default values and serve as a
+  // backend. Use ElementManager::GetEnableNewAnimatorForRadon/Fiber() to read
+  // enable_new_animator_radon/fiber_ when need its value.
+  bool enable_new_animator_radon_{false};
+  bool enable_new_animator_fiber_{true};
+
+  bool enable_layout_only_{true};
+  bool dom_tree_enabled_{true};
+
+  LynxEnvConfig lynx_env_config_;
+  std::shared_ptr<PageConfig> config_;
+  PageOptions page_options_;
+  starlight::LayoutConfigs layout_configs_;
+
+  fml::RefPtr<PageElement> fiber_page_;
+
+  Delegate *delegate_;
+  ElementManagerDelegate *element_manager_delegate_{nullptr};
+  std::shared_ptr<base::VSyncMonitor> vsync_monitor_;
+
+  CSSFragment *preresolving_style_sheet_{nullptr};
+  std::unique_ptr<starlight::ComputedCSSStyle> platform_computed_css_;
+
+  // <page>,<wrapper>,<none> is a special tag and must be COMMON.
+  std::unordered_map<base::String, int32_t> node_info_recorder_{
+      {BASE_STATIC_STRING(kElementPageTag), LayoutNodeType::COMMON},
+      {BASE_STATIC_STRING(kElementWrapperElementTag), LayoutNodeType::COMMON},
+      {BASE_STATIC_STRING(kElementNoneElementTag), LayoutNodeType::COMMON}};
+  std::unordered_map<std::string, std::set<int32_t>> global_bind_name_to_ids_;
+  std::shared_ptr<tasm::PropBundleCreator> prop_bundle_creator_ =
+      std::make_shared<lynx::tasm::PropBundleCreatorDefault>();
+
+  std::unordered_set<ElementContainer *> dirty_stacking_contexts_;
+
+  // This set holds the unique_id of the already flushed keyframes to ensure
+  // that they are not flushed repeatedly.
+  std::unordered_set<std::string> resolved_keyframes_set_;
+
+  // Animation proxy class
+  std::shared_ptr<ElementVsyncProxy> element_vsync_proxy_;
+  std::unordered_set<tasm::Element *> animation_element_set_;
+  std::unordered_set<tasm::Element *> paused_animation_element_set_;  // paused
+
+  std::list<base::OnceTaskRefptr<ParallelFlushReturn>> parallel_task_queue_;
 
   std::list<base::OnceTaskRefptr<ParallelFlushReturn>>
-      parallel_resolve_tree_tasks_queue_{};
+      parallel_resolve_tree_tasks_queue_;
 
-  base::ConcurrentQueue<std::string> attribute_timing_flag_list_{};
+  base::ConcurrentQueue<std::string> attribute_timing_flag_list_;
 
   std::shared_ptr<tasm::TasmWorkerTaskRunner> task_runner_;
 
-  bool settings_enable_use_mapbuffer_for_ui_op_{false};
-
-  std::atomic_int element_count_{0};
-  std::atomic_int layout_only_element_count_{0};
-  std::atomic_int layout_only_transition_count_{0};
-
-  // Internal timeout in threaded element flush mode to enable force running on
-  // thread-pool in unittests
-  int32_t task_wait_timeout_{0};
-
+  ALLOW_UNUSED_TYPE int64_t record_id_{0};
   ALLOW_UNUSED_TYPE std::map<lynx::devtool::DevToolFunction,
                              std::function<void(const base::any &)>>
       devtool_func_map_;
-
-  ElementManagerDelegate *element_manager_delegate_{nullptr};
 
  public:
   // fixed node attached to the page node.

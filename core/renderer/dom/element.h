@@ -47,7 +47,7 @@ class ListNode;
 using ElementChildrenArray =
     base::InlineVector<Element*, kChildrenInlineVectorSize>;
 
-enum ElementArchTypeEnum {
+enum ElementArchTypeEnum : uint8_t {
   FiberArch = 0,
   RadonArch,
 };
@@ -676,11 +676,26 @@ class Element : public lepus::RefCounted {
       const std::shared_ptr<CSSStyleSheetManager>& style_manager,
       bool keep_element_id);
 
-  std::unique_ptr<ElementContainer> element_container_;
+  base::String tag_;
 
-  fml::RefPtr<AttributeHolder> data_model_;
+  int32_t id_;
+  uint32_t node_index_{0};
 
-  ElementArchTypeEnum arch_type_ = ElementArchTypeEnum::FiberArch;
+  constexpr const static int32_t kLayoutNodeTypeNotInit = -1;
+  // Used to record the LayoutNodeType corresponding to the current tag, init
+  // with LayoutNodeType::UNKNOWN.
+  int32_t layout_node_type_{kLayoutNodeTypeNotInit};
+
+  int pseudo_type_{0};
+
+  short overflow_{0};
+
+  ElementArchTypeEnum arch_type_;
+
+  bool will_destroy_{false};
+
+  bool is_pseudo_{false};
+
   bool is_fixed_{false};
   bool is_sticky_{false};
   // indicate the element's position:fixed style has changed
@@ -698,49 +713,14 @@ class Element : public lepus::RefCounted {
   // relevant to z-index
   bool has_z_props_{false};
 
-  // Should be set to false if children's layout parameter will be used on
-  // platform layer. (e.g. scroll-view will use children's margin value on
-  // both android and iOS)
-  bool can_has_layout_only_children_{true};
-
   bool enable_class_change_transmit_{false};
 
   // relevant to layout only
   bool is_virtual_{false};
 
-  base::String tag_;
-
   // indicate has platform UI(view)
   bool has_painting_node_{false};
 
-  Catalyzer* catalyzer_;
-
-  // TODO(songshourui.null): rename css_patching_ to style_resolver_;
-  CSSPatching css_patching_;
-
-  bool has_layout_only_props_{true};
-
-  // enable_component_layout_only_ & enable_extended_layout_only_opt_
-  // optimization is enabled by default in Fiber Arch.
-  // But in Radon Arch, this switch should be get from page_config.
-  bool enable_extended_layout_only_opt_{true};
-  bool enable_component_layout_only_{true};
-
-  std::shared_ptr<PropBundle> prop_bundle_{nullptr};
-  // just for unit test now.
-  std::shared_ptr<PropBundle> pre_prop_bundle_{nullptr};
-
-  // relevant to layout and frame
-  float width_{0};
-  float height_{0};
-  float top_{0};
-  float left_{0};
-  // left, right, top, bottom -> starlight::Direction
-  std::array<float, 4> borders_{};
-  std::array<float, 4> margins_{};
-  std::array<float, 4> paddings_{};
-  std::array<float, 4> sticky_positions_{};
-  float max_height_{starlight::DefaultLayoutStyle::kDefaultMaxSize};
   bool subtree_need_update_{false};
   bool frame_changed_{false};
   // Determine by Catalyzer
@@ -759,42 +739,68 @@ class Element : public lepus::RefCounted {
 
   bool allow_layoutnode_inline_{false};
 
-  std::unique_ptr<ContentData> content_data_{nullptr};
+  bool has_placeholder_{false};
+  bool has_text_selection_{false};
+  bool trigger_global_event_{false};
+
+  bool enable_new_animator_;
+
+  bool create_node_async_{false};
+
   bool config_flatten_{true};
+
+  bool has_layout_only_props_{true};
+
+  // Should be set to false if children's layout parameter will be used on
+  // platform layer. (e.g. scroll-view will use children's margin value on
+  // both android and iOS)
+  bool can_has_layout_only_children_{true};
+
+  // enable_component_layout_only_ & enable_extended_layout_only_opt_
+  // optimization is enabled by default in Fiber Arch.
+  // But in Radon Arch, this switch should be get from page_config.
+  bool enable_extended_layout_only_opt_{true};
+  bool enable_component_layout_only_{true};
+
+  starlight::DirectionType direction_ =
+      starlight::DefaultLayoutStyle::SL_DEFAULT_DIRECTION;
+
+  // relevant to layout and frame
+  float width_{0};
+  float height_{0};
+  float top_{0};
+  float left_{0};
+  // left, right, top, bottom -> starlight::Direction
+  std::array<float, 4> borders_{};
+  std::array<float, 4> margins_{};
+  std::array<float, 4> paddings_{};
+  std::array<float, 4> sticky_positions_{};
+  float max_height_{starlight::DefaultLayoutStyle::kDefaultMaxSize};
+
+  std::unique_ptr<ContentData> content_data_;
+
+  std::unique_ptr<ElementContainer> element_container_;
+
+  fml::RefPtr<AttributeHolder> data_model_;
+
+  ElementManager* element_manager_{nullptr};
+
+  Catalyzer* catalyzer_;
+
+  // TODO(songshourui.null): rename css_patching_ to style_resolver_;
+  CSSPatching css_patching_;
+
+  std::shared_ptr<PropBundle> prop_bundle_;
+  // just for unit test now.
+  std::shared_ptr<PropBundle> pre_prop_bundle_;
 
   // relevant to hierarchy
   Element* parent_{nullptr};
   ElementChildrenArray children_;
 
-  bool is_pseudo_{false};
-  int pseudo_type_{0};
-
-  starlight::DirectionType direction_ =
-      starlight::DefaultLayoutStyle::SL_DEFAULT_DIRECTION;
-
-  short overflow_{0};
-
-  bool has_placeholder_{false};
-  bool has_text_selection_{false};
-  bool trigger_global_event_{false};
-
-  int32_t id_;
-  uint32_t node_index_{0};
-
-  constexpr const static int32_t kLayoutNodeTypeNotInit = -1;
-  // Used to record the LayoutNodeType corresponding to the current tag, init
-  // with LayoutNodeType::UNKNOWN.
-  int32_t layout_node_type_{kLayoutNodeTypeNotInit};
-
-  bool create_node_async_{false};
-
   std::unique_ptr<starlight::ComputedCSSStyle> platform_css_style_;
 
-  bool will_destroy_{false};
-  ElementManager* element_manager_{nullptr};
-
   // for animation
-  bool enable_new_animator_;
   std::unique_ptr<animation::CSSKeyframeManager> css_keyframe_manager_;
   std::unique_ptr<animation::CSSTransitionManager> css_transition_manager_;
   // Saves the css style that the all animation applied to the element.
@@ -807,13 +813,12 @@ class Element : public lepus::RefCounted {
   std::set<std::string> global_bind_target_set_;
 
   // Using to record some previous element styles which New Animator needs.
-  std::unordered_map<tasm::CSSPropertyID, CSSValue>
-      animation_previous_styles_{};
+  std::unordered_map<tasm::CSSPropertyID, CSSValue> animation_previous_styles_;
 
   // Used to record all layout-related styles of the element only when we
   // enable dump element tree. In the copied element, we will use these styles
   // to initialize the layout node.
-  std::unordered_map<tasm::CSSPropertyID, CSSValue> layout_styles_{};
+  std::unordered_map<tasm::CSSPropertyID, CSSValue> layout_styles_;
 
   // for devtool
   std::unique_ptr<InspectorAttribute> inspector_attribute_;

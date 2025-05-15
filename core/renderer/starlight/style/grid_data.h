@@ -42,6 +42,8 @@ class GridData : public fml::RefCountedThreadSafeStorage {
 
   NLength grid_column_gap_;
   NLength grid_row_gap_;
+
+  JustifyType justify_self_;
   JustifyType justify_items_;
   GridAutoFlowType grid_auto_flow_;
 
@@ -52,7 +54,6 @@ class GridData : public fml::RefCountedThreadSafeStorage {
   int32_t grid_column_start_;
   int32_t grid_row_end_;
   int32_t grid_row_start_;
-  JustifyType justify_self_;
 };
 
 }  // namespace starlight

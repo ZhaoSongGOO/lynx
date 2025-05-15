@@ -61,10 +61,10 @@ InspectorAttribute::~InspectorAttribute() {
 Element::Element(const base::String& tag, ElementManager* manager,
                  uint32_t node_index)
     : tag_(tag),
-      css_patching_(this, manager),
       id_(manager ? manager->GenerateElementID() : -1),
       node_index_(node_index),
-      element_manager_(manager) {
+      element_manager_(manager),
+      css_patching_(this, manager) {
   if (manager == nullptr) {
     return;
   }
@@ -102,7 +102,11 @@ Element::Element(const base::String& tag, ElementManager* manager,
 // copy constructor to determine if there are other additional member variables
 // that need to be copied.
 Element::Element(const Element& element, bool clone_resolved_props)
-    : arch_type_(element.arch_type_),
+    : tag_(element.tag_),
+      id_(element.id_),
+      node_index_(element.node_index_),
+      overflow_(element.overflow_),
+      arch_type_(element.arch_type_),
       is_fixed_(element.is_fixed_),
       is_sticky_(element.is_sticky_),
       // Because is_fixed_ is false by default, if is_fixed_ is true, it means
@@ -114,14 +118,22 @@ Element::Element(const Element& element, bool clone_resolved_props)
       has_non_flatten_attrs_(element.has_non_flatten_attrs_),
       has_opacity_(element.has_opacity_),
       has_z_props_(element.has_z_props_),
-      can_has_layout_only_children_(element.can_has_layout_only_children_),
       is_virtual_(element.is_virtual_),
-      tag_(element.tag_),
-      css_patching_(this, nullptr),
+      subtree_need_update_(element.subtree_need_update_),
+      frame_changed_(element.frame_changed_),
+      is_layout_only_(element.is_layout_only_),
+      is_text_(element.is_text_),
+      is_inline_element_(element.is_inline_element_),
+      is_list_item_(element.is_list_item_),
+      has_placeholder_(element.has_placeholder_),
+      trigger_global_event_(element.trigger_global_event_),
+      enable_new_animator_(element.enable_new_animator_),
       has_layout_only_props_(element.has_layout_only_props_),
+      can_has_layout_only_children_(element.can_has_layout_only_children_),
       enable_extended_layout_only_opt_(
           element.enable_extended_layout_only_opt_),
       enable_component_layout_only_(element.enable_component_layout_only_),
+      direction_(element.direction_),
       width_(element.width_),
       height_(element.height_),
       top_(element.top_),
@@ -131,19 +143,7 @@ Element::Element(const Element& element, bool clone_resolved_props)
       paddings_(element.paddings_),
       sticky_positions_(element.sticky_positions_),
       max_height_(element.max_height_),
-      subtree_need_update_(element.subtree_need_update_),
-      frame_changed_(element.frame_changed_),
-      is_layout_only_(element.is_layout_only_),
-      is_text_(element.is_text_),
-      is_inline_element_(element.is_inline_element_),
-      is_list_item_(element.is_list_item_),
-      direction_(element.direction_),
-      overflow_(element.overflow_),
-      has_placeholder_(element.has_placeholder_),
-      trigger_global_event_(element.trigger_global_event_),
-      id_(element.id_),
-      node_index_(element.node_index_),
-      enable_new_animator_(element.enable_new_animator_),
+      css_patching_(this, nullptr),
       global_bind_target_set_(element.global_bind_target_set_),
       animation_previous_styles_(element.animation_previous_styles_) {
   platform_css_style_ = std::make_unique<starlight::ComputedCSSStyle>(

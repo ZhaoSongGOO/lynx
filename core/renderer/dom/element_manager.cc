@@ -157,17 +157,16 @@ ElementManager::ElementManager(
           std::make_unique<Catalyzer>(std::make_unique<PaintingContext>(
                                           std::move(platform_painting_context)),
                                       instance_id)),
-      root_(nullptr),
       instance_id_(instance_id),
+      enable_diff_without_layout_(enable_diff_without_layout),
+      settings_enable_use_mapbuffer_for_ui_op_(
+          LynxEnv::GetInstance().EnableUseMapBufferForUIProps()),
       lynx_env_config_(lynx_env_config),
       delegate_(delegate),
       vsync_monitor_(vsync_monitor),
-      enable_diff_without_layout_(enable_diff_without_layout),
       platform_computed_css_(std::make_unique<starlight::ComputedCSSStyle>(
           lynx_env_config.LayoutsUnitPerPx(),
-          lynx_env_config.PhysicalPixelsPerLayoutUnit())),
-      settings_enable_use_mapbuffer_for_ui_op_(
-          LynxEnv::GetInstance().EnableUseMapBufferForUIProps()) {
+          lynx_env_config.PhysicalPixelsPerLayoutUnit())) {
   dom_tree_enabled_ = lynx::tasm::LynxEnv::GetInstance().IsDomTreeEnabled();
   platform_computed_css_->SetCSSParserConfigs(GetCSSParserConfigs());
   task_runner_ = std::make_shared<tasm::TasmWorkerTaskRunner>();
@@ -933,38 +932,26 @@ void ElementManager::ResumeAllAnimations() {
 void ElementManager::SetGlobalBindElementId(const base::String &name,
                                             const base::String &type,
                                             const int node_id) {
-  auto &map = global_bind_name_to_ids_;
-  auto name_str = name.str();
-  if (name_str.empty()) {
-    return;
-  }
-  auto iter = map.find(name_str);
-  if (iter == map.end()) {
-    std::set<int> set;
-    set.insert(node_id);
-    map[name_str] = std::move(set);
-  } else {
-    iter->second.insert(node_id);
+  if (!name.empty()) {
+    global_bind_name_to_ids_[name.str()].insert(node_id);
   }
 }
 
 void ElementManager::EraseGlobalBindElementId(const EventMap &global_event_map,
                                               const int node_id) {
-  auto &map = global_bind_name_to_ids_;
-  for ([[maybe_unused]] auto &[key, event] : map) {
-    event.erase(node_id);
+  for (auto &p : global_bind_name_to_ids_) {
+    p.second.erase(node_id);
   }
 }
 
-std::set<int> ElementManager::GetGlobalBindElementIds(
+const std::set<int32_t> &ElementManager::GetGlobalBindElementIds(
     const std::string &name) const {
-  auto &map = global_bind_name_to_ids_;
-
-  auto iter = map.find(name);
-  if (iter != map.end()) {
+  auto iter = global_bind_name_to_ids_.find(name);
+  if (iter != global_bind_name_to_ids_.end()) {
     return iter->second;
   }
-  return {};
+  static std::set<int32_t> kEmpty;
+  return kEmpty;
 }
 
 bool ElementManager::Hydrate(AttributeHolder *node, Element *shadow_node) {

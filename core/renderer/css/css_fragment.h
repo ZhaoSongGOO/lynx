@@ -145,13 +145,13 @@ class CSSFragment {
   // resolved or not
   bool has_font_faces_resolved_{false};
 
-  CSSKeyframesTokenMap keyframes_;
-  CSSFontFaceRuleMap fontfaces_;
+  // enableCSSLazyImport's default value is false now.
+  bool enable_css_lazy_import_ = false;
 
   std::optional<bool> has_css_style_;
 
-  // enableCSSLazyImport's default value is false now.
-  bool enable_css_lazy_import_ = false;
+  CSSKeyframesTokenMap keyframes_;
+  CSSFontFaceRuleMap fontfaces_;
 };
 
 }  // namespace tasm

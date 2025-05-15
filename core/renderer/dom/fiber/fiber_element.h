@@ -64,14 +64,14 @@ class FiberElement : public Element, public SelectorItem {
 
   // Element state, used to indicate whether the current Element is on the root
   // Dom tree.
-  enum class State {
+  enum class State : uint8_t {
     // attached to root DOM tree
     kAttached,
     // removed from root DOM tree
     kDetached,
   };
 
-  enum class Action {
+  enum class Action : uint8_t {
     kCreateAct = 0,
     kDestroyAct,
     kInsertChildAct,
@@ -157,7 +157,7 @@ class FiberElement : public Element, public SelectorItem {
 
   // TODO(zhouzhitao): kSyncResolving and kResolving status will be merged later
   // with the removal of parallel_flush_ flag
-  enum class AsyncResolveStatus {
+  enum class AsyncResolveStatus : uint8_t {
     kCreated = 0,
     kPrepareRequested,  // prepare requested, but may not trigger prepare task
                         // for it is detached
@@ -848,8 +848,6 @@ class FiberElement : public Element, public SelectorItem {
   }
 
  protected:
-  bool need_handle_fixed_ = false;
-
   FiberElement(const FiberElement& element, bool clone_resolved_props);
 
   void ConsumeStyleInternal(
@@ -903,8 +901,6 @@ class FiberElement : public Element, public SelectorItem {
   const AttrUMap& updated_attr_map() const { return updated_attr_map_; }
 
   bool ShouldDestroy() const;
-
-  ElementContextDelegate* element_context_delegate_{nullptr};
 
  private:
   friend class WrapperElement;
@@ -963,6 +959,13 @@ class FiberElement : public Element, public SelectorItem {
 
   void UpdateDynamicElementStyleRecursively(uint32_t style, bool force_update);
 
+  void PrepareComponentExternalStyles(AttributeHolder* holder);
+  void PrepareRootCSSVariables(AttributeHolder* holder);
+  void ParseRawInlineStyles(const lepus::Value& input, StyleMap* parsed_styles);
+  void DoFullCSSResolving();
+  const tasm::CSSValue& ResolveCurrentStyleValue(
+      const CSSPropertyID& key, const tasm::CSSValue& default_value);
+
   // relevant to hierarchy
   base::InlineVector<fml::RefPtr<FiberElement>, kChildrenInlineVectorSize>
       scoped_children_;
@@ -982,13 +985,13 @@ class FiberElement : public Element, public SelectorItem {
   FiberElement* next_render_sibling_{nullptr};
   css::InvalidationLists invalidation_lists_;
 
-  // css
-  void PrepareComponentExternalStyles(AttributeHolder* holder);
-  void PrepareRootCSSVariables(AttributeHolder* holder);
-  void ParseRawInlineStyles(const lepus::Value& input, StyleMap* parsed_styles);
-  void DoFullCSSResolving();
-  const tasm::CSSValue& ResolveCurrentStyleValue(
-      const CSSPropertyID& key, const tasm::CSSValue& default_value);
+  // TODO(linxs): tobe refined
+  int64_t parent_component_unique_id_{-1};
+  mutable FiberElement* parent_component_element_{nullptr};
+
+  mutable FiberElement* render_root_element_{nullptr};
+
+  FiberElement* enclosing_none_wrapper_{nullptr};
 
   std::string path_{};
   std::unordered_map<base::String, ClassList> external_classes_;
@@ -997,11 +1000,52 @@ class FiberElement : public Element, public SelectorItem {
   std::shared_ptr<CSSFragmentDecorator> style_sheet_{nullptr};
 
   uint32_t dirty_{0};
+  uint32_t wrapper_element_count_{false};
+
+  int32_t css_id_{kInvalidCssId};
+
+  // indicate current not style related flags, such as viewport_unit_, em_units_
+  // for performance, we will never reset it
+  DynamicCSSStylesManager::StyleUpdateFlags dynamic_style_flags_{0};
+
+  // Element state, used to identify whether the current Element is on the root
+  // Dom tree. When an Element is constructed, it is definitely not on the root
+  // Dom tree, so state_ is initialized as State::kDetached.
+  State state_{State::kDetached};
 
   AsyncResolveStatus resolve_status_{AsyncResolveStatus::kCreated};
 
+  bool need_handle_fixed_ = false;
+
+  // Flag used to determine whether the element has extreme_parsed_styles_
+  bool has_extreme_parsed_styles_{false};
+  // If this flag is set to true, it indicates that only the selector was
+  // extracted during compilation.
+  bool only_selector_extreme_parsed_styles_{false};
+
+  bool children_propagate_inherited_styles_flag_{false};
+
+  // indicates the node's layout node has been inserted to parent layout node
+  // yet
+  bool attached_to_layout_parent_{false};
+
+  // can be optimized as layout only node, currently only view & component
+  bool can_be_layout_only_{false};
+
+  // indicate if need to cache children tree actions
+  bool has_to_store_insert_remove_actions_{false};
+
+  bool has_font_size_{false};
+
+  bool is_template_{false};
+
+  // for unittest
+  bool has_transition_props_ = false;
+
   // indicate this tree scope needs to do flushActon
   bool flush_required_{true};
+
+  bool is_first_created_{true};
 
   // indicate the value of SetRawInlineStyles, we need to split it
   lepus::Value full_raw_inline_style_;
@@ -1014,85 +1058,44 @@ class FiberElement : public Element, public SelectorItem {
                                        // updated_inherited_styles_
   RawLepusStyleMap current_raw_inline_styles_{kCSSStyleMapFuzzyAllocationSize};
 
-  // indicate current not style related flags, such as viewport_unit_, em_units_
-  // for performance, we will never reset it
-  DynamicCSSStylesManager::StyleUpdateFlags dynamic_style_flags_{0};
-
-  // Flag used to determine whether the element has extreme_parsed_styles_
-  bool has_extreme_parsed_styles_{false};
-  // If this flag is set to true, it indicates that only the selector was
-  // extracted during compilation.
-  bool only_selector_extreme_parsed_styles_{false};
   // the parsed styles that set from front-end resolved in compiler stage
   StyleMap extreme_parsed_styles_;
 
   StyleMap inherited_styles_;
   std::vector<tasm::CSSPropertyID> reset_inherited_ids_;
 
-  bool children_propagate_inherited_styles_flag_{false};
-
-  bool is_first_created_{true};
-  // indicates the node's layout node has been inserted to parent layout node
-  // yet
-  bool attached_to_layout_parent_{false};
-
-  // can be optimized as layout only node, currently only view & component
-  bool can_be_layout_only_{false};
-
-  uint32_t wrapper_element_count_{false};
-  FiberElement* enclosing_none_wrapper_{nullptr};
-
-  // Element state, used to identify whether the current Element is on the root
-  // Dom tree. When an Element is constructed, it is definitely not on the root
-  // Dom tree, so state_ is initialized as State::kDetached.
-  State state_{State::kDetached};
-
   //{origin_css_id, {css_value, is_logic_style}}
   std::unordered_map<tasm::CSSPropertyID, std::pair<CSSValue, IsLogic>>
       pending_updated_direction_related_styles_;
-
-  // TODO(linxs): tobe refined
-  int64_t parent_component_unique_id_{-1};
-  mutable FiberElement* parent_component_element_{nullptr};
-
-  mutable FiberElement* render_root_element_{nullptr};
 
   std::vector<ActionParam> action_param_list_;
 
   AttrUMap updated_attr_map_;
   std::vector<base::String> reset_attr_vec_;
-  int32_t css_id_{kInvalidCssId};
-
-  // indicate if need to cache children tree actions
-  bool has_to_store_insert_remove_actions_{false};
 
   // Configuration set for elements through the LepusRuntime will be stored in
   // the config variable
   lepus::Value config_{lepus::Dictionary::Create()};
 
-  std::list<base::closure> parallel_reduce_tasks_ = {};
+  std::list<base::closure> parallel_reduce_tasks_;
 
   // Need extra list to record tasks that need to be invoked before flush
   // actions
-  std::list<base::closure> parallel_before_flush_action_tasks_ = {};
-
-  bool has_font_size_{false};
+  std::list<base::closure> parallel_before_flush_action_tasks_;
 
   std::unique_ptr<LayoutBundle> layout_bundle_;
-
-  bool is_template_{false};
 
   base::String part_id_;
 
   BuiltinAttrMap builtin_attr_map_;
 
-  // for unittest
-  bool has_transition_props_ = false;
-
   std::unordered_map<PseudoState, std::unique_ptr<PseudoElement>>
-      pseudo_elements_{};
+      pseudo_elements_;
 
-  std::shared_ptr<ListItemSchedulerAdapter> scheduler_adapter_{nullptr};
+  std::shared_ptr<ListItemSchedulerAdapter> scheduler_adapter_;
+
+ protected:
+  ElementContextDelegate* element_context_delegate_{nullptr};
 };
 
 }  // namespace tasm
