@@ -26,9 +26,9 @@
 }
 
 - (void)testComponentStatistic {
-  id templateRenderMock = OCMClassMock([LynxTemplateRender class]);
-  LynxUIOwner* uiOwner = [[LynxUIOwner alloc] initWithContainerView:nil
-                                                     templateRender:templateRenderMock
+  id uiBodyViewMock = OCMProtocolMock(@protocol(LUIBodyView));
+  OCMStub([uiBodyViewMock instanceId]).andReturn(-1);
+  LynxUIOwner* uiOwner = [[LynxUIOwner alloc] initWithContainerView:uiBodyViewMock
                                                   componentRegistry:nil
                                                       screenMetrics:nil];
   id lynxEnvInstance = OCMPartialMock([LynxEnv sharedInstance]);
@@ -40,17 +40,17 @@
   [uiOwner componentStatistic:@"view"];
   sleep(1);
   // Reported only when the view is first created.
-  OCMVerify(times(1), [templateRenderMock instanceId]);
+  OCMVerify(times(1), [uiBodyViewMock instanceId]);
 
   [uiOwner componentStatistic:@"text"];
   sleep(1);
   // Reported only when the text is first created.
-  OCMVerify(times(2), [templateRenderMock instanceId]);
+  OCMVerify(times(2), [uiBodyViewMock instanceId]);
 
   [uiOwner componentStatistic:@"text"];
   sleep(1);
   // Because the text has already been created, it will not be reported.
-  OCMVerify(times(2), [templateRenderMock instanceId]);
+  OCMVerify(times(2), [uiBodyViewMock instanceId]);
 }
 
 @end

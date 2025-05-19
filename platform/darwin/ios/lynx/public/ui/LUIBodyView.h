@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 #import <Lynx/LUIErrorHandling.h>
+#import <Lynx/LynxViewEnum.h>
 
 typedef void (^attachLynxPageUI)(__weak NSObject* _Nonnull ui);
 
@@ -57,5 +58,9 @@ typedef void (^attachLynxPageUI)(__weak NSObject* _Nonnull ui);
 /// scenario.
 @optional
 @property(nonatomic) BOOL isChildLynxPage;
+
+/// getThreadStrategyForRender
+@optional
+- (LynxThreadStrategyForRender)getThreadStrategyForRender;
 
 @end

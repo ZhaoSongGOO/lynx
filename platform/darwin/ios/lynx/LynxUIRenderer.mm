@@ -46,7 +46,7 @@
 
 - (void)attachLynxView:(nonnull LynxView *)lynxView {
   if (_uiOwner != nil) {
-    [_uiOwner attachLynxView:(LynxView *)lynxView];
+    [_uiOwner attachContainerView:(LynxView *)lynxView];
   }
 
   if (_eventHandler) {
@@ -188,8 +188,7 @@
                     screenSize:(CGSize)screenSize {
   LynxScreenMetrics *screenMetrics =
       [[LynxScreenMetrics alloc] initWithScreenSize:screenSize scale:[UIScreen mainScreen].scale];
-  _uiOwner = [[LynxUIOwner alloc] initWithContainerView:(LynxView *)containerView
-                                         templateRender:templateRenderer
+  _uiOwner = [[LynxUIOwner alloc] initWithContainerView:containerView
                                       componentRegistry:builder.config.componentRegistry
                                           screenMetrics:screenMetrics];
 

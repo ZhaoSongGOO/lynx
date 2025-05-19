@@ -6,7 +6,7 @@
 #import <Lynx/LynxTemplateRender.h>
 #import <Lynx/LynxTemplateRenderDelegate.h>
 #import <Lynx/LynxViewEnum.h>
-#import "TemplateRenderCallbackProtocol.h"
+#import <Lynx/TemplateRenderCallbackProtocol.h>
 
 #include <memory>
 

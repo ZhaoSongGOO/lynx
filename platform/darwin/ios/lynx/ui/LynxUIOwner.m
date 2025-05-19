@@ -29,14 +29,11 @@
 #import <Lynx/LynxUIOwner.h>
 #import <Lynx/LynxUIText.h>
 #import <Lynx/LynxUIUnitUtils.h>
-#import <Lynx/LynxView+Internal.h>
-#import <Lynx/LynxViewInternal.h>
 #import <Lynx/LynxWeakProxy.h>
 #import <Lynx/UIView+Lynx.h>
 #import "LynxEnv+Internal.h"
 #import "LynxFeatureCounter.h"
 #import "LynxGestureArenaManager.h"
-#import "LynxTemplateRender+Internal.h"
 #import "LynxUI+Private.h"
 #import "LynxUIContext+Internal.h"
 #import "LynxUIIntersectionObserver.h"
@@ -123,14 +120,13 @@ extern NSString* const kDefaultComponentID;
   BOOL _enableDetailLog;
 }
 
-- (void)attachLynxView:(LynxView* _Nonnull)containerView {
+- (void)attachContainerView:(UIView<LUIBodyView>* _Nonnull)containerView {
   _containerView = containerView;
   _uiContext.rootView = containerView;
   _uiContext.errorHandler = containerView;
 }
 
 - (instancetype)initWithContainerView:(UIView<LUIBodyView>*)containerView
-                       templateRender:(LynxTemplateRender*)templateRender
                     componentRegistry:(LynxComponentScopeRegistry*)registry
                         screenMetrics:(LynxScreenMetrics*)screenMetrics
                          errorHandler:(id<LUIErrorHandling>)errorHandler
@@ -141,7 +137,6 @@ extern NSString* const kDefaultComponentID;
     _enableDetailLog = [[LynxEnv sharedInstance] boolFromExternalEnv:LynxEnvEnableLynxDetailLog
                                                         defaultValue:NO];
     _containerView = containerView;
-    _templateRender = templateRender;
     _hasRootAttached = NO;
     _nameLynxUIMap = [[NSMutableDictionary alloc] init];
     _uiHolder = [[NSMutableDictionary alloc] init];
@@ -180,16 +175,21 @@ extern NSString* const kDefaultComponentID;
   return self;
 }
 
-- (instancetype)initWithContainerView:(LynxView*)containerView
-                       templateRender:(LynxTemplateRender*)templateRender
+- (instancetype)initWithContainerView:(UIView<LUIBodyView>*)containerView
                     componentRegistry:(LynxComponentScopeRegistry*)registry
                         screenMetrics:(LynxScreenMetrics*)screenMetrics {
   return [self initWithContainerView:containerView
-                      templateRender:templateRender
                    componentRegistry:registry
                        screenMetrics:screenMetrics
                         errorHandler:containerView
                             uiConfig:nil];
+}
+
+- (LynxThreadStrategyForRender)getThreadStrategyForRender {
+  if ([_containerView respondsToSelector:@selector(getThreadStrategyForRender)]) {
+    return [_containerView getThreadStrategyForRender];
+  }
+  return LynxThreadStrategyForRenderAllOnUI;
 }
 
 #pragma mark - A11y
@@ -330,7 +330,7 @@ extern NSString* const kDefaultComponentID;
       ![_componentSet containsObject:componentName]) {
     [_componentSet addObject:componentName];
     [LynxEventReporter onEvent:@"lynxsdk_component_statistic"
-                    instanceId:[_templateRender instanceId]
+                    instanceId:[_containerView instanceId]
                   propsBuilder:^NSDictionary<NSString*, NSObject*>* _Nonnull {
                     return @{@"component_name" : componentName};
                   }];
@@ -851,7 +851,7 @@ extern NSString* const kDefaultComponentID;
     }
   }
   // FiberElement may be referenced by JS engine. Just clear the parent-son relationship.
-  if (![_templateRender enableFiberArch]) {
+  if (![_uiContext enableFiberArch]) {
     [self removeUIFromHolderRecursively:child];
   } else {
     [self removeUIFromHolder:child];
@@ -1088,7 +1088,7 @@ extern NSString* const kDefaultComponentID;
   } else {
     LLogInfo(@"LynxUIOwner:releaseUI on a child thread");
     [LynxFeatureCounter count:LynxFeatureObjcUiOwnerReleaseOnChildThread
-                   instanceId:[_templateRender instanceId]];
+                   instanceId:[_containerView instanceId]];
   }
 }
 

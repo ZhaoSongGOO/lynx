@@ -13,13 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class LynxView;
 @class LynxRootUI;
 @class LynxEventHandler;
 @class LynxComponentScopeRegistry;
 @class LynxWeakProxy;
 @class LynxGestureDetectorDarwin;
-@class LynxTemplateRender;
 @class LynxGestureArenaManager;
 
 @protocol LynxBaseInspectorOwner;
@@ -42,17 +40,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) LynxFontFaceContext* fontFaceContext;
 @property(nonatomic, readonly) id<LynxBaseInspectorOwner> baseInspectOwner;
 @property(nonatomic, strong) LynxGestureArenaManager* _Nullable gestureArenaManager;
-@property(nonatomic, weak, readonly) LynxTemplateRender* templateRender;
 @property(nonatomic) attachLynxPageUI attachLynxPageUICallback;
 
-- (void)attachLynxView:(LynxView* _Nonnull)containerView;
-- (instancetype)initWithContainerView:(LynxView*)containerView
-                       templateRender:(LynxTemplateRender*)templateRender
+- (void)attachContainerView:(UIView<LUIBodyView>* _Nonnull)containerView;
+- (instancetype)initWithContainerView:(UIView<LUIBodyView>*)containerView
                     componentRegistry:(LynxComponentScopeRegistry*)registry
                         screenMetrics:(LynxScreenMetrics*)screenMetrics;
 
 - (instancetype)initWithContainerView:(UIView<LUIBodyView>*)containerView
-                       templateRender:(nullable LynxTemplateRender*)templateRender
                     componentRegistry:(LynxComponentScopeRegistry*)registry
                         screenMetrics:(LynxScreenMetrics*)screenMetrics
                          errorHandler:(id<LUIErrorHandling> _Nullable)errorHandler

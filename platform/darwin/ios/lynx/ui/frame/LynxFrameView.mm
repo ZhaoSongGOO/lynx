@@ -58,4 +58,9 @@
 - (void)runOnTasmThread:(dispatch_block_t)task {
 }
 
+// TODO(zhoupeng.z):implement it by frame render
+- (LynxThreadStrategyForRender)getThreadStrategyForRender {
+  return LynxThreadStrategyForRenderAllOnUI;
+}
+
 @end

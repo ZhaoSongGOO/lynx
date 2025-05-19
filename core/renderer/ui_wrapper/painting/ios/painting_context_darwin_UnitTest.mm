@@ -17,9 +17,7 @@
 @implementation painting_context_darwin_UnitTest
 
 - (void)setUp {
-  id templateRenderMock = OCMClassMock([LynxTemplateRender class]);
   LynxUIOwner* uiOwner = [[LynxUIOwner alloc] initWithContainerView:nil
-                                                     templateRender:templateRenderMock
                                                   componentRegistry:nil
                                                       screenMetrics:nil];
   paintingContext = std::make_unique<lynx::tasm::PaintingContextDarwin>(uiOwner, false);

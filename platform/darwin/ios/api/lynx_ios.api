@@ -120,6 +120,7 @@ public protocol LUIBodyView-p : <NSObject>, <LUIErrorHandling> {
   public void LUIBodyView-p::setIntrinsicContentSize:(CGSize size);
   public BOOL LUIBodyView-p::enableTextNonContiguousLayout();
   public void LUIBodyView-p::setAttachLynxPageUICallback:(attachLynxPageUI _Nonnull callback);
+  public LynxThreadStrategyForRender LUIBodyView-p::getThreadStrategyForRender();
 }
 
 public protocol LUIConfig-p : <NSObject> {
@@ -4093,11 +4094,10 @@ public class LynxUIOwner : NSObject {
   public LynxFontFaceContext* LynxUIOwner::fontFaceContext fontFaceContext;
   public id<LynxBaseInspectorOwner> LynxUIOwner::baseInspectOwner baseInspectOwner;
   public LynxGestureArenaManager* _Nullable LynxUIOwner::gestureArenaManager gestureArenaManager;
-  public LynxTemplateRender* LynxUIOwner::templateRender templateRender;
   public attachLynxPageUI LynxUIOwner::attachLynxPageUICallback attachLynxPageUICallback;
-  public void LynxUIOwner::attachLynxView:(LynxView *_Nonnull containerView);
-  public instancetype LynxUIOwner::initWithContainerView:templateRender:componentRegistry:screenMetrics:(LynxView *containerView,[templateRender] LynxTemplateRender *templateRender,[componentRegistry] LynxComponentScopeRegistry *registry,[screenMetrics] LynxScreenMetrics *screenMetrics);
-  public instancetype LynxUIOwner::initWithContainerView:templateRender:componentRegistry:screenMetrics:errorHandler:uiConfig:(UIView< LUIBodyView > *containerView,[templateRender] nullable LynxTemplateRender *templateRender,[componentRegistry] LynxComponentScopeRegistry *registry,[screenMetrics] LynxScreenMetrics *screenMetrics,[errorHandler] id< LUIErrorHandling > _Nullable errorHandler,[uiConfig] id< LUIConfig > _Nullable uiConfig);
+  public void LynxUIOwner::attachContainerView:(UIView< LUIBodyView > *_Nonnull containerView);
+  public instancetype LynxUIOwner::initWithContainerView:componentRegistry:screenMetrics:(UIView< LUIBodyView > *containerView,[componentRegistry] LynxComponentScopeRegistry *registry,[screenMetrics] LynxScreenMetrics *screenMetrics);
+  public instancetype LynxUIOwner::initWithContainerView:componentRegistry:screenMetrics:errorHandler:uiConfig:(UIView< LUIBodyView > *containerView,[componentRegistry] LynxComponentScopeRegistry *registry,[screenMetrics] LynxScreenMetrics *screenMetrics,[errorHandler] id< LUIErrorHandling > _Nullable errorHandler,[uiConfig] id< LUIConfig > _Nullable uiConfig);
   public LynxUI * LynxUIOwner::findUIBySign:(NSInteger sign);
   public LynxUI * LynxUIOwner::findUIByComponentId:(NSString *componentId);
   public LynxUI * LynxUIOwner::findUIByIdSelector:withinUI:(NSString *idSelector,[withinUI] LynxUI *ui);
@@ -4162,6 +4162,7 @@ public class LynxUIOwner : NSObject {
   public void LynxUIOwner(Private)::createUISyncWithSign:tagName:clazz:supportedState:eventSet:lepusEventSet:props:nodeIndex:gestureDetectorSet:(NSInteger sign, [tagName] NSString *tagName, [clazz] Class clazz, [supportedState] TagSupportedState state, [eventSet] NSSet< NSString * > *eventSet, [lepusEventSet] NSSet< NSString * > *lepusEventSet, [props] NSDictionary *props, [nodeIndex] uint32_t nodeIndex, [gestureDetectorSet] NSSet< LynxGestureDetectorDarwin * > *gestureDetectorSet);
   public LynxUI * LynxUIOwner(Private)::createUIAsyncWithSign:tagName:clazz:supportedState:eventSet:lepusEventSet:props:nodeIndex:gestureDetectorSet:(NSInteger sign, [tagName] NSString *tagName, [clazz] Class clazz, [supportedState] TagSupportedState state, [eventSet] NSSet< NSString * > *eventSet, [lepusEventSet] NSSet< NSString * > *lepusEventSet, [props] NSDictionary *props, [nodeIndex] uint32_t nodeIndex, [gestureDetectorSet] NSSet< LynxGestureDetectorDarwin * > *gestureDetectorSet);
   public void LynxUIOwner(Private)::processUIOnMainThread:withSign:tagName:props:(LynxUI *ui, [withSign] NSInteger sign, [tagName] NSString *tagName, [props] NSDictionary *props);
+  public LynxThreadStrategyForRender LynxUIOwner(Private)::getThreadStrategyForRender();
 }
 
 public interface LynxUIOwner(Accessibility) {
@@ -4180,6 +4181,7 @@ public interface LynxUIOwner(Private) {
   public void LynxUIOwner(Private)::createUISyncWithSign:tagName:clazz:supportedState:eventSet:lepusEventSet:props:nodeIndex:gestureDetectorSet:(NSInteger sign,[tagName] NSString *tagName,[clazz] Class clazz,[supportedState] TagSupportedState state,[eventSet] NSSet< NSString * > *eventSet,[lepusEventSet] NSSet< NSString * > *lepusEventSet,[props] NSDictionary *props,[nodeIndex] uint32_t nodeIndex,[gestureDetectorSet] NSSet< LynxGestureDetectorDarwin * > *gestureDetectorSet);
   public LynxUI * LynxUIOwner(Private)::createUIAsyncWithSign:tagName:clazz:supportedState:eventSet:lepusEventSet:props:nodeIndex:gestureDetectorSet:(NSInteger sign,[tagName] NSString *tagName,[clazz] Class clazz,[supportedState] TagSupportedState state,[eventSet] NSSet< NSString * > *eventSet,[lepusEventSet] NSSet< NSString * > *lepusEventSet,[props] NSDictionary *props,[nodeIndex] uint32_t nodeIndex,[gestureDetectorSet] NSSet< LynxGestureDetectorDarwin * > *gestureDetectorSet);
   public void LynxUIOwner(Private)::processUIOnMainThread:withSign:tagName:props:(LynxUI *ui,[withSign] NSInteger sign,[tagName] NSString *tagName,[props] NSDictionary *props);
+  public LynxThreadStrategyForRender LynxUIOwner(Private)::getThreadStrategyForRender();
 }
 
 public protocol LynxUIRendererProtocol-p : <NSObject> {

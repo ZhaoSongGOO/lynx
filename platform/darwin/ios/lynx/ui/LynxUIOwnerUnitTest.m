@@ -27,7 +27,6 @@
   [LynxEnv sharedInstance];
 
   self.uiOwner = [[LynxUIOwner alloc] initWithContainerView:nil
-                                             templateRender:nil
                                           componentRegistry:[LynxComponentScopeRegistry new]
                                               screenMetrics:nil];
 

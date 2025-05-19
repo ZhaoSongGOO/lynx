@@ -14,6 +14,9 @@
 #import <Lynx/LynxEnv.h>
 #import <Lynx/LynxListScrollEventEmitter.h>
 #import <Lynx/LynxPropsProcessor.h>
+#import <Lynx/LynxTemplateRender+Internal.h>
+#import <Lynx/LynxTemplateRender+Protected.h>
+#import <Lynx/LynxUI+Private.h>
 #import <Lynx/LynxUI.h>
 #import <Lynx/LynxUICollection+Internal.h>
 #import <Lynx/LynxUICollection.h>
@@ -21,8 +24,6 @@
 #import <Lynx/LynxView+Internal.h>
 #import <Lynx/LynxView.h>
 #import <Lynx/UIView+Lynx.h>
-#import "LynxTemplateRender+Internal.h"
-#import "LynxUI+Private.h"
 
 #include <stdio.h>
 #include <memory>
@@ -132,7 +133,6 @@ static const void *applyRTLArrayKey = &applyRTLArrayKey;
                                               scale:[UIScreen mainScreen].scale];
 
   _uiOwner = [[LynxUIOwner alloc] initWithContainerView:_lynxView
-                                         templateRender:_lynxView.templateRender
                                       componentRegistry:[LynxComponentScopeRegistry new]
                                           screenMetrics:screenMetrics];
 

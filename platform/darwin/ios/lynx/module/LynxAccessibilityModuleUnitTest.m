@@ -28,7 +28,6 @@
   // Put setup code here. This method is called before the invocation of each test method in the
   // class.
   _uiOwner = [[LynxUIOwner alloc] initWithContainerView:nil
-                                         templateRender:nil
                                       componentRegistry:nil
                                           screenMetrics:nil];
 }

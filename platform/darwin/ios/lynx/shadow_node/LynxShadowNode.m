@@ -6,7 +6,7 @@
 #import <Lynx/LynxDefines.h>
 #import <Lynx/LynxPropsProcessor.h>
 #import <Lynx/LynxShadowNode.h>
-#import "LynxTemplateRender+Internal.h"
+#import <Lynx/LynxUIOwner+Private.h>
 
 @implementation LynxShadowNodeStyle
 @end
@@ -57,8 +57,7 @@ LYNX_PROPS_GROUP_DECLARE(LYNX_PROP_DECLARE("event-through", setEventThrough, BOO
   // Executing Layout on the wrong thread can cause render exceptions.
   // Add thread checking to fix related issues.
   // TODO(huangweiwu): The judgment method may be modified due to thread model switching
-  if ([[_uiOwner templateRender] getThreadStrategyForRender] !=
-          LynxThreadStrategyForRenderAllOnUI &&
+  if ([_uiOwner getThreadStrategyForRender] != LynxThreadStrategyForRenderAllOnUI &&
       [NSThread isMainThread]) {
     if (@available(iOS 10.0, *)) {
       __weak __typeof(self) weakSelf = self;

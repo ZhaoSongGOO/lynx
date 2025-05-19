@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import <Lynx/LynxUIOwner.h>
 
+#import <Lynx/LynxViewEnum.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 // Indicate that whether LynxUIOwner supports specific tagName, there are currently only three
@@ -61,6 +63,8 @@ typedef enum : NSInteger {
                      withSign:(NSInteger)sign
                       tagName:(NSString*)tagName
                         props:(NSDictionary*)props;
+
+- (LynxThreadStrategyForRender)getThreadStrategyForRender;
 
 @end
 
