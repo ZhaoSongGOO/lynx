@@ -73,8 +73,10 @@ class TraceEventSummary(SummaryConsumer):
         traces = {"traceEvents": []}
         self.accept_aux(traces["traceEvents"], summary)
         Log.info(traces)
-        trace_path = os.path.join(RTFEnv.get_project_root_path(), "native-ut-trace-events.json")
-        with open(trace_path, "w")  as f:
+        trace_path = os.path.join(
+            RTFEnv.get_project_root_path(), "native-ut-trace-events.json"
+        )
+        with open(trace_path, "w") as f:
             f.write(json.dumps(traces))
 
 

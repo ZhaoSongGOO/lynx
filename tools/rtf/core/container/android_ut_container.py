@@ -30,6 +30,12 @@ class AndroidUTContainer(Container):
         self.use_real_device = False
         self.clean = True
 
+    def restart_device_handler(self):
+        self.emulator.close()
+        self.emulator.prepare_android_emulator(use_real_device=self.use_real_device)
+        for target in self.targets:
+            target.insert_global_info("device_name", self.emulator.device)
+
     def before_test(self, targets, filter: str):
         result = self.emulator.prepare_android_emulator(
             use_real_device=self.use_real_device
@@ -66,6 +72,9 @@ class AndroidUTContainer(Container):
             if result.is_err():
                 return result
             target.insert_global_info("device_name", self.emulator.device)
+            target.insert_global_info(
+                "restart_device_handler", self.restart_device_handler
+            )
 
         return Ok()
 

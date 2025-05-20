@@ -75,19 +75,37 @@ class AndroidUTTarget(Target):
             pull_ec_file_cmd = f"adb -s {self.global_info['device_name']} pull /sdcard/coverage_{self.name}.ec {RTFEnv.get_project_root_path()}"
             subprocess.check_call(pull_ec_file_cmd, shell=True)
 
-    def install_apk(self):
-        Log.info(f"Installing apk for {self.name}")
-        install_cmd = (
-            f"adb -s {self.global_info['device_name']} install -g {self.target_path}"
+    def install_apk_aux(self):
+        retry_times = 1
+        retry = 0
+        timeout = 120
+        while True:
+            Log.info(f"Installing apk for {self.name}")
+            install_cmd = f"adb -s {self.global_info['device_name']} install -g {self.target_path}"
+            try:
+                subprocess.check_call(install_cmd, shell=True, timeout=timeout)
+                return Ok()
+            except subprocess.TimeoutExpired:
+                Log.error(f"adb install timeout, retry ({retry}/{retry_times})")
+                if retry < retry_times:
+                    retry += 1
+                    handler = self.global_info["restart_device_handler"]
+                    if handler is not None:
+                        handler()
+                else:
+                    break
+            except Exception as e:
+                return Err(
+                    Constants.ANDROID_APK_INSTALL_ERR,
+                    f"adb install failed for {self.name} \n: {e}",
+                )
+        return Err(
+            Constants.ANDROID_APK_INSTALL_ERR,
+            f"adb install {self.target_path} timeout: {timeout}s",
         )
-        try:
-            subprocess.check_call(install_cmd, shell=True)
-            return Ok()
-        except Exception as e:
-            return Err(
-                Constants.ANDROID_APK_INSTALL_ERR,
-                f"adb install failed for {self.name} \n: {e}",
-            )
+
+    def install_apk(self):
+        return self.install_apk_aux()
 
     def run(self):
         result = self.install_apk()
