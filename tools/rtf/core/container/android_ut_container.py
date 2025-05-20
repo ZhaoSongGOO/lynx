@@ -7,7 +7,7 @@ from core.builder.builder_manager import BuilderManager
 from core.container.container import Container
 from core.coverage.coverage import Coverage
 from core.coverage.coverage_factory import CoverageFactory
-from core.target.observer import LogObserver, OwnersObserver
+from core.target.observer import LogObserver, OwnersObserver, AndroidCrashObserver
 from core.target.target_factory import TargetFactory
 from core.utils.emu_env_setup import EmulatorEnv
 from core.utils.log import Log
@@ -24,7 +24,7 @@ class AndroidUTContainer(Container):
         self.coverage_init_params = coverage
         self.coverage: Coverage = None
         self.emulator = EmulatorEnv()
-        self.observers = [LogObserver(), OwnersObserver()]
+        self.observers = [LogObserver(), OwnersObserver(), AndroidCrashObserver()]
         self.device_log = "device.log"
         self.log_process = None
         self.use_real_device = False
@@ -93,11 +93,17 @@ class AndroidUTContainer(Container):
             self.log_process.kill()
             return Ok()
 
-    def test(self):
+    def init_device_logcat(self):
         log_file = open(self.device_log, "w")
+        subprocess.check_call(f"adb -s {self.emulator.device} logcat -c", shell=True)
         self.log_process = subprocess.Popen(
-            ["adb", "logcat", "-v", "time"], stdout=log_file, stderr=subprocess.STDOUT
+            ["adb", "-s", f"{self.emulator.device}", "logcat", "-v", "time"],
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
         )
+
+    def test(self):
+        self.init_device_logcat()
         for target in self.targets:
             result = target.run()
             if result.is_err():

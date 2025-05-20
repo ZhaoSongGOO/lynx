@@ -23,6 +23,7 @@ class AndroidUTTarget(Target):
 
     def init_self_info(self):
         self.package = self.params["package"]
+        self.symbol = self.params["symbol"] if "symbol" in self.params else None
         self.coverage_data_path = os.path.join(
             RTFEnv.get_project_root_path(), f"coverage_{self.name}.ec"
         )
@@ -42,6 +43,15 @@ class AndroidUTTarget(Target):
                 return True
             if "Error in" in content:
                 return True
+            if "Process crashed" in content:
+                return True
+        return False
+
+    def has_crash(self):
+        if super().has_crash():
+            return True
+        with open(self.log_file, "r") as log_file:
+            content = log_file.read()
             if "Process crashed" in content:
                 return True
         return False

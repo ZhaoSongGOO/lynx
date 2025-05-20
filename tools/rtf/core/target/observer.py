@@ -7,6 +7,7 @@ import subprocess
 from core.env.env import RTFEnv
 from core.target.target import Target
 from core.utils.log import Log
+import re
 
 
 class Observer:
@@ -92,6 +93,41 @@ class LinuxCrashObserver(CrashObserver):
             Log.print(lldb_output.decode("utf-8"))
         else:
             Log.warning(f"core dump file not found: {core_file}")
+
+
+class AndroidCrashObserver(CrashObserver):
+    def __init__(self):
+        super().__init__()
+
+    def action(self, target: Target):
+        if not target.has_crash():
+            Log.info(f"The {target.nam} did not crash, skipping stack check")
+            return
+        if target.symbol is None:
+            Log.warning(f"The {target.nam} not found symbol path, skipping stack check")
+            return
+        if not os.path.exists(target.symbol):
+            Log.warning(f"The symbol file not found, skipping stack check")
+            return
+        device_log_file = os.path.join(RTFEnv.get_project_root_path(), "device.log")
+        crash_log = {}
+
+        with open(device_log_file, "r") as f:
+            content = f.read()
+            matches = re.findall(r"#[0-9]+ pc ([0-9a-fA-F]+).*liblynx.so", content)
+            for match in matches:
+                cmd = f"addr2line -fCe {target.symbol} {match}"
+                try:
+                    output = subprocess.check_output(cmd, shell=True)
+                except Exception as e:
+                    Log.warning(f"Analysis backtrace error: {e}")
+                    return
+                crash_log[f"{match}"] = output.decode("utf-8")
+        format_output = ""
+        for address in crash_log.keys():
+            info = crash_log[address]
+            format_output += f"\n{address}---->{info}"
+        Log.error(f"{target.name} crash info:\n {format_output}")
 
 
 def CrashObserverFactory():
