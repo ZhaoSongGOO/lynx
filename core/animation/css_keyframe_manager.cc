@@ -196,7 +196,7 @@ void CSSKeyframeManager::SetAnimationDataAndPlay(
 std::shared_ptr<Animation> CSSKeyframeManager::CreateAnimation(
     starlight::AnimationData& data) {
   // 1. create animation & keyframe_effect according to animation data
-  auto animation = std::make_shared<Animation>(data.name.str());
+  auto animation = std::make_shared<Animation>(data.name);
   animation->set_animation_data(data);
 
   std::unique_ptr<KeyframeEffect> keyframe_effect = KeyframeEffect::Create();
@@ -207,12 +207,12 @@ std::shared_ptr<Animation> CSSKeyframeManager::CreateAnimation(
   animation->BindElement(this->element());
   // 2. create keyframe Models& animation Curves according to CSS keyframe
   // tokens
-  MakeKeyframeModel(animation.get(), data.name.str());
+  MakeKeyframeModel(animation.get(), data.name);
   return animation;
 }
 
 tasm::CSSKeyframesContent& CSSKeyframeManager::GetKeyframesStyleMap(
-    const std::string& animation_name) {
+    const base::String& animation_name) {
   DCHECK(element() != nullptr);
   auto iter = element()->keyframes_map().find(animation_name);
   if (iter != element()->keyframes_map().end()) {
@@ -227,7 +227,7 @@ tasm::CSSKeyframesContent& CSSKeyframeManager::GetKeyframesStyleMap(
 }
 
 void CSSKeyframeManager::MakeKeyframeModel(Animation* animation,
-                                           const std::string& animation_name) {
+                                           const base::String& animation_name) {
   const auto& keyframes_map = GetKeyframesStyleMap(animation_name);
   for (const auto& keyframe_info : keyframes_map) {
     double offset = keyframe_info.first;
@@ -315,7 +315,8 @@ void CSSKeyframeManager::NotifyClientAnimated(tasm::StyleMap& styles,
   styles.insert_or_assign(css_id, std::move(value));
 }
 
-void CSSKeyframeManager::SetNeedsAnimationStyleRecalc(const std::string& name) {
+void CSSKeyframeManager::SetNeedsAnimationStyleRecalc(
+    const base::String& name) {
   // clear effect
   TRACE_EVENT(LYNX_TRACE_CATEGORY, KEYFRAME_MANAGER_NEEDS_ANIMATION_RECALC);
   if (element_) {

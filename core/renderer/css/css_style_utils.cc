@@ -1251,7 +1251,7 @@ std::shared_ptr<tasm::StyleMap> CSSStyleUtils::ProcessCSSAttrsMap(
 }
 
 void CSSStyleUtils::UpdateCSSKeyframes(
-    tasm::CSSKeyframesTokenMap& keyframes_map, const std::string& name,
+    tasm::CSSKeyframesTokenMap& keyframes_map, const base::String& name,
     const lepus::Value& keyframes, const tasm::CSSParserConfigs& configs) {
   if (!keyframes.IsTable()) {
     if (!keyframes.IsArray() || keyframes.Array()->size() < 2) {

@@ -11,13 +11,14 @@
 #include <unordered_set>
 #include <vector>
 
+#include "base/include/value/base_string.h"
 #include "core/animation/css_keyframe_manager.h"
 #include "core/style/transition_data.h"
 
 namespace lynx {
 namespace animation {
 
-std::string ConvertAnimationPropertyTypeToString(
+const char* ConvertAnimationPropertyTypeToString(
     lynx::starlight::AnimationPropertyType type);
 
 class CSSTransitionManager : public CSSKeyframeManager {
@@ -29,7 +30,7 @@ class CSSTransitionManager : public CSSKeyframeManager {
       const base::Vector<starlight::TransitionData>& transition_data);
 
   tasm::CSSKeyframesContent& GetKeyframesStyleMap(
-      const std::string& animation_name) override;
+      const base::String& animation_name) override;
 
   void TickAllAnimation(fml::TimePoint& time) override;
 
@@ -56,7 +57,7 @@ class CSSTransitionManager : public CSSKeyframeManager {
 
  protected:
   std::unordered_map<unsigned int, starlight::AnimationData> transition_data_;
-  std::unordered_map<std::string, tasm::CSSKeyframesContent> keyframe_tokens_;
+  std::unordered_map<base::String, tasm::CSSKeyframesContent> keyframe_tokens_;
   std::unordered_set<unsigned int> property_types_;
 };
 

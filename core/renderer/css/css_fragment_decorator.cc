@@ -126,7 +126,7 @@ CSSParseToken* CSSFragmentDecorator::GetCSSStyle(const std::string& key) {
 }
 
 CSSKeyframesToken* CSSFragmentDecorator::GetKeyframesRule(
-    const std::string& key) {
+    const base::String& key) {
   if (!intrinsic_style_sheets_) {
     return nullptr;
   }

@@ -60,10 +60,10 @@ TEST(AutoFontSizeHandler, Handler) {
   auto arr3 = output[id].GetValue().Array();
   EXPECT_TRUE(arr3->get(0).Bool());
   EXPECT_EQ(arr3->get(1).Number(), 8.f);
-  EXPECT_EQ(static_cast<CSSValuePattern>(arr2->get(2).Number()),
+  EXPECT_EQ(static_cast<CSSValuePattern>(arr3->get(2).Number()),
             CSSValuePattern::PX);
   EXPECT_EQ(arr3->get(3).Number(), 20.8);
-  EXPECT_EQ(static_cast<CSSValuePattern>(arr2->get(4).Number()),
+  EXPECT_EQ(static_cast<CSSValuePattern>(arr3->get(4).Number()),
             CSSValuePattern::PX);
 
   output.clear();

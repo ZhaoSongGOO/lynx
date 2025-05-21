@@ -42,7 +42,7 @@ class Animation : public std::enable_shared_from_this<Animation> {
   static fml::TimePoint& GetAnimationDummyStartTime();
 
   enum class State { kIdle = 0, kPlay, kPause, kStop };
-  Animation(const std::string& name);
+  Animation(const base::String& name);
   ~Animation() = default;
   void Play();
   void Pause();
@@ -59,7 +59,7 @@ class Animation : public std::enable_shared_from_this<Animation> {
 
   void SendIterationEvent();
 
-  std::string& name() { return name_; }
+  const base::String& name() { return name_; }
 
   void BindDelegate(AnimationDelegate* target);
 
@@ -107,7 +107,7 @@ class Animation : public std::enable_shared_from_this<Animation> {
   void Tick(fml::TimePoint& time);
   void RequestNextFrame();
   AnimationDelegate* animation_delegate_{nullptr};
-  std::string name_;
+  base::String name_;
   std::unique_ptr<KeyframeEffect> keyframe_effect_;
 
   starlight::AnimationData animation_data_;

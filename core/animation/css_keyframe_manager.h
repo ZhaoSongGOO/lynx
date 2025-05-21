@@ -73,7 +73,7 @@ class CSSKeyframeManager : public AnimationDelegate {
 
   void NotifyClientAnimated(tasm::StyleMap& styles, tasm::CSSValue value,
                             tasm::CSSPropertyID css_id) override;
-  void SetNeedsAnimationStyleRecalc(const std::string& name) override;
+  void SetNeedsAnimationStyleRecalc(const base::String& name) override;
 
   bool InitCurveAndModelAndKeyframe(
       AnimationCurve::CurveType type, Animation* animation, double offset,
@@ -87,7 +87,7 @@ class CSSKeyframeManager : public AnimationDelegate {
       const std::pair<tasm::CSSPropertyID, tasm::CSSValue>& css_value_pair);
 
   virtual tasm::CSSKeyframesContent& GetKeyframesStyleMap(
-      const std::string& animation_name);
+      const base::String& animation_name);
 
   tasm::CSSKeyframesContent& empty_keyframe_map() {
     return empty_keyframe_map_;
@@ -114,7 +114,7 @@ class CSSKeyframeManager : public AnimationDelegate {
 
  private:
   void MakeKeyframeModel(Animation* animation,
-                         const std::string& animation_name);
+                         const base::String& animation_name);
 
  private:
   std::shared_ptr<base::VSyncMonitor> vsync_monitor_{nullptr};

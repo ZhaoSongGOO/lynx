@@ -238,7 +238,7 @@ class CSSStyleUtils {
   static std::shared_ptr<tasm::StyleMap> ProcessCSSAttrsMap(
       const lepus::Value& value, const tasm::CSSParserConfigs& configs);
   static void UpdateCSSKeyframes(tasm::CSSKeyframesTokenMap& keyframes_map,
-                                 const std::string& name,
+                                 const base::String& name,
                                  const lepus::Value& keyframes,
                                  const tasm::CSSParserConfigs& configs);
   static float GetBorderWidthFromLengthToFloat(

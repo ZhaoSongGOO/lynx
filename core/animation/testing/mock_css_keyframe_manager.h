@@ -32,13 +32,10 @@ class MockCSSKeyframeManager : public CSSKeyframeManager {
   MockCSSKeyframeManager(tasm::Element* element)
       : CSSKeyframeManager(element) {}
   ~MockCSSKeyframeManager() = default;
-  std::unordered_map<base::String, std::shared_ptr<Animation>>&
-  animations_map() {
-    return animations_map_;
-  }
+  auto& animations_map() { return animations_map_; }
 
-  void SetNeedsAnimationStyleRecalc(const std::string& name) override {
-    clear_effect_animation_name_ = name;
+  void SetNeedsAnimationStyleRecalc(const base::String& name) override {
+    clear_effect_animation_name_ = name.str();
   }
 
   const std::string& GetClearEffectAnimationName() {

@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "base/include/value/base_string.h"
 #include "core/renderer/css/css_font_face_token.h"
 #include "core/renderer/css/css_keyframes_token.h"
 #include "core/renderer/css/css_parser_token.h"
@@ -34,7 +35,7 @@ using CSSParserTokenMap =
     std::unordered_map<std::string, std::shared_ptr<CSSParseToken>>;
 
 using CSSKeyframesTokenMap =
-    std::unordered_map<std::string, std::shared_ptr<CSSKeyframesToken>>;
+    std::unordered_map<base::String, std::shared_ptr<CSSKeyframesToken>>;
 
 using CSSFontFaceRuleMap =
     std::unordered_map<std::string,
@@ -93,7 +94,7 @@ class CSSFragment {
 
   virtual const CSSFontFaceRuleMap& GetFontFaceRuleMap();
 
-  virtual CSSKeyframesToken* GetKeyframesRule(const std::string& key);
+  virtual CSSKeyframesToken* GetKeyframesRule(const base::String& key);
   virtual const std::vector<std::shared_ptr<CSSFontFaceRule>>& GetFontFaceRule(
       const std::string& key);
 

@@ -589,7 +589,7 @@ lepus::Value Element::ResolveCSSKeyframesByNames(
                  const lepus::Value& key, const lepus::Value& val) {
         if (val.IsString()) {
           auto val_str = val.String();
-          auto keyframes_token_iter = frames.find(val_str.str());
+          auto keyframes_token_iter = frames.find(val_str);
           if (keyframes_token_iter != frames.end() &&
               keyframes_token_iter->second) {
             auto unique_id = "__lynx_unique_" + std::to_string(GetCSSID()) +
@@ -687,7 +687,7 @@ void Element::Animate(const lepus::Value& args) {
         return;
       }
       lepus::Value lepus_name;
-      std::string animate_name;
+      base::String animate_name;
       const auto& table = args.GetProperty(3).Table();
       // Since autoincrement keys causes the keyframes_map to overflow, we
       // remove them from keyframes_map when the last animation was overwritten.
@@ -704,7 +704,7 @@ void Element::Animate(const lepus::Value& args) {
           bundle->SetProps("removeKeyframe", pub::ValueImplLepus(remove_name));
           painting_context()->SetKeyframes(std::move(bundle));
         }
-        will_removed_keyframe_name_.clear();
+        will_removed_keyframe_name_ = base::String();
       }
       BASE_STATIC_STRING_DECL(kName, "name");
       auto iter = table->find(kName);
@@ -712,16 +712,16 @@ void Element::Animate(const lepus::Value& args) {
         // If the user has not set animation_name, the system-generated
         // autoincrement key animation_name is used, and it is logged and
         // removed when overridden.
-        animate_name = args.GetProperty(1).StdString();
+        animate_name = args.GetProperty(1).String();
         will_removed_keyframe_name_ = animate_name;
       } else {
         // If the user has set animation_name, it is used.
-        animate_name = iter->second.StdString();
+        animate_name = iter->second.String();
       }
 
       starlight::CSSStyleUtils::UpdateCSSKeyframes(
           keyframes_map_, animate_name, args.GetProperty(2), parser_configs);
-      lepus_name = lepus::Value(animate_name);
+      lepus_name = lepus::Value(std::move(animate_name));
       if (!enable_new_animator()) {
         // the unique_id may be the same but the keyframes content is different
         // when Animate trigger each time.
@@ -806,7 +806,7 @@ void Element::AnimateV2(const lepus::Value& args) {
         return;
       }
       lepus::Value lepus_name;
-      std::string animate_name;
+      base::String animate_name;
       const auto& table = args.GetProperty(3).Table();
       BASE_STATIC_STRING_DECL(kName, "name");
       auto iter = table->find(kName);
@@ -814,15 +814,15 @@ void Element::AnimateV2(const lepus::Value& args) {
         // If the user has not set animation_name, the system-generated
         // autoincrement key animation_name is used, and it is logged and
         // removed when overridden.
-        animate_name = args.GetProperty(1).StdString();
+        animate_name = args.GetProperty(1).String();
       } else {
         // If the user has set animation_name, it is used.
-        animate_name = iter->second.StdString();
+        animate_name = iter->second.String();
       }
 
       starlight::CSSStyleUtils::UpdateCSSKeyframes(
           keyframes_map_, animate_name, args.GetProperty(2), parser_configs);
-      lepus_name = lepus::Value(animate_name);
+      lepus_name = lepus::Value(std::move(animate_name));
       UnitHandler::Process(kPropertyIDAnimationName, lepus_name, styles,
                            parser_configs);
       for (auto& [key, value] : *table) {
@@ -1572,7 +1572,7 @@ std::optional<CSSValue> Element::GetElementPreviousStyle(
 }
 
 CSSKeyframesToken* Element::GetCSSKeyframesToken(
-    const std::string& animation_name) {
+    const base::String& animation_name) {
   tasm::CSSFragment* style_sheet = GetRelatedCSSFragment();
   if (style_sheet) {
     return style_sheet->GetKeyframesRule(animation_name);

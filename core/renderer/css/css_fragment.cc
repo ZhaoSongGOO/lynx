@@ -14,7 +14,7 @@ const CSSFontFaceRuleMap& CSSFragment::GetFontFaceRuleMap() {
   return fontfaces_;
 }
 
-CSSKeyframesToken* CSSFragment::GetKeyframesRule(const std::string& key) {
+CSSKeyframesToken* CSSFragment::GetKeyframesRule(const base::String& key) {
   auto it = keyframes_.find(key);
   if (it != keyframes_.end()) {
     return it->second.get();

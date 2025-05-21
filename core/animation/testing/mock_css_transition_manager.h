@@ -32,25 +32,19 @@ class MockCSSTransitionManager : public CSSTransitionManager {
     return animation_data_;
   }
 
-  std::unordered_set<unsigned int>& property_types() { return property_types_; }
+  auto& property_types() { return property_types_; }
 
-  std::unordered_map<std::string, tasm::CSSKeyframesContent>&
-  keyframe_tokens() {
-    return keyframe_tokens_;
-  }
+  auto& keyframe_tokens() { return keyframe_tokens_; }
 
-  std::unordered_map<base::String, std::shared_ptr<Animation>>&
-  animations_map() {
-    return animations_map_;
-  }
+  auto& animations_map() { return animations_map_; }
 
   void NotifyClientAnimated(tasm::StyleMap& styles, tasm::CSSValue value,
                             tasm::CSSPropertyID css_id) override {
     has_been_ticked_ = true;
   }
 
-  void SetNeedsAnimationStyleRecalc(const std::string& name) override {
-    clear_effect_animation_name_ = name;
+  void SetNeedsAnimationStyleRecalc(const base::String& name) override {
+    clear_effect_animation_name_ = name.str();
   }
 
   bool has_been_ticked() { return has_been_ticked_; }

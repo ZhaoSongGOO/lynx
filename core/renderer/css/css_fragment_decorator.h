@@ -49,7 +49,7 @@ class CSSFragmentDecorator : public CSSFragment {
       const std::string& key) override;
   const CSSKeyframesTokenMap& GetKeyframesRuleMap() override;
   const CSSFontFaceRuleMap& GetFontFaceRuleMap() override;
-  CSSKeyframesToken* GetKeyframesRule(const std::string& key) override;
+  CSSKeyframesToken* GetKeyframesRule(const base::String& key) override;
   const std::vector<std::shared_ptr<CSSFontFaceRule>>& GetFontFaceRule(
       const std::string& key) override;
 

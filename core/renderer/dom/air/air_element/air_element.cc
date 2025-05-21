@@ -98,7 +98,7 @@ bool AirElement::ResolveKeyframesMap(CSSPropertyID id,
             keyframes_map, [this](const lepus::Value &keyframe_name,
                                   const lepus::Value &keyframe_dic) {
               starlight::CSSStyleUtils::UpdateCSSKeyframes(
-                  keyframes_map_, keyframe_name.StdString(), keyframe_dic,
+                  keyframes_map_, keyframe_name.String(), keyframe_dic,
                   air_element_manager_->GetCSSParserConfigs());
             });
       }

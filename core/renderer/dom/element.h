@@ -358,9 +358,7 @@ class Element : public lepus::RefCounted {
   virtual StyleMap GetStylesForWorklet() = 0;
   virtual const AttrMap& GetAttributesForWorklet() = 0;
 
-  inline const std::set<std::string>& GlobalBindTarget() {
-    return global_bind_target_set_;
-  }
+  inline const auto& GlobalBindTarget() { return global_bind_target_set_; }
   virtual bool CanBeLayoutOnly() const = 0;
 
   virtual void CheckHasInlineContainer(Element* parent);
@@ -419,7 +417,7 @@ class Element : public lepus::RefCounted {
     return sticky_positions_;
   }
 
-  inline tasm::CSSKeyframesTokenMap& keyframes_map() { return keyframes_map_; }
+  inline const auto& keyframes_map() { return keyframes_map_; }
 
   bool ShouldAvoidFlattenForView();
 
@@ -524,7 +522,7 @@ class Element : public lepus::RefCounted {
   virtual std::optional<CSSValue> GetElementStyle(
       tasm::CSSPropertyID css_id) = 0;
 
-  CSSKeyframesToken* GetCSSKeyframesToken(const std::string& animation_name);
+  CSSKeyframesToken* GetCSSKeyframesToken(const base::String& animation_name);
 
   virtual CSSFragment* GetRelatedCSSFragment() = 0;
 
@@ -811,7 +809,7 @@ class Element : public lepus::RefCounted {
   // Save the keyframes of the Animate API.
   tasm::CSSKeyframesTokenMap keyframes_map_;
   // Save increase key of the Animate API.
-  std::string will_removed_keyframe_name_;
+  base::String will_removed_keyframe_name_;
   // for global-bind event
   std::set<std::string> global_bind_target_set_;
 

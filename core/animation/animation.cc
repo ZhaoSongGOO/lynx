@@ -22,7 +22,7 @@
 
 namespace lynx {
 namespace animation {
-Animation::Animation(const std::string& name)
+Animation::Animation(const base::String& name)
     : name_(name), keyframe_effect_(nullptr) {}
 
 void Animation::Play() {
@@ -76,7 +76,7 @@ void Animation::Destroy(bool need_clear_effect) {
   }
   if (state_ == State::kPlay || state_ == State::kPause) {
     SendCancelEvent();
-    LOGI("Animation cancel, name is: " << name_);
+    LOGI("Animation cancel, name is: " << name_.str());
   }
   state_ = State::kStop;
   if (animation_delegate_) {
@@ -150,7 +150,7 @@ void Animation::DoFrame(fml::TimePoint& frame_time) {
               [this](lynx::perfetto::EventContext ctx) {
                 auto* curveTypeInfo = ctx.event()->add_debug_annotations();
                 curveTypeInfo->set_name("animationName");
-                curveTypeInfo->set_string_value(name_);
+                curveTypeInfo->set_string_value(name_.str());
               });
   if (frame_time != fml::TimePoint::Min()) {
     Tick(frame_time);

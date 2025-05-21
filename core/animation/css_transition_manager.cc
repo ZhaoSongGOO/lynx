@@ -14,7 +14,7 @@
 namespace lynx {
 namespace animation {
 
-std::string ConvertAnimationPropertyTypeToString(
+const char* ConvertAnimationPropertyTypeToString(
     lynx::starlight::AnimationPropertyType type) {
   switch (type) {
     case starlight::AnimationPropertyType::kNone:
@@ -110,6 +110,8 @@ std::string ConvertAnimationPropertyTypeToString(
       return "offset-distance";
     case starlight::AnimationPropertyType::kBoxShadow:
       return "box-shadow";
+    default:
+      return "";
   }
 }
 
@@ -193,7 +195,6 @@ bool CSSTransitionManager::ConsumeCSSProperty(tasm::CSSPropertyID css_id,
       GetAnimationPropertyType(css_id);
   if (IsShouldTransitionType(property_type)) {
     // 1. get transition start value and end value
-    tasm::CSSKeyframesMap map;
     tasm::CSSValue start_value_internal;
     tasm::CSSValue end_value_internal;
     std::optional<tasm::CSSValue> start_value_opt =
@@ -263,7 +264,7 @@ void CSSTransitionManager::TickAllAnimation(fml::TimePoint& frame_time) {
 }
 
 tasm::CSSKeyframesContent& CSSTransitionManager::GetKeyframesStyleMap(
-    const std::string& animation_name) {
+    const base::String& animation_name) {
   auto it = keyframe_tokens_.find(animation_name);
   if (it != keyframe_tokens_.end()) {
     return it->second;
