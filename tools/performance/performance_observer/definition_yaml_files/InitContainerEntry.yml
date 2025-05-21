@@ -17,5 +17,5 @@ InitContainerEntry:
           type: number
         extraTiming:
           type: map
-          additionalProperties:
-            type: number
+          keyType: string
+          valueType: number

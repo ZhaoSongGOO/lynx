@@ -22,7 +22,7 @@ def prepare_before_generate(yaml_files):
     for yaml_file in yaml_files:
         items = read_yaml_file(os.path.join(base_dir, yaml_file))
         for class_name, definition in list(items.items()):
-            # Prepare the PerformanceConverter to generate the required data.
+            # Prepare the required data to generate PerformanceConverter
             # x-type refer to 'PerformanceEntry.entryType', it's unique.
             # x-name refer to 'PerformanceEntry.name'.
             if 'x-type' in definition:
@@ -52,7 +52,7 @@ def generate_java_code(yaml_files):
 
             if not tsOnly:
                 # Generate java code
-                java_code = generate_java(class_name, definition, items, java_imports)
+                java_code = generate_java(class_name, definition, java_imports)
                 if java_code:
                     java_codes.append(java_code)
                 # Write Java file
@@ -87,11 +87,11 @@ def generate_objc_code(yaml_files):
 
             if not tsOnly:
                 # Generate objc header code
-                objc_header = generate_objc_interface(class_name, definition, items, objc_imports)
+                objc_header = generate_objc_interface(class_name, definition, objc_imports)
                 if objc_header:
                     objc_headers.append(objc_header)
                 # Generate objc implementation code
-                objc_implementation = generate_objc_implementation(class_name, definition, items, objc_implementations_imports)
+                objc_implementation = generate_objc_implementation(class_name, definition, objc_implementations_imports)
                 if objc_implementation:
                     objc_implementations.append(objc_implementation)
                 # Write header file
@@ -119,13 +119,12 @@ def generate_objc_code(yaml_files):
 
 def generate_ts_code(yaml_files):
     ts_interfaces = []
-    ts_imports = []
 
     for yaml_file in yaml_files:
         items = read_yaml_file(os.path.join(base_dir, yaml_file))
 
         for class_name, definition in list(items.items()):
-            ts_interface = generate_ts(class_name, definition, items, ts_imports)
+            ts_interface = generate_ts(class_name, definition, items)
             ts_interfaces.append(ts_interface)
     # Generate ts Interface
     ts_output = get_license(2024)
