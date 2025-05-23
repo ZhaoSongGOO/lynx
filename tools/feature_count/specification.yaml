@@ -79,3 +79,4 @@ java:
   - get_theme_android
   - enable_async_list
   - use_legacy_elements
+  - enable_font_scaling

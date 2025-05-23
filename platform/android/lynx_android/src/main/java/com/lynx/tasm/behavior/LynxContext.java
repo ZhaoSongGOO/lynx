@@ -139,6 +139,7 @@ public abstract class LynxContext extends LynxBaseContext implements ExceptionHa
 
   private Map<String, LynxExtensionModule> mExtensionModules = new HashMap<>();
   private LynxImageFetcher mImageFetcher;
+  private Float mFontScale;
 
   private boolean mEnableVSyncAligned;
 
@@ -152,6 +153,21 @@ public abstract class LynxContext extends LynxBaseContext implements ExceptionHa
     super(base);
     mVirtualScreenMetrics = new DisplayMetrics();
     mVirtualScreenMetrics.setTo(screenMetrics);
+  }
+
+  /**
+   * @brief Get the current font scale
+   *
+   * @details This method returns the current font scale. If `mFontScale` is null,
+   * it initializes it with the system's font scale and marks it as initialized.
+   *
+   * @return float The current font scale
+   */
+  public float getFontScale() {
+    if (mFontScale == null) {
+      mFontScale = getResources().getConfiguration().fontScale;
+    }
+    return mFontScale;
   }
 
   /**

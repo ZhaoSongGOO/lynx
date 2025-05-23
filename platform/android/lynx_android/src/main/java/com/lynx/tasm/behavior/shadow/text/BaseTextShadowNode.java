@@ -73,6 +73,7 @@ import com.lynx.tasm.behavior.ui.background.BackgroundLinearGradientLayer;
 import com.lynx.tasm.behavior.ui.background.BackgroundRadialGradientLayer;
 import com.lynx.tasm.behavior.ui.text.AbsInlineImageSpan;
 import com.lynx.tasm.behavior.utils.UnicodeFontUtils;
+import com.lynx.tasm.featurecount.LynxFeatureCounter;
 import com.lynx.tasm.fontface.FontFaceManager;
 import com.lynx.tasm.utils.DeviceUtils;
 import com.lynx.tasm.utils.PixelUtils;
@@ -259,7 +260,7 @@ public class BaseTextShadowNode extends ShadowNode {
   protected void setLineHeightInternal(float lineHeight) {
     mOriginLineHeight = lineHeight;
     if (mEnableFontScaling && mContext != null) {
-      lineHeight = lineHeight * mContext.getResources().getConfiguration().fontScale;
+      lineHeight = lineHeight * mContext.getFontScale();
     }
     if (mTextAttributes.mLineHeight != lineHeight) {
       mTextAttributes.mLineHeight = lineHeight;
@@ -288,7 +289,7 @@ public class BaseTextShadowNode extends ShadowNode {
       fontSize = (float) Math.round(fontSize);
     }
     if (mEnableFontScaling && mContext != null) {
-      fontSize = fontSize * mContext.getResources().getConfiguration().fontScale;
+      fontSize = fontSize * mContext.getFontScale();
     }
     if (mTextAttributes.mFontSize != (int) fontSize) {
       mTextAttributes.mFontSize = (int) fontSize;
@@ -298,6 +299,10 @@ public class BaseTextShadowNode extends ShadowNode {
 
   @LynxProp(name = PropsConstants.ENABLE_FONT_SCALING)
   public void setEnableFontScaling(String enable) {
+    if (mContext != null) {
+      LynxFeatureCounter.count(
+          LynxFeatureCounter.JAVA_ENABLE_FONT_SCALING, mContext.getInstanceId());
+    }
     setEnableFontScaling(Boolean.parseBoolean(enable));
   }
 

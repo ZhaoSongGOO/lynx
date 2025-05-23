@@ -3690,6 +3690,7 @@ public class com::lynx::tasm::utils::LynxConstants :  {
 public class abstract com::lynx::tasm::behavior::LynxContext : com.lynx.tasm.behavior.LynxBaseContext, com.lynx.tasm.behavior.ExceptionHandler {
   public final int com.lynx.tasm.behavior.LynxContext.INSTANCE_ID_DEFAULT INSTANCE_ID_DEFAULT;
   public com.lynx.tasm.behavior.LynxContext.LynxContext(Context base, DisplayMetrics screenMetrics);
+  public float com.lynx.tasm.behavior.LynxContext.getFontScale();
   public boolean com.lynx.tasm.behavior.LynxContext.enableEventReporter();
   public boolean com.lynx.tasm.behavior.LynxContext.enableTiming();
   public boolean com.lynx.tasm.behavior.LynxContext.isEmbeddedModeOn();
@@ -4414,6 +4415,7 @@ public class com::lynx::tasm::featurecount::LynxFeatureCounter :  {
   public final int com.lynx.tasm.featurecount.LynxFeatureCounter.JAVA_GET_THEME_ANDROID JAVA_GET_THEME_ANDROID;
   public final int com.lynx.tasm.featurecount.LynxFeatureCounter.JAVA_ENABLE_ASYNC_LIST JAVA_ENABLE_ASYNC_LIST;
   public final int com.lynx.tasm.featurecount.LynxFeatureCounter.JAVA_USE_LEGACY_ELEMENTS JAVA_USE_LEGACY_ELEMENTS;
+  public final int com.lynx.tasm.featurecount.LynxFeatureCounter.JAVA_ENABLE_FONT_SCALING JAVA_ENABLE_FONT_SCALING;
   public static void com.lynx.tasm.featurecount.LynxFeatureCounter.setEnable(boolean enable);
   public static void com.lynx.tasm.featurecount.LynxFeatureCounter.count(int feature, int instanceId);
   public static native void com.lynx.tasm.featurecount.LynxFeatureCounter.nativeFeatureCount(int feature, int instanceId);
