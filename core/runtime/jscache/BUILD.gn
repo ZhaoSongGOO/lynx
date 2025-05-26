@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 config("jscache_config") {
   if (enable_unittests) {
@@ -34,9 +34,9 @@ lynx_core_source_set("jscache") {
     sources += [ "ios/js_cache_manager_darwin.mm" ]
   }
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/services/event_report",
-    "//lynx/third_party/rapidjson",
+    "../../../third_party/rapidjson",
+    "../../base",
+    "../../services/event_report",
   ]
 }
 

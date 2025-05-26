@@ -4,8 +4,8 @@
 
 import("//${lynx_dir}/build_overrides/darwin.gni")
 import("//${lynx_dir}/build_overrides/resource_file.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../../core/Lynx.gni")
+import("../../../../tools/gn_tools/podspec_target_template.gni")
 import("Podspecs.gni")
 
 assert(is_ios)
@@ -351,20 +351,20 @@ subspec_target("UnitTests") {
     HEADER_SEARCH_PATHS = [ "//TARGET_BUILD_DIR/Lynx/Lynx/gen/Lynx" ]
   }
   sources = [
-    "//lynx/core/value_wrapper/darwin/value_impl_darwin_unittest.mm",
-    "//lynx/platform/darwin/common/lynx/LynxEnvUnitTest.mm",
-    "//lynx/platform/darwin/common/lynx/LynxErrorUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/LynxResourceLoaderDarwinUnitTest.mm",
-    "//lynx/platform/darwin/common/lynx/LynxTemplateDataUnitTest.mm",
-    "//lynx/platform/darwin/common/lynx/LynxViewClientUnitTest.mm",
-    "//lynx/platform/darwin/common/lynx/base/LynxConverter+UIUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/base/LynxPageReloadHelperUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/base/LynxResourceServiceFetcherUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/base/LynxVersionUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/devtool_wrapper/LynxMemoryListenerUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/event_report/LynxEventReporterUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/event_report/LynxEventReporterUtilsUnitTest.m",
-    "//lynx/platform/darwin/common/lynx/feature_count/LynxFeatureCounterUnitTest.mm",
+    "../../../../core/value_wrapper/darwin/value_impl_darwin_unittest.mm",
+    "../../common/lynx/LynxEnvUnitTest.mm",
+    "../../common/lynx/LynxErrorUnitTest.m",
+    "../../common/lynx/LynxResourceLoaderDarwinUnitTest.mm",
+    "../../common/lynx/LynxTemplateDataUnitTest.mm",
+    "../../common/lynx/LynxViewClientUnitTest.mm",
+    "../../common/lynx/base/LynxConverter+UIUnitTest.m",
+    "../../common/lynx/base/LynxPageReloadHelperUnitTest.m",
+    "../../common/lynx/base/LynxResourceServiceFetcherUnitTest.m",
+    "../../common/lynx/base/LynxVersionUnitTest.m",
+    "../../common/lynx/devtool_wrapper/LynxMemoryListenerUnitTest.m",
+    "../../common/lynx/event_report/LynxEventReporterUnitTest.m",
+    "../../common/lynx/event_report/LynxEventReporterUtilsUnitTest.m",
+    "../../common/lynx/feature_count/LynxFeatureCounterUnitTest.mm",
     "LynxModuleManagerDarwinUnitTest.mm",
     "LynxUnitTestUtils.h",
     "LynxUnitTestUtils.mm",
@@ -436,7 +436,7 @@ subspec_target("Air") {
   pod_target_xcconfig = {
     GCC_PREPROCESSOR_DEFINITIONS = [ "ENABLE_AIR=1" ]
   }
-  deps = [ "//lynx/core/renderer/dom/air:tasm_air" ]
+  deps = [ "../../../../core/renderer/dom/air:tasm_air" ]
 }
 
 subspec_target("Inspector") {
@@ -450,7 +450,7 @@ subspec_target("Inspector") {
   if (!use_flatten_deps) {
     header_mappings_dir = "."
   }
-  deps = [ "//lynx/core/inspector" ]
+  deps = [ "../../../../core/inspector" ]
   pod_target_xcconfig = {
     GCC_PREPROCESSOR_DEFINITIONS = [ "INSPECTOR_TEST=1" ]
     HEADER_SEARCH_PATHS = [ "//core" ]
@@ -467,17 +467,17 @@ subspec_target("JSRuntime") {
   ]
   framework = "JavaScriptCore"
   deps = [
-    "//lynx/core/runtime",
-    "//lynx/core/runtime:js_common",
-    "//lynx/core/runtime/bindings/jsi",
-    "//lynx/core/runtime/common:reporter",
-    "//lynx/core/runtime/common:utils",
-    "//lynx/core/runtime/jscache:jscache",
-    "//lynx/core/runtime/jsi",
-    "//lynx/core/runtime/jsi/quickjs",
-    "//lynx/core/runtime/profile:profile",
-    "//lynx/core/runtime/profile/quickjs:quickjs_profile",
-    "//lynx/core/runtime/trace:runtime_trace",
+    "../../../../core/runtime",
+    "../../../../core/runtime:js_common",
+    "../../../../core/runtime/bindings/jsi",
+    "../../../../core/runtime/common:reporter",
+    "../../../../core/runtime/common:utils",
+    "../../../../core/runtime/jscache:jscache",
+    "../../../../core/runtime/jsi",
+    "../../../../core/runtime/jsi/quickjs",
+    "../../../../core/runtime/profile:profile",
+    "../../../../core/runtime/profile/quickjs:quickjs_profile",
+    "../../../../core/runtime/trace:runtime_trace",
   ]
 
   libraries = [ "stdc++" ]
@@ -489,8 +489,8 @@ subspec_target("JSRuntime") {
 
 subspec_target("LepusNG") {
   deps = [
-    "//lynx/core/runtime/profile/lepusng:lepusng_profile",
-    "//lynx/core/runtime/vm/lepus:lepus_ng",
+    "../../../../core/runtime/profile/lepusng:lepusng_profile",
+    "../../../../core/runtime/vm/lepus:lepus_ng",
   ]
   dependency = []
   if (!use_flatten_deps) {
@@ -535,7 +535,7 @@ subspec_target("NapiBinding") {
 }
 
 subspec_target("JSC") {
-  deps = [ "//lynx/core/runtime/bindings/napi:napi_binding_jsc" ]
+  deps = [ "../../../../core/runtime/bindings/napi:napi_binding_jsc" ]
   dependency = []
   if (!use_flatten_deps) {
     dependency += [ "Lynx/NapiBinding/Common" ]
@@ -553,8 +553,8 @@ subspec_target("NapiBinding_Common") {
     ]
   }
   deps = [
-    "//lynx/core/runtime/bindings/napi:napi_binding_core",
-    "//lynx/third_party/binding/napi:napi_binding_base",
+    "../../../../core/runtime/bindings/napi:napi_binding_core",
+    "../../../../third_party/binding/napi:napi_binding_base",
   ]
   dependency = []
   if (!use_flatten_deps) {
@@ -567,7 +567,7 @@ subspec_target("QuickJS") {
   pod_target_xcconfig = {
     HEADER_SEARCH_PATHS = QuickJS_includes
   }
-  deps = [ "//lynx/core/runtime/bindings/napi:napi_binding_quickjs" ]
+  deps = [ "../../../../core/runtime/bindings/napi:napi_binding_quickjs" ]
   dependency = []
   if (!use_flatten_deps) {
     dependency += [ "Lynx/NapiBinding/Common" ]
@@ -609,7 +609,7 @@ subspec_target("Native") {
 subspec_target("Recorder") {
   header_mappings_dir = "."
   libraries = [ "stdc++" ]
-  deps = [ "//lynx/core/services/recorder" ]
+  deps = [ "../../../../core/services/recorder" ]
   pod_target_xcconfig = {
     GCC_PREPROCESSOR_DEFINITIONS = [ "ENABLE_TESTBENCH_RECORDER=1" ]
   }
@@ -628,122 +628,124 @@ subspec_target("zlib") {
 }
 
 subspec_target("amoeba") {
-  deps = [ "//lynx/core/renderer/css" ]
+  deps = [ "../../../../core/renderer/css" ]
 }
 
 subspec_target("animation") {
-  deps = [ "//lynx/core/animation" ]
+  deps = [ "../../../../core/animation" ]
 }
 
 subspec_target("animation_utils") {
-  deps = [ "//lynx/core/animation/utils:animation_utils" ]
+  deps = [ "../../../../core/animation/utils:animation_utils" ]
 }
 
 subspec_target("base") {
   deps = [
-    "//lynx/base/src:base_log",
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/base",
-    "//lynx/core/base:json_utils",
-    "//lynx/core/base:observer",
-    "//lynx/core/build:build",
+    "../../../../base/src:base_log",
+    "../../../../base/src:base_log_headers",
+    "../../../../core/base",
+    "../../../../core/base:json_utils",
+    "../../../../core/base:observer",
+    "../../../../core/build:build",
   ]
 }
 
 subspec_target("basic_animation") {
-  deps = [ "//lynx/core/animation/basic_animation:basic_animation" ]
+  deps = [ "../../../../core/animation/basic_animation:basic_animation" ]
 }
 
 subspec_target("lynx_basic_animator") {
-  deps = [ "//lynx/core/animation/lynx_basic_animator:lynx_basic_animator" ]
+  deps =
+      [ "../../../../core/animation/lynx_basic_animator:lynx_basic_animator" ]
 }
 
 subspec_target("fml") {
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:string_utils",
-    "//lynx/base/src:time_utils",
-    "//lynx/base/src:values",
+    "../../../../base/src:base",
+    "../../../../base/src:string_utils",
+    "../../../../base/src:time_utils",
+    "../../../../base/src:values",
   ]
 }
 
 subspec_target("lepus") {
-  deps = [ "//lynx/core/runtime/vm/lepus" ]
+  deps = [ "../../../../core/runtime/vm/lepus" ]
   dependency = Lepus_deps
 }
 
 subspec_target("parser") {
-  deps = [ "//lynx/core/parser" ]
+  deps = [ "../../../../core/parser" ]
 }
 
 subspec_target("resource") {
   deps = [
-    "//lynx/core/resource",
-    "//lynx/core/resource/external_resource:external_resource",
-    "//lynx/core/resource/lazy_bundle:lazy_bundle",
-    "//lynx/core/resource/trace:resource_trace",
+    "../../../../core/resource",
+    "../../../../core/resource/external_resource:external_resource",
+    "../../../../core/resource/lazy_bundle:lazy_bundle",
+    "../../../../core/resource/trace:resource_trace",
   ]
 }
 
 subspec_target("starlight") {
-  deps = [ "//lynx/core/renderer/starlight" ]
+  deps = [ "../../../../core/renderer/starlight" ]
 }
 
 subspec_target("tasm") {
-  deps = [
-           "//lynx/core/event",
-           "//lynx/core/public",
-           "//lynx/core/renderer:tasm",
-           "//lynx/core/renderer/css:css_decoder",
-           "//lynx/core/renderer/css:css_dom",
-           "//lynx/core/renderer/data:data",
-           "//lynx/core/renderer/dom:dom",
-           "//lynx/core/renderer/dom:dom_headers",
-           "//lynx/core/renderer/dom:renderer_dom",
-           "//lynx/core/renderer/dom/fiber",
-           "//lynx/core/renderer/dom/selector:element_selector",
-           "//lynx/core/renderer/dom/vdom/radon",
-           "//lynx/core/renderer/events:events",
-           "//lynx/core/renderer/pipeline",
-           "//lynx/core/renderer/signal:signal",
-           "//lynx/core/renderer/trace:renderer_trace",
-           "//lynx/core/renderer/ui_component/list:react_component_list",
-           "//lynx/core/renderer/ui_wrapper/common",
-           "//lynx/core/renderer/ui_wrapper/layout",
-           "//lynx/core/renderer/ui_wrapper/painting",
-           "//lynx/core/renderer/utils:renderer_dom_utils",
-           "//lynx/core/renderer/utils:renderer_utils",
-           "//lynx/core/runtime/bindings/common/event:runtime_common",
-           "//lynx/core/runtime/bindings/jsi/event:js_runtime",
-           "//lynx/core/runtime/bindings/jsi/interceptor:interceptor_factory",
-           "//lynx/core/runtime/bindings/jsi/interceptor:network_interceptor",
-           "//lynx/core/runtime/bindings/lepus",
-           "//lynx/core/runtime/bindings/lepus/event:lepus_runtime",
-           "//lynx/core/runtime/vm/lepus/tasks:tasks",
-           "//lynx/core/services/event_report:event_report",
-           "//lynx/core/services/feature_count:feature_count",
-           "//lynx/core/services/fluency:fluency",
-           "//lynx/core/services/long_task_timing:long_task_timing",
-           "//lynx/core/services/performance:performance",
-           "//lynx/core/services/ssr",
-           "//lynx/core/services/timing_handler:timing_handler",
-           "//lynx/core/services/timing_handler:timing_handler_delegate",
-           "//lynx/core/services/timing_handler:timing_handler_platform",
-           "//lynx/core/services/trace:service_trace",
-           "//lynx/core/shared_data",
-           "//lynx/core/shared_data:white_board",
-           "//lynx/core/shell",
-           "//lynx/core/style",
-           "//lynx/core/value_wrapper:value_wrapper",
-         ] + tasm_extend_deps
+  deps =
+      [
+        "../../../../core/event",
+        "../../../../core/public",
+        "../../../../core/renderer:tasm",
+        "../../../../core/renderer/css:css_decoder",
+        "../../../../core/renderer/css:css_dom",
+        "../../../../core/renderer/data:data",
+        "../../../../core/renderer/dom:dom",
+        "../../../../core/renderer/dom:dom_headers",
+        "../../../../core/renderer/dom:renderer_dom",
+        "../../../../core/renderer/dom/fiber",
+        "../../../../core/renderer/dom/selector:element_selector",
+        "../../../../core/renderer/dom/vdom/radon",
+        "../../../../core/renderer/events:events",
+        "../../../../core/renderer/pipeline",
+        "../../../../core/renderer/signal:signal",
+        "../../../../core/renderer/trace:renderer_trace",
+        "../../../../core/renderer/ui_component/list:react_component_list",
+        "../../../../core/renderer/ui_wrapper/common",
+        "../../../../core/renderer/ui_wrapper/layout",
+        "../../../../core/renderer/ui_wrapper/painting",
+        "../../../../core/renderer/utils:renderer_dom_utils",
+        "../../../../core/renderer/utils:renderer_utils",
+        "../../../../core/runtime/bindings/common/event:runtime_common",
+        "../../../../core/runtime/bindings/jsi/event:js_runtime",
+        "../../../../core/runtime/bindings/jsi/interceptor:interceptor_factory",
+        "../../../../core/runtime/bindings/jsi/interceptor:network_interceptor",
+        "../../../../core/runtime/bindings/lepus",
+        "../../../../core/runtime/bindings/lepus/event:lepus_runtime",
+        "../../../../core/runtime/vm/lepus/tasks:tasks",
+        "../../../../core/services/event_report:event_report",
+        "../../../../core/services/feature_count:feature_count",
+        "../../../../core/services/fluency:fluency",
+        "../../../../core/services/long_task_timing:long_task_timing",
+        "../../../../core/services/performance:performance",
+        "../../../../core/services/ssr",
+        "../../../../core/services/timing_handler:timing_handler",
+        "../../../../core/services/timing_handler:timing_handler_delegate",
+        "../../../../core/services/timing_handler:timing_handler_platform",
+        "../../../../core/services/trace:service_trace",
+        "../../../../core/shared_data",
+        "../../../../core/shared_data:white_board",
+        "../../../../core/shell",
+        "../../../../core/style",
+        "../../../../core/value_wrapper:value_wrapper",
+      ] + tasm_extend_deps
 }
 
 subspec_target("template_bundle") {
   deps = [
-    "//lynx/core/template_bundle:template_bundle",
-    "//lynx/core/template_bundle/template_codec:magic_number",
-    "//lynx/core/template_bundle/template_codec:template_decoder",
-    "//lynx/core/template_bundle/template_codec/binary_decoder:binary_decoder",
+    "../../../../core/template_bundle:template_bundle",
+    "../../../../core/template_bundle/template_codec:magic_number",
+    "../../../../core/template_bundle/template_codec:template_decoder",
+    "../../../../core/template_bundle/template_codec/binary_decoder:binary_decoder",
   ]
 }
 
@@ -766,16 +768,16 @@ subspec_target("third_party") {
 }
 
 subspec_target("modp64") {
-  deps = [ "//lynx/third_party/modp_b64" ]
+  deps = [ "../../../../third_party/modp_b64" ]
   libraries = [ "stdc++" ]
 }
 
 subspec_target("rapidjson") {
-  deps = [ "//lynx/third_party/rapidjson" ]
+  deps = [ "../../../../third_party/rapidjson" ]
 }
 
 subspec_target("transforms") {
-  deps = [ "//lynx/core/animation/transforms" ]
+  deps = [ "../../../../core/animation/transforms" ]
 }
 
 subspec_target("ReleaseResource") {
@@ -787,7 +789,7 @@ subspec_target("Replay") {
   pod_target_xcconfig = {
     GCC_PREPROCESSOR_DEFINITIONS = [ "ENABLE_TESTBENCH_REPLAY=1" ]
   }
-  deps = [ "//lynx/core/services/replay" ]
+  deps = [ "../../../../core/services/replay" ]
   if (!use_flatten_deps) {
     dependency = [ "Lynx/Native" ]
     header_mappings_dir = "."
@@ -803,18 +805,18 @@ subspec_target("Trace") {
   }
   pod_target_xcconfig = {
     HEADER_SEARCH_PATHS = [
-      "//lynx/base/trace/darwin",
-      "//lynx/base/trace/darwin/ios",
+      "../../../../base/trace/darwin",
+      "../../../../base/trace/darwin/ios",
     ]
     GCC_PREPROCESSOR_DEFINITIONS = [
       "OS_IOS=1",
       "ENABLE_TRACE_PERFETTO=#{\$enable_trace}",
     ]
   }
-  flatten_deps = [ "//lynx/base/trace/darwin:LynxTrace_subspec" ]
-  deps = [ "//lynx/base/trace/native:trace" ]
+  flatten_deps = [ "../../../../base/trace/darwin:LynxTrace_subspec" ]
+  deps = [ "../../../../base/trace/native:trace" ]
   if (enable_trace == "perfetto") {
-    deps += [ "//lynx/third_party/perfetto:perfetto" ]
+    deps += [ "../../../../third_party/perfetto:perfetto" ]
   }
 }
 
@@ -826,9 +828,9 @@ subspec_target("Worklet") {
   pod_target_xcconfig = {
     GCC_PREPROCESSOR_DEFINITIONS = [ "ENABLE_LEPUSNG_WORKLET=1" ]
   }
-  deps = [ "//lynx/core/renderer/worklet" ]
+  deps = [ "../../../../core/renderer/worklet" ]
   if (!enable_unittests) {
-    deps += [ "//lynx/core/renderer/css:css_decoder" ]
+    deps += [ "../../../../core/renderer/css:css_decoder" ]
   }
   dependency = []
   if (!use_flatten_deps) {

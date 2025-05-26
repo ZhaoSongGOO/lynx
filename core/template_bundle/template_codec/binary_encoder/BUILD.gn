@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../../Lynx.gni")
 
 lynx_core_source_set("binary_encoder") {
   sources = [
@@ -30,5 +30,5 @@ lynx_core_source_set("binary_encoder") {
     exclude_configs += [ "//build/config/compiler:no_rtti" ]
     configs = [ "//build/config/compiler:rtti" ]
   }
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../../third_party/rapidjson:rapidjson" ]
 }

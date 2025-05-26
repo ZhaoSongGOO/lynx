@@ -1,12 +1,12 @@
 #Copyright 2022 The Lynx Authors.All rights reserved.
 #Licensed under the Apache License Version 2.0 that can be found in the
 #LICENSE file in the root directory of this source tree.
-import("//lynx/devtool/lynx_devtool/devtool.gni")
+import("../devtool.gni")
 
 #devtool_agent_shared_sources
 devtool_agent_shared_sources = [
-  "//lynx/devtool/lynx_devtool/lynx_devtool_ng.cc",
-  "//lynx/devtool/lynx_devtool/lynx_devtool_ng.h",
+  "../lynx_devtool_ng.cc",
+  "../lynx_devtool_ng.h",
   "agent_constants.h",
   "devtool_platform_facade.cc",
   "devtool_platform_facade.h",
@@ -86,11 +86,11 @@ devtool_agent_ng_sources = [
 
 if (is_android) {
   devtool_agent_shared_sources += [
-    "//lynx/devtool/lynx_devtool/android/devtool_message_handler_android.cc",
-    "//lynx/devtool/lynx_devtool/android/devtool_message_handler_android.h",
-    "//lynx/devtool/lynx_devtool/android/invoke_cdp_from_sdk_sender_android.cc",
-    "//lynx/devtool/lynx_devtool/android/invoke_cdp_from_sdk_sender_android.h",
-    "//lynx/devtool/lynx_devtool/android/lynx_devtool_ng_android.cc",
+    "../android/devtool_message_handler_android.cc",
+    "../android/devtool_message_handler_android.h",
+    "../android/invoke_cdp_from_sdk_sender_android.cc",
+    "../android/invoke_cdp_from_sdk_sender_android.h",
+    "../android/lynx_devtool_ng_android.cc",
     "android/devtool_platform_android.cc",
     "android/devtool_platform_android.h",
     "android/global_devtool_platform_android.cc",
@@ -103,7 +103,7 @@ if (is_android) {
 devtool_source_set("agent") {
   sources = devtool_agent_shared_sources + devtool_agent_ng_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
+    "../../../base/src:base_log_headers",
     "//third_party/zlib",
   ]
 }

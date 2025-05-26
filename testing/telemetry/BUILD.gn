@@ -5,7 +5,7 @@
 group("telemetry") {
   testonly = true
   deps = [
-    "//lynx/testing/telemetry/base:base_benchmark",
-    "//lynx/testing/telemetry/lepus:lepus_benchmark",
+    "base:base_benchmark",
+    "lepus:lepus_benchmark",
   ]
 }

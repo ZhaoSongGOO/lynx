@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 
 animation_shared_sources = [
   "animation.cc",
@@ -31,10 +31,10 @@ lynx_core_source_set("animation") {
   sources = animation_shared_sources
 
   public_deps = [
-    "//lynx/core/animation/utils:animation_utils",
-    "//lynx/core/base",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/third_party/rapidjson",
+    "../../third_party/rapidjson",
+    "../base",
+    "../runtime/vm/lepus",
+    "utils:animation_utils",
   ]
 }
 
@@ -44,10 +44,10 @@ unittest_set("animation_testset") {
   public_deps = [ ":animation" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
+    "../renderer:tasm",
+    "../renderer/dom:renderer_dom",
+    "../runtime/bindings/lepus",
+    "../shell/testing:mock_tasm_delegate_testset",
   ]
 
   sources = [
@@ -70,7 +70,7 @@ unittest_exec("animation_unittests_exec") {
   deps = [
     ":animation",
     ":animation_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../renderer/dom:dom",
   ]
 }
 

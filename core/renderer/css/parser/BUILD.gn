@@ -2,12 +2,12 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
 
 unittest_set("css_parser_testset") {
   public_deps = [
     "..:css",
-    "//lynx/third_party/rapidjson",
+    "../../../../third_party/rapidjson",
   ]
 
   sources = [
@@ -59,6 +59,6 @@ unittest_exec("css_parser_test_exec") {
   sources = []
   deps = [
     ":css_parser_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../../dom:dom",
   ]
 }

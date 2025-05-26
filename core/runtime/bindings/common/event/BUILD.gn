@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../../testing/test.gni")
+import("../../../../Lynx.gni")
 
 # runtime_common_shared_sources
 runtime_common_shared_sources = [
@@ -18,7 +18,7 @@ lynx_core_source_set("runtime_common") {
   sources = runtime_common_shared_sources
 
   # The runtime_common is expected to only depend on the lepus::Value, base and event module, but lepus::Value is still strongly coupled with context now. In the future, if there is a common::Value, it will depend on common::Value rather than lepus::Value.
-  public_deps = [ "//lynx/core/event" ]
+  public_deps = [ "../../../../event" ]
 }
 
 unittest_set("runtime_common_testset") {
@@ -30,17 +30,17 @@ unittest_set("runtime_common_testset") {
   ]
   public_deps = [
     ":runtime_common",
-    "//lynx/core/base",
-    "//lynx/core/event",
-    "//lynx/core/event:event_testset",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/runtime:runtime",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/third_party/quickjs",
+    "../../../:runtime",
+    "../../../../../third_party/quickjs",
+    "../../../../base",
+    "../../../../event",
+    "../../../../event:event_testset",
+    "../../../../renderer:tasm",
+    "../../../../renderer/dom:dom",
+    "../../../../renderer/dom:renderer_dom",
+    "../../../../renderer/starlight",
+    "../../../../shell/testing:mock_tasm_delegate_testset",
+    "../../../vm/lepus",
   ]
   data_deps = []
 }

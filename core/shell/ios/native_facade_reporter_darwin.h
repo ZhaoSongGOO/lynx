@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/shell/native_facade_reporter.h"
-#import "darwin/common/lynx/TemplateRenderCallbackProtocol.h"
+#import "platform/darwin/common/lynx/TemplateRenderCallbackProtocol.h"
 
 namespace lynx {
 namespace shell {

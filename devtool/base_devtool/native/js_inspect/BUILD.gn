@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/devtool/base_devtool/native/base_devtool.gni")
+import("../../../../config.gni")
+import("../base_devtool.gni")
 
 base_devtool_source_set("base_devtool_js_inspect") {
   sources = [
@@ -13,9 +13,9 @@ base_devtool_source_set("base_devtool_js_inspect") {
     "script_manager_ng.h",
   ]
   public_deps = [
-    "//lynx/devtool/fundamentals/js_inspect:js_inspect_interface",
-    "//lynx/devtool/js_inspect:inspector_const",
-    "//lynx/third_party/rapidjson",
+    "../../../../third_party/rapidjson",
+    "../../../fundamentals/js_inspect:js_inspect_interface",
+    "../../../js_inspect:inspector_const",
   ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../../base/src:base_log_headers" ]
 }

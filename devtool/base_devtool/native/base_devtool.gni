@@ -2,8 +2,11 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/core/base_targets.gni")
+import("../../../config.gni")
+import("../../../core/base_targets.gni")
+devtool_common_defines =
+    rebase_path("../android/base_devtool:devtool_common_defines")
+devtool_flag_config = rebase_path("../android/base_devtool:devtool_flag_config")
 
 template("base_devtool_source_set") {
   source_set(target_name) {
@@ -17,8 +20,8 @@ template("base_devtool_source_set") {
     }
     if (is_android) {
       configs += [
-        "//lynx/devtool/base_devtool/android/base_devtool:devtool_common_defines",
-        "//lynx/devtool/base_devtool/android/base_devtool:devtool_flag_config",
+        devtool_common_defines,
+        devtool_flag_config,
       ]
     }
     if (!defined(defines)) {

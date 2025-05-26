@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 
 lynx_core_source_set("white_board") {
   sources = [
@@ -11,7 +11,7 @@ lynx_core_source_set("white_board") {
     "lynx_white_board.h",
   ]
 
-  public_deps = [ "//lynx/core/base" ]
+  public_deps = [ "../base" ]
 }
 
 lynx_core_source_set("shared_data") {
@@ -28,21 +28,21 @@ lynx_core_source_set("shared_data") {
   libs = []
   public_deps = [
     ":white_board",
-    "//lynx/core/runtime",
-    "//lynx/core/runtime/vm/lepus",
+    "../runtime",
+    "../runtime/vm/lepus",
   ]
 }
 
 unittest_set("shared_data_test_testset") {
   testonly = true
-  public_deps = [ "//lynx/core/shared_data" ]
+  public_deps = [ "../shared_data" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/core/shell/testing:shell_testset",
+    "../renderer:tasm",
+    "../renderer/dom:renderer_dom",
+    "../runtime/bindings/lepus",
+    "../shell/testing:mock_tasm_delegate_testset",
+    "../shell/testing:shell_testset",
   ]
 
   sources = [ "lynx_white_board_unittest.cc" ]
@@ -53,6 +53,6 @@ unittest_exec("shared_data_test_exec") {
   sources = []
   deps = [
     ":shared_data_test_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../renderer/dom:dom",
   ]
 }

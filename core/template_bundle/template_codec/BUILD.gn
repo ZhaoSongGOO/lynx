@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/codec_files.gni")
-import("//lynx/core/Lynx.gni")
+import("../../Lynx.gni")
 
 lynx_core_source_set("lepus_cmd") {
   include_dirs = [ "//third_party" ]
@@ -14,9 +14,9 @@ lynx_core_source_set("lepus_cmd") {
   ]
 
   if (is_oliver) {
-    public_deps = [ "//lynx/third_party/quickjs:quickjs" ]
+    public_deps = [ "../../../third_party/quickjs:quickjs" ]
   }
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../third_party/rapidjson:rapidjson" ]
 }
 
 lynx_core_source_set("lepus_compile") {

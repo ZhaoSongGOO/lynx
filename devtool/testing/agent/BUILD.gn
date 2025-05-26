@@ -1,43 +1,43 @@
 # Copyright 2024 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/config.gni")
-import("//lynx/testing/test.gni")
+import("../../../config.gni")
+import("../../../testing/test.gni")
 
 unittest_set("devtool_agent_testset") {
   testonly = true
   sources = [ "devtool_mediator_unittest.cc" ]
 
   public_deps = [
-    "//lynx/core/inspector:inspector",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/css:css",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/starlight:starlight",
-    "//lynx/core/renderer/utils:renderer_utils",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/services/recorder:recorder",
-    "//lynx/core/services/replay:replay",
-    "//lynx/devtool/lynx_devtool/agent:agent",
-    "//lynx/devtool/lynx_devtool/base:base",
-    "//lynx/devtool/lynx_devtool/config:config",
-    "//lynx/devtool/lynx_devtool/element:element",
-    "//lynx/devtool/lynx_devtool/js_debug:js_debug",
-    "//lynx/third_party/jsoncpp",
+    "../../../core/inspector:inspector",
+    "../../../core/renderer:tasm",
+    "../../../core/renderer/css:css",
+    "../../../core/renderer/dom:dom",
+    "../../../core/renderer/starlight:starlight",
+    "../../../core/renderer/utils:renderer_utils",
+    "../../../core/runtime/bindings/lepus",
+    "../../../core/services/recorder:recorder",
+    "../../../core/services/replay:replay",
+    "../../../third_party/jsoncpp",
+    "../../lynx_devtool/agent:agent",
+    "../../lynx_devtool/base:base",
+    "../../lynx_devtool/config:config",
+    "../../lynx_devtool/element:element",
+    "../../lynx_devtool/js_debug:js_debug",
     "//third_party/zlib",
   ]
 
   deps = [
+    "../../base_devtool/native:base_devtool",
     "../mock:devtool_mock",
-    "//lynx/devtool/base_devtool/native:base_devtool",
   ]
 
   include_dirs = [
     "//third_party/googletest/googletest/include",
-    "//lynx/third_party/jsoncpp/include/",
+    "../../../third_party/jsoncpp/include/",
   ]
   public_configs = [
-    "//lynx/core:lynx_public_config",
-    "//lynx/devtool/lynx_devtool:devtool_common_config",
+    "../../../core:lynx_public_config",
+    "../../lynx_devtool:devtool_common_config",
   ]
 }

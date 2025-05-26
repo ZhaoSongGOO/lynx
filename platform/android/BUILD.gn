@@ -4,7 +4,7 @@
 
 assert(is_android)
 
-import("//lynx/config.gni")
+import("../../config.gni")
 
 config("16kb_page") {
   ldflags = []
@@ -19,8 +19,8 @@ config("16kb_page") {
 
 group("Android") {
   deps = [
-    "//lynx/base/trace/android:LynxTrace",
-    "//lynx/platform/android/lynx_android",
-    "//lynx/platform/android/lynx_devtool:LynxDevtool",
+    "../../base/trace/android:LynxTrace",
+    "lynx_android",
+    "lynx_devtool:LynxDevtool",
   ]
 }

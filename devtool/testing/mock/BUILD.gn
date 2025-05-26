@@ -1,8 +1,8 @@
 # Copyright 2024 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/config.gni")
-import("//lynx/testing/test.gni")
+import("../../../config.gni")
+import("../../../testing/test.gni")
 
 source_set("devtool_mock") {
   sources = [
@@ -22,22 +22,22 @@ source_set("devtool_mock") {
   ]
 
   public_deps = [
-    "//lynx/base/trace/native:trace",
-    "//lynx/core/inspector:inspector",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/devtool/lynx_devtool/agent:agent",
-    "//lynx/devtool/lynx_devtool/base:base",
-    "//lynx/devtool/lynx_devtool/config:config",
-    "//lynx/devtool/lynx_devtool/element:element",
-    "//lynx/devtool/lynx_devtool/js_debug:js_debug",
-    "//lynx/third_party/jsoncpp",
+    "../../../base/trace/native:trace",
+    "../../../core/inspector:inspector",
+    "../../../core/renderer/dom:dom",
+    "../../../third_party/jsoncpp",
+    "../../lynx_devtool/agent:agent",
+    "../../lynx_devtool/base:base",
+    "../../lynx_devtool/config:config",
+    "../../lynx_devtool/element:element",
+    "../../lynx_devtool/js_debug:js_debug",
     "//third_party/zlib",
   ]
 
   include_dirs = [ "//third_party/googletest/googletest/include" ]
 
   public_configs = [
-    "//lynx/core:lynx_public_config",
-    "//lynx/devtool/lynx_devtool:devtool_common_config",
+    "../../../core:lynx_public_config",
+    "../../lynx_devtool:devtool_common_config",
   ]
 }

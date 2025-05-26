@@ -1,9 +1,9 @@
 # Copyright 2022 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/core/runtime/jsi/v8/v8.gni")
-import("//lynx/devtool/lynx_devtool/devtool.gni")
-import("//lynx/testing/test.gni")
+import("../../../core/runtime/jsi/v8/v8.gni")
+import("../../../testing/test.gni")
+import("../devtool.gni")
 
 devtool_common_js_debug_sources = [
   "inspector_client_delegate_impl.cc",
@@ -38,22 +38,22 @@ devtool_quickjs_debug_sources = [
 devtool_source_set("devtool_quickjs_debug") {
   sources = devtool_quickjs_debug_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/devtool/js_inspect/quickjs:quickjs_debug",
+    "../../../base/src:base_log_headers",
+    "../../js_inspect/quickjs:quickjs_debug",
   ]
 }
 
 devtool_source_set("v8_profile_devtool") {
   sources = [
-    "//lynx/core/runtime/profile/v8/v8_runtime_profiler.cc",
-    "//lynx/core/runtime/profile/v8/v8_runtime_profiler.h",
-    "//lynx/core/runtime/profile/v8/v8_runtime_profiler_wrapper.h",
+    "../../../core/runtime/profile/v8/v8_runtime_profiler.cc",
+    "../../../core/runtime/profile/v8/v8_runtime_profiler.h",
+    "../../../core/runtime/profile/v8/v8_runtime_profiler_wrapper.h",
   ]
 
   defines = [ "ENABLE_TRACE_PERFETTO=1" ]
   deps = [
-    "//lynx/core/runtime/profile:profile_public_header",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../core/runtime/profile:profile_public_header",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 
@@ -66,7 +66,7 @@ devtool_v8_debug_sources = [
 devtool_source_set("devtool_js_v8_bridge") {
   include_dirs = [ v8_headers_search_path ]
   sources = js_v8_bridge_shared_sources
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 devtool_source_set("devtool_v8_debug") {
@@ -74,21 +74,20 @@ devtool_source_set("devtool_v8_debug") {
   include_dirs = [ v8_headers_search_path ]
   deps = [
     ":devtool_js_v8_bridge",
-    "//lynx/base/src:base_log_headers",
-    "//lynx/devtool/js_inspect/v8:v8_debug",
+    "../../../base/src:base_log_headers",
+    "../../js_inspect/v8:v8_debug",
   ]
 }
 
 devtool_source_set("devtool_common_js_debug") {
   sources = devtool_common_js_debug_sources
   if (!is_android && !is_ios) {
-    public_deps = [
-      "//lynx/devtool/base_devtool/native/js_inspect:base_devtool_js_inspect",
-    ]
+    public_deps =
+        [ "../../base_devtool/native/js_inspect:base_devtool_js_inspect" ]
   }
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 
@@ -96,7 +95,7 @@ devtool_source_set("devtool_js_debug") {
   sources = devtool_js_debug_sources
   deps = [
     ":devtool_common_js_debug",
-    "//lynx/base/src:base_log_headers",
+    "../../../base/src:base_log_headers",
   ]
   if (!enable_unittests) {
     deps += [ ":devtool_quickjs_debug" ]
@@ -112,7 +111,7 @@ devtool_source_set("devtool_lepus_debug_sources") {
   sources = devtool_lepus_debug_sources
   deps = [
     ":devtool_common_js_debug",
-    "//lynx/base/src:base_log_headers",
+    "../../../base/src:base_log_headers",
   ]
   if (is_ios || is_android) {
     sources += [
@@ -125,7 +124,7 @@ devtool_source_set("devtool_lepus_debug_sources") {
 devtool_source_set("devtool_lepus_debug") {
   deps = [ ":devtool_lepus_debug_sources" ]
   if (is_ios || is_android) {
-    deps += [ "//lynx/devtool/js_inspect/lepus:lepus_debug" ]
+    deps += [ "../../js_inspect/lepus:lepus_debug" ]
   }
 }
 
@@ -133,7 +132,7 @@ devtool_source_set("js_debug") {
   deps = [
     ":devtool_js_debug",
     ":devtool_lepus_debug",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 
@@ -145,8 +144,8 @@ config("common_config") {
 
 unittest_set("js_debug_testset") {
   public_configs = [
-    "//lynx/core:lynx_public_config",
-    "//lynx/devtool/lynx_devtool:devtool_common_config",
+    "../../../core:lynx_public_config",
+    "../:devtool_common_config",
   ]
   sources = [
     "inspector_client_delegate_impl_unittest.cc",
@@ -156,8 +155,8 @@ unittest_set("js_debug_testset") {
   ]
   public_deps = [
     ":js_debug",
-    "//lynx/devtool/base_devtool/native:base_devtool",
-    "//lynx/devtool/testing/mock:devtool_mock",
+    "../../base_devtool/native:base_devtool",
+    "../../testing/mock:devtool_mock",
   ]
   include_dirs = [ "//third_party/googletest/googletest/include" ]
 }

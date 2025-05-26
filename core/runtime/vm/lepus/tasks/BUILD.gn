@@ -2,24 +2,24 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/runtime/vm/lepus/build.gni")
-import("//lynx/testing/test.gni")
+import("../../../../../testing/test.gni")
+import("../../../../Lynx.gni")
+import("../build.gni")
 
 lynx_core_source_set("tasks") {
   sources = lynx_lepus_task_sources_path
-  public_deps = [ "//lynx/core/base" ]
+  public_deps = [ "../../../../base" ]
 }
 
 unittest_set("tasks_testset") {
   sources = [
-    "//lynx/core/renderer/dom/air/testing/air_lepus_context_mock.h",
+    "../../../../renderer/dom/air/testing/air_lepus_context_mock.h",
     "lepus_callback_manager_unittest.cc",
   ]
   public_deps = [
     ":tasks",
-    "//lynx/core/base",
-    "//lynx/third_party/quickjs",
+    "../../../../../third_party/quickjs",
+    "../../../../base",
   ]
   data_deps = []
 }
@@ -28,12 +28,12 @@ unittest_exec("task_unittests_exec") {
   sources = []
   deps = [
     ":tasks_testset",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/ui_wrapper:ui_wrapper",
-    "//lynx/core/renderer/utils:renderer_utils",
-    "//lynx/core/runtime/bindings/lepus:lepus",
-    "//lynx/core/runtime/vm/lepus:lepus",
-    "//lynx/core/value_wrapper:value_wrapper",
+    "../:lepus",
+    "../../../../renderer:tasm",
+    "../../../../renderer/dom:dom",
+    "../../../../renderer/ui_wrapper:ui_wrapper",
+    "../../../../renderer/utils:renderer_utils",
+    "../../../../value_wrapper:value_wrapper",
+    "../../../bindings/lepus:lepus",
   ]
 }

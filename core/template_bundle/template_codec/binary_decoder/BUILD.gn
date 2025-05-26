@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 # binary_decoder_shared_sources
 binary_decoder_shared_sources = [
@@ -35,26 +35,26 @@ binary_decoder_shared_sources = [
 lynx_core_source_set("binary_decoder") {
   sources = binary_decoder_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../../base/src:base_log_headers",
+    "../../../../third_party/rapidjson:rapidjson",
   ]
 }
 
 unittest_set("binary_decoder_testset") {
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../../../:lynx_public_config" ]
   sources = [
     "lynx_binary_config_decoder_unittest.cc",
     "lynx_binary_config_decoder_unittest.h",
   ]
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/third_party/quickjs",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../../third_party/quickjs",
+    "../../../../third_party/rapidjson:rapidjson",
+    "../../../renderer:tasm",
+    "../../../renderer/dom:dom",
+    "../../../renderer/dom:renderer_dom",
+    "../../../renderer/starlight",
+    "../../../runtime/bindings/lepus",
+    "../../../shell/testing:mock_tasm_delegate_testset",
   ]
   public_deps = [ ":binary_decoder" ]
 }

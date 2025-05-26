@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 
 event_shared_sources = [
   "event.cc",
@@ -26,7 +26,7 @@ event_shared_sources = [
 lynx_core_source_set("event") {
   sources = event_shared_sources
 
-  public_deps = [ "//lynx/base" ]
+  public_deps = [ "../../base" ]
 }
 
 unittest_set("event_testset") {
@@ -38,7 +38,7 @@ unittest_set("event_testset") {
     "event_target_test.cc",
     "event_target_test.h",
   ]
-  public_deps = [ "//lynx/core/event" ]
+  public_deps = [ "../event" ]
   data_deps = []
 }
 

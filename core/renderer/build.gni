@@ -3,13 +3,13 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/renderer_utils_files.gni")
-import("//lynx/config.gni")
+import("../../config.gni")
 
 # TODO(chenyouhui): Remove this
-import("//lynx/oliver/oliver.gni")
+import("../../oliver/oliver.gni")
 lynx_tasm_shared_sources = [
-                             "//lynx/core/services/replay/replay_controller.cc",
-                             "//lynx/core/services/replay/replay_controller.h",
+                             "../services/replay/replay_controller.cc",
+                             "../services/replay/replay_controller.h",
                              "element_manager_delegate_impl.cc",
                              "element_manager_delegate_impl.h",
                              "js_bundle_holder_impl.cc",
@@ -46,8 +46,8 @@ if (is_ios) {
 
 if (is_apple && !enable_unittests && !is_oliver_ssr && !is_oliver_node_lynx) {
   lynx_tasm_shared_sources += [
-    "//lynx/core/base/darwin/config_darwin.h",
-    "//lynx/core/base/darwin/config_darwin.mm",
+    "../base/darwin/config_darwin.h",
+    "../base/darwin/config_darwin.mm",
     "tasm/i18n/i18n_binder_darwin.h",
     "tasm/i18n/i18n_binder_darwin.mm",
   ]
@@ -64,8 +64,8 @@ lynx_tasm_shared_sources_path =
     get_path_info(lynx_tasm_shared_sources, "abspath")
 
 lynx_recorder_sources = [
-  "//lynx/core/services/recorder/recorder_controller.cc",
-  "//lynx/core/services/recorder/recorder_controller.h",
+  "../services/recorder/recorder_controller.cc",
+  "../services/recorder/recorder_controller.h",
 ]
 
 lynx_recorder_sources_path = get_path_info(lynx_recorder_sources, "abspath")

@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/bindings_files.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 
 # base_shared_sources
 base_shared_sources = [
@@ -114,7 +114,7 @@ lynx_core_source_set("base") {
   libs = []
   sources = []
   deps = []
-  public_deps = [ "//lynx/core/build:build" ]
+  public_deps = [ "../build:build" ]
   public_configs = []
   if (is_oliver_ssr) {
     not_needed(base_shared_sources)
@@ -125,17 +125,17 @@ lynx_core_source_set("base") {
     deps += [
       ":json_utils",
       ":observer",
-      "//lynx/base/src:base_log",
+      "../../base/src:base_log",
     ]
   } else {
     sources += base_shared_sources
     public_deps += [
-      "//lynx/base/src:base",
-      "//lynx/base/src:base_log",
-      "//lynx/base/trace/native:trace_public_headers",
+      "../../base/src:base",
+      "../../base/src:base_log",
+      "../../base/trace/native:trace_public_headers",
     ]
     if (is_android) {
-      deps += [ "//lynx/third_party/rapidjson:rapidjson" ]
+      deps += [ "../../third_party/rapidjson:rapidjson" ]
     }
     if (is_win) {
       libs += [ "user32.lib" ]
@@ -154,8 +154,8 @@ lynx_core_source_set("json_utils") {
     "json/json_utils.cc",
   ]
 
-  public_deps = [ "//lynx/third_party/rapidjson" ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  public_deps = [ "../../third_party/rapidjson" ]
+  deps = [ "../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("observer") {
@@ -176,7 +176,7 @@ lynx_core_source_set("gtest_lynx_base_android") {
       "android/java_value_unittest.cc",
       "android/jni_helper_unittest.cc",
     ]
-    deps += [ "//lynx/core/value_wrapper:value_impl_android_unittest" ]
+    deps += [ "../value_wrapper:value_impl_android_unittest" ]
   }
   deps += [ "//third_party/googletest:gtest_sources" ]
 }
@@ -193,20 +193,20 @@ unittest_set("base_testset") {
     "threading/vsync_monitor_unittest.cc",
     "utils/file_utils_unittest.cc",
   ]
-  public_deps = [ "//lynx/core/base" ]
+  public_deps = [ "../base" ]
 }
 
 unittest_exec("lynx_base_unittests_exec") {
   sources = []
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/base:base_testset",
-    "//lynx/core/renderer/utils:lynx_env",
+    ":base_testset",
+    "../base",
+    "../renderer/utils:lynx_env",
   ]
 }
 
 group("base_tests") {
   testonly = true
-  deps = [ "//lynx/core/base:lynx_base_unittests_exec" ]
-  public_deps = [ "//lynx/core/base:base_testset" ]
+  deps = [ ":lynx_base_unittests_exec" ]
+  public_deps = [ ":base_testset" ]
 }

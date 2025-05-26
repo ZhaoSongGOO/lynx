@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 lynx_core_source_set("pipeline") {
   sources = [
@@ -31,8 +31,8 @@ unittest_set("pipeline_test_testset") {
 
   deps = [
     ":pipeline",
-    "//lynx/base/src:base_log",
-    "//lynx/core/public",
+    "../../../base/src:base_log",
+    "../../public",
   ]
 }
 

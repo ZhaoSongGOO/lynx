@@ -3,19 +3,19 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//build/toolchain/wasm/wasm_static_lib.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/build.gni")
-import("//lynx/core/renderer/css/build.gni")
-import("//lynx/core/renderer/data/build.gni")
-import("//lynx/core/renderer/dom/build.gni")
-import("//lynx/core/renderer/utils/build.gni")
-import("//lynx/core/runtime/bindings/lepus/build.gni")
-import("//lynx/core/runtime/jscache/quickjs/quickjs_cache.gni")
-import("//lynx/core/runtime/jsi/quickjs/build.gni")
-import("//lynx/core/runtime/vm/lepus/build.gni")
-import("//lynx/core/runtime/vm/lepus/build.gni")
-import("//lynx/oliver/oliver.gni")
-import("//lynx/tools/gn_tools/cmake_target_template.gni")
+import("../../core/Lynx.gni")
+import("../../core/renderer/build.gni")
+import("../../core/renderer/css/build.gni")
+import("../../core/renderer/data/build.gni")
+import("../../core/renderer/dom/build.gni")
+import("../../core/renderer/utils/build.gni")
+import("../../core/runtime/bindings/lepus/build.gni")
+import("../../core/runtime/jscache/quickjs/quickjs_cache.gni")
+import("../../core/runtime/jsi/quickjs/build.gni")
+import("../../core/runtime/vm/lepus/build.gni")
+import("../../core/runtime/vm/lepus/build.gni")
+import("../../tools/gn_tools/cmake_target_template.gni")
+import("../oliver.gni")
 
 group("LepusCmdExe") {
   if (build_lynx_lepus_node && !is_wasm) {
@@ -38,16 +38,16 @@ group("OliverTasmWasm") {
 if (build_lynx_lepus_node) {
   lynx_encoder_deps = [
     ":encoder_common",
-    "//lynx/core/parser",
-    "//lynx/core/template_bundle/template_codec/generator",
-    "//lynx/third_party/aes",
-    "//lynx/third_party/modp_b64",
+    "../../core/parser",
+    "../../core/template_bundle/template_codec/generator",
+    "../../third_party/aes",
+    "../../third_party/modp_b64",
   ]
 
   lynx_decoder_deps = [
-    "//lynx/core/template_bundle:template_bundle",
-    "//lynx/core/template_bundle:template_bundle_converter",
-    "//lynx/core/template_bundle/template_codec:template_decoder",
+    "../../core/template_bundle:template_bundle",
+    "../../core/template_bundle:template_bundle_converter",
+    "../../core/template_bundle/template_codec:template_decoder",
   ]
 
   if (is_wasm) {
@@ -55,7 +55,7 @@ if (build_lynx_lepus_node) {
       output_name = "lepus"
       binary_path = "$root_out_dir/obj/lynx/oliver/lynx-tasm"
 
-      script = "//lynx/oliver/gen_wasm_js.py"
+      script = "../gen_wasm_js.py"
       args = [
         "--emsdk_path",
         "$emsdk_dir",
@@ -96,7 +96,7 @@ if (build_lynx_lepus_node) {
       }
 
       deps = lynx_encoder_deps + lynx_decoder_deps
-      deps += [ "//lynx/third_party/quickjs:quickjs" ]
+      deps += [ "../../third_party/quickjs:quickjs" ]
     }
 
     cmake_target("lepus_cmd_exec") {
@@ -119,8 +119,8 @@ if (build_lynx_lepus_node) {
 
       deps = lynx_encoder_deps
       deps += [
-        "//lynx/core/template_bundle/template_codec:lepus_cmd",
-        "//lynx/third_party/quickjs:quickjs",
+        "../../core/template_bundle/template_codec:lepus_cmd",
+        "../../third_party/quickjs:quickjs",
       ]
 
       find_and_link_packages = [ [
@@ -156,11 +156,11 @@ if (build_lynx_lepus_node) {
     sources += lynx_component_attr_sources_path
     sources += lynx_tasm_config_sources_path
     if (is_nodejs) {
-      sources += [ "//lynx/core/renderer/tasm/napi_bind.cc" ]
+      sources += [ "../../core/renderer/tasm/napi_bind.cc" ]
     }
 
     if (is_wasm) {
-      sources += [ "//lynx/core/template_bundle/template_codec/wasm_bind.cc" ]
+      sources += [ "../../core/template_bundle/template_codec/wasm_bind.cc" ]
     }
 
     # utils
@@ -179,23 +179,23 @@ if (build_lynx_lepus_node) {
     }
 
     deps = [
-      "//lynx/base/src:base_log",
-      "//lynx/base/src:string_utils",
-      "//lynx/base/src:time_utils",
-      "//lynx/base/src:values",
-      "//lynx/core:find_node_headers",
-      "//lynx/core/base:json_utils",
-      "//lynx/core/base:observer",
-      "//lynx/core/build:build",
-      "//lynx/core/renderer/events:events_tasm",
-      "//lynx/core/runtime:js_common",
-      "//lynx/core/runtime/common:reporter",
-      "//lynx/core/template_bundle/template_codec:template_encoder",
-      "//lynx/core/value_wrapper:value_wrapper",
-      "//lynx/third_party/double-conversion:double_conversion",
+      "../../base/src:base_log",
+      "../../base/src:string_utils",
+      "../../base/src:time_utils",
+      "../../base/src:values",
+      "../../core:find_node_headers",
+      "../../core/base:json_utils",
+      "../../core/base:observer",
+      "../../core/build:build",
+      "../../core/renderer/events:events_tasm",
+      "../../core/runtime:js_common",
+      "../../core/runtime/common:reporter",
+      "../../core/template_bundle/template_codec:template_encoder",
+      "../../core/value_wrapper:value_wrapper",
+      "../../third_party/double-conversion:double_conversion",
     ]
 
-    deps += [ "//lynx/third_party/quickjs" ]
+    deps += [ "../../third_party/quickjs" ]
 
     if (is_wasm) {
       exclude_configs = [ "//build/config/compiler:no_rtti" ]

@@ -2,7 +2,7 @@
 
 # This target defines a source_set which contains some common configs and deps needed by
 # all targets in the source tree of Starlight
-#
+starlight_config = rebase_path(":starlight_config")
 template("starlight_source_set") {
   source_set(target_name) {
     forward_variables_from(invoker, "*", [ "configs" ])
@@ -14,7 +14,7 @@ template("starlight_source_set") {
       configs += invoker.configs
     }
 
-    configs += [ "//lynx/core/services/starlight_standalone:starlight_config" ]
+    configs += [ starlight_config ]
 
     if (is_android) {
       configs += [

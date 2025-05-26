@@ -2,9 +2,9 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/oliver/oliver.gni")
-import("//lynx/testing/test.gni")
+import("../../config.gni")
+import("../../oliver/oliver.gni")
+import("../../testing/test.gni")
 import("base.gni")
 
 config("base_public") {
@@ -88,7 +88,7 @@ source_set("base_log") {
     sources += [ "debug/backtrace.cc" ]
   }
 
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../third_party/rapidjson:rapidjson" ]
 }
 
 source_set("time_utils") {
@@ -398,5 +398,5 @@ source_set("datauri_utils") {
     "datauri_utils.cc",
   ]
 
-  public_deps = [ "//lynx/third_party/modp_b64" ]
+  public_deps = [ "../../third_party/modp_b64" ]
 }

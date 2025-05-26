@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-import("//lynx/core/Lynx.gni")
+import("../../Lynx.gni")
 
 event_report_shared_sources = [ "event_tracker.h" ]
 
@@ -25,7 +25,7 @@ if (!is_oliver_ssr && !is_oliver_node_lynx && !enable_unittests) {
 lynx_core_source_set("event_report") {
   sources = event_report_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/services/trace:service_trace",
+    "../../../base/src:base_log_headers",
+    "../trace:service_trace",
   ]
 }

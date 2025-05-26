@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 signal_shared_sources = [
   "computation.cc",
@@ -41,14 +41,14 @@ unittest_set("signal_test_testset") {
   ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:dom_testset",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/third_party/quickjs",
+    "../:tasm",
+    "../../../third_party/quickjs",
+    "../../runtime/bindings/lepus",
+    "../../shell/testing:mock_tasm_delegate_testset",
+    "../dom:dom",
+    "../dom:dom_testset",
+    "../dom:renderer_dom",
+    "../starlight",
   ]
 }
 

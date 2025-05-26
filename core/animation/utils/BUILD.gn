@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 animation_utils_shared_sources = [
   "cubic_bezier.cc",
@@ -15,7 +15,7 @@ animation_utils_shared_sources = [
 lynx_core_source_set("animation_utils") {
   sources = animation_utils_shared_sources
 
-  public_deps = [ "//lynx/core/style" ]
+  public_deps = [ "../../style" ]
 }
 
 unittest_set("animation_utils_testset") {
@@ -24,10 +24,10 @@ unittest_set("animation_utils_testset") {
   public_deps = [ ":animation_utils" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
+    "../../renderer:tasm",
+    "../../renderer/dom:renderer_dom",
+    "../../runtime/bindings/lepus",
+    "../../shell/testing:mock_tasm_delegate_testset",
   ]
 
   sources = [
@@ -42,7 +42,7 @@ unittest_exec("animation_utils_unittests_exec") {
   deps = [
     ":animation_utils",
     ":animation_utils_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../../renderer/dom:dom",
   ]
 }
 

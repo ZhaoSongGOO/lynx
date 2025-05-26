@@ -1,8 +1,8 @@
 # Copyright 2024 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 ssr_shared_sources = [
   "client/ssr_client_utils.h",
@@ -21,7 +21,7 @@ ssr_client_sources =
 lynx_core_source_set("ssr") {
   sources = ssr_shared_sources + ssr_client_sources
   public_deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/rapidjson",
   ]
 }

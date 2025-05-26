@@ -6,12 +6,20 @@ import("//${lynx_dir}/build_overrides/darwin.gni")
 
 # Do not include this file directly, include //core/Lynx.gni instead
 #
-import("//lynx/config.gni")
-import("//lynx/oliver/oliver.gni")
+import("../config.gni")
+import("../oliver/oliver.gni")
 
 # This target defines a source_set which contains some common configs and deps needed by
 # all targets in the source tree of Lynx
-#
+
+quickjs_public_config =
+    rebase_path("../third_party/quickjs:quickjs_public_config")
+lynx_oliver_config = rebase_path("../oliver:lynx_oliver_config")
+lynx_android_public_config =
+    rebase_path("../platform/android/lynx_android:lynx_android_public_config")
+lynx_unit_test_config = rebase_path("../testing:lynx_unit_test_config")
+find_node_headers = rebase_path(":find_node_headers")
+
 template("lynx_core_source_set") {
   source_set(target_name) {
     forward_variables_from(invoker,
@@ -40,28 +48,27 @@ template("lynx_core_source_set") {
     }
     public_configs += [
       "//${lynx_dir}/core:lynx_public_config",
-      "//lynx/third_party/quickjs:quickjs_public_config",
+      quickjs_public_config,
     ]
 
     if (enable_unittests) {
-      configs += [ "//lynx/testing:lynx_unit_test_config" ]
+      configs += [ lynx_unit_test_config ]
     }
 
     if (is_oliver || is_encoder_ut) {
-      configs += [ "//lynx/oliver:lynx_oliver_config" ]
+      configs += [ lynx_oliver_config ]
     } else if (is_android) {
       if (!defined(libs)) {
         libs = []
       }
       libs += [ "log" ]
-      configs +=
-          [ "//lynx/platform/android/lynx_android:lynx_android_public_config" ]
+      configs += [ lynx_android_public_config ]
     } else if (is_apple) {
       configs += darwin_config
     }
 
     if (is_oliver) {
-      deps += [ "//lynx/core:find_node_headers" ]
+      deps += [ find_node_headers ]
     }
 
     if (defined(exclude_configs)) {

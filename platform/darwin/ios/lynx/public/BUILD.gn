@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/darwin.gni")
-import("//lynx/config.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../../../config.gni")
+import("../../../../../tools/gn_tools/podspec_target_template.gni")
 
 # public_shared_sources
 public_shared_sources = [

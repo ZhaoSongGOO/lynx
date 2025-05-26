@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//build/util/write_cmake_config.gni")
-import("//lynx/config.gni")
-import("//lynx/core/Lynx.gni")
+import("../config.gni")
+import("Lynx.gni")
 
 # This target is used to contain configs that are required globally.
 # This config is added to the basic xxx_source_set template.
@@ -16,10 +16,10 @@ config("lynx_public_config") {
   defines = []
   include_dirs += [
     "//lynx",
-    "//lynx/platform",
-    "//lynx/core",
-    "//lynx/core/build/gen",
-    "//lynx/third_party",
+    "../platform",
+    "../core",
+    "build/gen",
+    "../third_party",
   ]
 
   cflags += [
@@ -145,7 +145,7 @@ config("lynx_public_config") {
 config("config") {
   include_dirs = [
     ".",
-    "//lynx/core",
+    "../core",
     "//third_party",
   ]
 
@@ -162,7 +162,7 @@ config("config") {
 action("find_node_headers") {
   target_dir = rebase_path(node_headers_dst_dir)
 
-  script = "//lynx/oliver/copy_node_headers.py"
+  script = "../oliver/copy_node_headers.py"
 
   args = [ target_dir ]
   outputs = [ "$root_gen_dir/node" ]
@@ -170,50 +170,50 @@ action("find_node_headers") {
 
 group("lynx_core_native") {
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/renderer/dom:dom",
+    "base",
+    "renderer/dom:dom",
   ]
 }
 
 group("lynx_native") {
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/core/animation",
-    "//lynx/core/animation/basic_animation",
-    "//lynx/core/animation/lynx_basic_animator:lynx_basic_animator",
-    "//lynx/core/animation/transforms",
-    "//lynx/core/animation/utils:animation_utils",
-    "//lynx/core/base",
-    "//lynx/core/build:build",
-    "//lynx/core/event",
-    "//lynx/core/renderer:tasm_group",
-    "//lynx/core/renderer/css",
-    "//lynx/core/renderer/data:data",
-    "//lynx/core/renderer/events",
-    "//lynx/core/renderer/pipeline",
-    "//lynx/core/renderer/signal:signal",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/renderer/utils:renderer_utils",
-    "//lynx/core/resource",
-    "//lynx/core/runtime/bindings/common/event:runtime_common",
-    "//lynx/core/runtime/bindings/jsi/interceptor:interceptor_factory",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/core/services/event_report:event_report",
-    "//lynx/core/services/feature_count:feature_count",
-    "//lynx/core/services/fluency:fluency",
-    "//lynx/core/services/long_task_timing:long_task_timing",
-    "//lynx/core/services/performance:performance",
-    "//lynx/core/services/timing_handler:timing_handler",
-    "//lynx/third_party/modp_b64",
-    "//lynx/third_party/rapidjson",
+    "../base/src:base",
+    "../third_party/modp_b64",
+    "../third_party/rapidjson",
+    "animation",
+    "animation/basic_animation",
+    "animation/lynx_basic_animator:lynx_basic_animator",
+    "animation/transforms",
+    "animation/utils:animation_utils",
+    "base",
+    "build:build",
+    "event",
+    "renderer:tasm_group",
+    "renderer/css",
+    "renderer/data:data",
+    "renderer/events",
+    "renderer/pipeline",
+    "renderer/signal:signal",
+    "renderer/starlight",
+    "renderer/utils:renderer_utils",
+    "resource",
+    "runtime/bindings/common/event:runtime_common",
+    "runtime/bindings/jsi/interceptor:interceptor_factory",
+    "runtime/bindings/lepus",
+    "runtime/vm/lepus",
+    "services/event_report:event_report",
+    "services/feature_count:feature_count",
+    "services/fluency:fluency",
+    "services/long_task_timing:long_task_timing",
+    "services/performance:performance",
+    "services/timing_handler:timing_handler",
   ]
 
   if (is_ios || is_android) {
-    deps += [ "//lynx/core/parser" ]
+    deps += [ "parser" ]
   }
 
   if (enable_recorder) {
-    deps += [ "//lynx/core/services/recorder:recorder" ]
+    deps += [ "services/recorder:recorder" ]
   }
 }

@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-import("//lynx/config.gni")
+import("../../config.gni")
 if (is_win) {
   import("//build/config/win/win.gni")
 }
@@ -14,7 +14,7 @@ config("quickjs_private_config") {
     ".",
     "src/src",
     "src/src/interpreter",
-    "//lynx/core/runtime/vm/lepus",
+    "../../core/runtime/vm/lepus",
   ]
 
   cflags = [

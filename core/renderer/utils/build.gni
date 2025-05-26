@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/renderer_utils_files.gni")
-import("//lynx/config.gni")
+import("../../../config.gni")
 
 lynx_renderer_utils_sources = [
                                 "base/base_def.h",

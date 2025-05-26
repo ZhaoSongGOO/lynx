@@ -12,5 +12,5 @@ starlight_source_set("starlight_native") {
     "include/starlight_value.h",
     "src/starlight.cc",
   ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../../base/src:base_log_headers" ]
 }

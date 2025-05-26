@@ -1,7 +1,7 @@
 # Copyright 2022 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/core/Lynx.gni")
+import("../../../../Lynx.gni")
 
 config("test_module_config") {
   include_dirs = [ "." ]
@@ -20,7 +20,7 @@ lynx_core_source_set("test_module") {
   ]
   public_configs = [
     ":test_module_config",
-    "//lynx/third_party/napi:napi_config",
+    "../../../../../third_party/napi:napi_config",
   ]
-  deps = [ "//lynx/core/runtime/bindings/napi:napi_binding_core" ]
+  deps = [ "../:napi_binding_core" ]
 }

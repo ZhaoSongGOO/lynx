@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../Lynx.gni")
 
 timing_handler_shared_sources = [
   "timing.cc",
@@ -42,16 +42,16 @@ lynx_core_source_set("timing_handler_platform") {
 
   deps = [
     ":timing_handler",
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/services/trace:service_trace",
+    "../../../base/src:base_log_headers",
+    "../trace:service_trace",
   ]
 }
 
 lynx_core_source_set("timing_handler") {
   sources = timing_handler_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/services/trace:service_trace",
+    "../../../base/src:base_log_headers",
+    "../trace:service_trace",
   ]
 }
 
@@ -59,6 +59,6 @@ lynx_core_source_set("timing_handler_delegate") {
   sources = timing_handler_delegate_shared_sources
   deps = [
     ":timing_handler",
-    "//lynx/base/src:base_log_headers",
+    "../../../base/src:base_log_headers",
   ]
 }

@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../../Lynx.gni")
 
 lynx_core_source_set("generator") {
   include_dirs = [ "//third_party" ]
@@ -26,5 +26,5 @@ lynx_core_source_set("generator") {
     "ttml_holder.cc",
     "ttml_holder.h",
   ]
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../../third_party/rapidjson:rapidjson" ]
 }

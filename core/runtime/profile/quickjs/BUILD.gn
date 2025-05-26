@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 lynx_core_source_set("quickjs_profile") {
   sources = [
@@ -12,9 +12,9 @@ lynx_core_source_set("quickjs_profile") {
   ]
 
   public_deps = [
-    "//lynx/core/runtime/jsi/quickjs:quickjs",
-    "//lynx/core/runtime/profile:profile_public_header",
-    "//lynx/core/runtime/vm/lepus:lepus_ng",
+    "../:profile_public_header",
+    "../../jsi/quickjs:quickjs",
+    "../../vm/lepus:lepus_ng",
   ]
 }
 
@@ -22,18 +22,18 @@ unittest_set("quickjs_profile_testset") {
   sources = [ "quickjs_runtime_profiler_unittest.cc" ]
   public_deps = [
     ":quickjs_profile",
-    "//lynx/base/trace/native:trace",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/jscache:jscache",
-    "//lynx/core/runtime/jsi:jsi",
-    "//lynx/core/runtime/jsi/quickjs:quickjs",
-    "//lynx/core/runtime/profile:profile",
-    "//lynx/core/runtime/vm/lepus:lepus",
-    "//lynx/testing/utils:runtime_utils",
-    "//lynx/testing/utils:testing_utils",
+    "../:profile",
+    "../../../../base/trace/native:trace",
+    "../../../../testing/utils:runtime_utils",
+    "../../../../testing/utils:testing_utils",
+    "../../../renderer:tasm",
+    "../../../renderer/dom:dom",
+    "../../../renderer/dom:renderer_dom",
+    "../../bindings/lepus",
+    "../../jscache:jscache",
+    "../../jsi:jsi",
+    "../../jsi/quickjs:quickjs",
+    "../../vm/lepus:lepus",
   ]
 }
 

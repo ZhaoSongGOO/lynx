@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/bindings_files.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 bindings_sources = [
                      "api_call_back-inl.h",
@@ -38,18 +38,18 @@ lynx_core_source_set("jsi") {
   sources = bindings_sources
 
   public_deps = [
-    "//lynx/core/runtime/bindings/common/event:runtime_common",
-    "//lynx/core/runtime/bindings/jsi/event:js_runtime",
-    "//lynx/core/runtime/trace:runtime_trace",
-    "//lynx/core/services/feature_count:feature_count",
-    "//lynx/core/services/fluency:fluency",
+    "../../../services/feature_count:feature_count",
+    "../../../services/fluency:fluency",
+    "../../trace:runtime_trace",
+    "../common/event:runtime_common",
+    "event:js_runtime",
   ]
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../../third_party/rapidjson:rapidjson" ]
 }
 
 unittest_set("bindings_unittests_testset") {
   sources = [
-    "//lynx/core/runtime/piper/js/mock_template_delegate.h",
+    "../../piper/js/mock_template_delegate.h",
     "api_call_back_unittest.cc",
     "js_app_unittest.cc",
     "js_task_adapter_unittest.cc",
@@ -57,10 +57,10 @@ unittest_set("bindings_unittests_testset") {
     "text_codec_helper_unittest.cc",
   ]
 
-  configs = [ "//lynx/core/runtime/jsi:jsi_unittest_config" ]
+  configs = [ "../../jsi:jsi_unittest_config" ]
 
   deps = [
     ":jsi",
-    "//lynx/testing/utils:runtime_utils",
+    "../../../../testing/utils:runtime_utils",
   ]
 }

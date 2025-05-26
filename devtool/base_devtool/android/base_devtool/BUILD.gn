@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/platform/android/Android.gni")
-import("//lynx/tools/gn_tools/cmake_target_template.gni")
+import("../../../../platform/android/Android.gni")
+import("../../../../tools/gn_tools/cmake_target_template.gni")
 
 cmake_target("base_devtool") {
   cmake_version = "3.4.1"
@@ -11,7 +11,7 @@ cmake_target("base_devtool") {
   output_name = "basedevtool"
   deps = [
     ":base_devtool_jni_files",
-    "//lynx/devtool/base_devtool/native:base_devtool_lib",
+    "../../native:base_devtool_lib",
   ]
   libs = [
     "android",
@@ -23,12 +23,12 @@ cmake_target("base_devtool") {
     ":devtool_common_defines",
     ":devtool_flag_config",
     ":devtool_ldflag_config",
-    "//lynx/platform/android:16kb_page",
+    "../../../../platform/android:16kb_page",
   ]
 }
 
 group("base_devtool_jni_files") {
-  exec_script("//lynx/tools/build_jni/generate_and_register_jni_files.py",
+  exec_script("../../../../tools/build_jni/generate_and_register_jni_files.py",
               [
                 "-root",
                 rebase_path("//"),

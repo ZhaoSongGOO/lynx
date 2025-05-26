@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../core/Lynx.gni")
+import("../../../testing/test.gni")
 
 config("test_module_config") {
   include_dirs = [
@@ -32,9 +32,9 @@ lynx_core_source_set("test_module") {
   ]
   public_configs = [
     ":test_module_config",
-    "//lynx/third_party/napi:napi_config",
+    "../../napi:napi_config",
   ]
-  deps = [ "//lynx/core/runtime/bindings/napi:napi_binding_core" ]
+  deps = [ "../../../core/runtime/bindings/napi:napi_binding_core" ]
 }
 
 unittest_exec("binding_generator_unittests_exec") {
@@ -42,11 +42,11 @@ unittest_exec("binding_generator_unittests_exec") {
 
   deps = [
     ":test_module",
-    "//lynx/core/base",
-    "//lynx/core/runtime/bindings/napi:napi_binding_quickjs",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/third_party/napi:env",
-    "//lynx/third_party/napi:quickjs",
+    "../../../core/base",
+    "../../../core/runtime/bindings/napi:napi_binding_quickjs",
+    "../../../core/renderer/dom:dom",
+    "../../napi:env",
+    "../../napi:quickjs",
     ":binding_unittest_sources",
   ]
 }

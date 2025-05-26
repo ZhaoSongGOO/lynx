@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/testing/test.gni")
+import("../../../../../testing/test.gni")
 
 group("lepus_compiler_tests") {
   testonly = true
@@ -31,8 +31,8 @@ executable("lepus_compiler") {
   testonly = true
   sources = [ "encode_main.cc" ]
   deps = [
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/runtime/vm/lepus",
+    "../../../../renderer/dom:dom",
+    "../../lepus",
   ]
   data_deps = [ ":test_cases_copy" ]
   configs += [ ":private_compiler_config" ]
@@ -42,8 +42,8 @@ unittest_exec("lepus_compiler_exec") {
   testonly = true
   sources = [ "lepus_compiler_unittests.cc" ]
   deps = [
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/runtime/vm/lepus",
+    "../../../../renderer/dom:dom",
+    "../../lepus",
   ]
   support_custom_init = true
   data_deps = [ ":test_cases_copy" ]

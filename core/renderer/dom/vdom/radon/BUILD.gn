@@ -2,11 +2,11 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../../../Lynx.gni")
 
 # TODO(): extract "radon" works as an independent module
 lynx_core_source_set("radon") {
-  public_deps = [ "//lynx/third_party/rapidjson" ]
+  public_deps = [ "../../../../../third_party/rapidjson" ]
   sources = [
     "base_component.cc",
     "base_component.h",
@@ -42,6 +42,6 @@ lynx_core_source_set("radon") {
     "radon_types.h",
     "set_css_variable_op.h",
   ]
-  public_deps += [ "//lynx/core/renderer/css:css_decoder" ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  public_deps += [ "../../../css:css_decoder" ]
+  deps = [ "../../../../../base/src:base_log_headers" ]
 }

@@ -2,10 +2,10 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../../../../Lynx.gni")
 
 lynx_core_source_set("modules_android_src") {
-  include_dirs = [ "//lynx/core/runtime/bindings/jsi/modules/android" ]
+  include_dirs = [ "../android" ]
   sources = [
     "callback_impl.cc",
     "callback_impl.h",
@@ -25,8 +25,8 @@ lynx_core_source_set("modules_android_src") {
     "module_factory_android.h",
   ]
   public_deps = [
+    "../../../../../../third_party/rapidjson",
     "platform_jsi:platform_jsi_android",
-    "//lynx/third_party/rapidjson",
   ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../../../../base/src:base_log_headers" ]
 }

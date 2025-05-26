@@ -2,9 +2,9 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/utils/build.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
+import("build.gni")
 
 need_default_lynx_trail_hub_impl = is_oliver_ssr || enable_unittests ||
                                    (is_linux || is_win) || is_oliver_node_lynx
@@ -16,14 +16,14 @@ lynx_core_source_set("lynx_env") {
     sources += lynx_trail_hub_default_sources_path
   }
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 
 lynx_core_source_set("renderer_dom_utils") {
   sources = lynx_renderer_dom_utils_sources_path
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("renderer_utils") {
@@ -35,8 +35,8 @@ lynx_core_source_set("renderer_utils") {
     sources += lynx_renderer_utils_mock_sources_path
     sources += lynx_trail_hub_default_sources_path
   }
-  public_deps = [ "//lynx/core/public" ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  public_deps = [ "../../public" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("gtest_renderer_utils_android") {
@@ -53,7 +53,7 @@ unittest_exec("renderer_utils_unittests_exec") {
   ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
+    "../:tasm",
+    "../dom:dom",
   ]
 }

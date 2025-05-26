@@ -2,9 +2,9 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/css/build.gni")
-import("//lynx/testing/test.gni")
+import("../../../../../testing/test.gni")
+import("../../../../Lynx.gni")
+import("../../../../renderer/css/build.gni")
 
 lynx_core_source_set("css_encoder") {
   sources = [
@@ -22,7 +22,7 @@ lynx_core_source_set("css_encoder") {
   ]
 
   # After clarifying all dependencies, then add new deps.
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../../../third_party/rapidjson:rapidjson" ]
 }
 
 unittest_set("css_encoder_testset") {
@@ -30,10 +30,10 @@ unittest_set("css_encoder_testset") {
 
   public_deps = [
     ":css_encoder",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
+    "../../../../renderer:tasm",
+    "../../../../renderer/dom:dom",
+    "../../../../renderer/dom:renderer_dom",
+    "../../../../runtime/bindings/lepus",
   ]
 
   sources = [
@@ -43,7 +43,7 @@ unittest_set("css_encoder_testset") {
     "css_parser_unittest.cc",
     "shared_css_fragment_unittest.cc",
   ]
-  deps = [ "//lynx/third_party/rapidjson:rapidjson" ]
+  deps = [ "../../../../../third_party/rapidjson:rapidjson" ]
 }
 
 unittest_exec("css_encoder_test_exec") {

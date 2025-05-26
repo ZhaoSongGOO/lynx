@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 basic_animation_shared_sources = [
   "animation_effect.cc",
@@ -34,8 +34,8 @@ lynx_core_source_set("basic_animation") {
   sources = basic_animation_shared_sources
 
   public_deps = [
-    "//lynx/core/animation/utils:animation_utils",
-    "//lynx/core/base",
+    "../../base",
+    "../utils:animation_utils",
   ]
 }
 
@@ -52,7 +52,7 @@ unittest_exec("basic_animation_unittests_exec") {
   deps = [
     ":basic_animation",
     ":basic_animation_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../../renderer/dom:dom",
   ]
 }
 

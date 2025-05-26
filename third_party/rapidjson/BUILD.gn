@@ -2,14 +2,15 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
+import("build.gni")
 import("rapidjson.gni")
-import ("build.gni")
 
 config("rapidjson_config") {
   include_dirs = [
     ".",
-    "//lynx/third_party",
+    "../../third_party",
   ]
+
   # rapidjson needs these defines to support C++11 features. These features
   # are intentionally not autodetected by rapidjson.
   defines = [

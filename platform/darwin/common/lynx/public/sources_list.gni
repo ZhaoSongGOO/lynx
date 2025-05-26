@@ -128,14 +128,13 @@ common_lynx_public_headers =
                   ],
                   "abspath")
 
-performanceentry_header_lists = exec_script(
-        "//build/ls.py",
-        [
-          "--target-directory",
-          rebase_path(
-              "//lynx/platform/darwin/common/lynx/public/performance/performance_observer"),
-        ],
-        "list lines")
+performanceentry_header_lists =
+    exec_script("//build/ls.py",
+                [
+                  "--target-directory",
+                  rebase_path("performance/performance_observer"),
+                ],
+                "list lines")
 common_lynx_public_headers += performanceentry_header_lists
 
 common_lynx_public_headers += lynx_public_extend_sources

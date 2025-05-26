@@ -2,9 +2,9 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/css/build.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
+import("build.gni")
 
 lynx_core_source_set("css") {
   check_includes = false
@@ -12,31 +12,31 @@ lynx_core_source_set("css") {
 
   # FIXME(renzhongyue): Check file contents to prevent duplicated
   # compilation for the generated file
-  exec_script("//lynx/tools/css_generator/css_parser_generator.py")
+  exec_script("../../../tools/css_generator/css_parser_generator.py")
   public_deps = [
-    "//lynx/core/base",
-    "//lynx/core/renderer/trace:renderer_trace",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/core/style",
-    "//lynx/third_party/rapidjson",
+    "../../../third_party/rapidjson",
+    "../../base",
+    "../../runtime/vm/lepus",
+    "../../style",
+    "../trace:renderer_trace",
   ]
 
   if (enable_unittests) {
     public_deps += [
       ":css_parser",
-      "//lynx/third_party/double-conversion:double_conversion",
+      "../../../third_party/double-conversion:double_conversion",
     ]
   }
 }
 
 lynx_core_source_set("css_dom") {
   sources = lynx_css_dom_sources_path
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("css_decoder") {
   sources = lynx_css_decoder_sources_path
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("css_parser") {
@@ -47,15 +47,15 @@ unittest_set("css_test_testset") {
   public_deps = [ ":css" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../:tasm",
+    "../../../third_party/rapidjson:rapidjson",
+    "../../runtime/bindings/lepus",
+    "../../shell/testing:mock_tasm_delegate_testset",
+    "../dom:renderer_dom",
   ]
 
   sources = [
-    "//lynx/core/renderer/dom/style_resolver_unittest.cc",
+    "../dom/style_resolver_unittest.cc",
     "css_color_unittest.cc",
     "css_font_face_token_unittest.cc",
     "css_fragment_unittest.cc",
@@ -77,10 +77,10 @@ unittest_set("css_ng_testset") {
   public_deps = [ ":css" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
+    "../:tasm",
+    "../../runtime/bindings/lepus",
+    "../../shell/testing:mock_tasm_delegate_testset",
+    "../dom:renderer_dom",
   ]
 
   sources = [
@@ -100,7 +100,7 @@ unittest_exec("css_test_exec") {
   deps = [
     ":css_ng_testset",
     ":css_test_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../dom:dom",
   ]
 }
 

@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../config.gni")
+import("../../../tools/gn_tools/podspec_target_template.gni")
 
 trace_public_headers = [
   "LynxTraceController.h",
@@ -50,8 +50,8 @@ source_set("LynxTrace") {
   sources = trace_shared_sources + trace_public_headers
   public = trace_public_headers
 
-  public_configs = [ "//lynx/base/trace/native:trace_public_config" ]
-  public_deps = [ "//lynx/base/trace/native:trace" ]
+  public_configs = [ "../native:trace_public_config" ]
+  public_deps = [ "../native:trace" ]
 
   if (enable_trace == "perfetto" && is_mac) {
     configs -= [ "//build/config/compiler:cxx_version_default" ]

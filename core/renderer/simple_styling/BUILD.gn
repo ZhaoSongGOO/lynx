@@ -2,13 +2,13 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/css/build.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
+import("../css/build.gni")
 import("simple_styling.gni")
 
 lynx_core_source_set("simple_styling") {
-  public_deps = [ "//lynx/core/renderer/css" ]
+  public_deps = [ "../css" ]
 
   sources = lynx_simple_styling_sources_path
 }
@@ -23,13 +23,13 @@ unittest_set("style_object_testset") {
   testonly = true
   sources = [ "style_object_unittest.cc" ]
   public_deps = [ ":simple_styling" ]
-  deps = [ "//lynx/core/renderer/css" ]
+  deps = [ "../css" ]
 }
 
 unittest_exec("style_object_unittest_exec") {
   sources = []
   deps = [
     ":style_object_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../dom:dom",
   ]
 }

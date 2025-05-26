@@ -8,10 +8,10 @@ benchmark_test("lepus_benchmark") {
   sources = [ "lepus_benchmark.cc" ]
   deps = [
     ":lepus_benchmark_test_files",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
+    "../../../core/renderer:tasm",
+    "../../../core/renderer/dom:dom",
+    "../../../core/renderer/dom:renderer_dom",
+    "../../../core/runtime/bindings/lepus",
     "//third_party/googletest:gtest",
   ]
 }

@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
+import("../../config.gni")
 
 group("testing_utils") {
   deps = [ ":runtime_utils" ]
@@ -15,8 +15,8 @@ source_set("runtime_utils") {
   ]
 
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/runtime",
+    "../../core/base",
+    "../../core/runtime",
   ]
 }
 

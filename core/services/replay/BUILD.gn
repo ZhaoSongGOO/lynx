@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 replay_shared_sources = [
   #TOOD(@dupengcheng.ptrdu) move to other file later.
@@ -28,29 +28,29 @@ replay_shared_sources = [
 lynx_core_source_set("replay") {
   include_dirs = [
     "//core",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
+    "../../renderer:tasm",
+    "../../renderer/dom:renderer_dom",
+    "../../runtime/bindings/lepus",
   ]
   sources = replay_shared_sources
 
   if (is_android) {
-    public_deps = [ "//lynx/third_party/rapidjson" ]
+    public_deps = [ "../../../third_party/rapidjson" ]
   }
 
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/runtime",
-    "//lynx/core/runtime/vm/lepus:lepus",
-    "//lynx/third_party/modp_b64:modp_b64",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../base/src:base",
+    "../../../third_party/modp_b64:modp_b64",
+    "../../../third_party/rapidjson:rapidjson",
+    "../../renderer/dom:dom",
+    "../../runtime",
+    "../../runtime/vm/lepus:lepus",
     "//third_party/zlib",
   ]
 }
 
 unittest_set("replay_testset") {
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../../:lynx_public_config" ]
   sources = [
     "layout_tree_testbench_unittest.cc",
     "lynx_module_testbench_unittest.cc",
@@ -58,8 +58,8 @@ unittest_set("replay_testset") {
   ]
   public_deps = [
     ":replay",
-    "//lynx/testing/utils:testing_utils",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../testing/utils:testing_utils",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 

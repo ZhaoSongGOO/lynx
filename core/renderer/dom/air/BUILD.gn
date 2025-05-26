@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 air_shared_sources = [
   "air_element/air_block_element.cc",
@@ -29,12 +29,12 @@ air_shared_sources = [
 lynx_core_source_set("tasm_air") {
   sources = air_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../../base/src:base_log_headers",
+    "../../../../third_party/rapidjson:rapidjson",
   ]
 }
 
 mocktest_exec("air_runtime_mockset_exec") {
   sources = [ "testing/air_lepus_context_mock.h" ]
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../../../:lynx_public_config" ]
 }

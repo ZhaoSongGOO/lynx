@@ -9,8 +9,8 @@ config("starlight_config") {
     ".",
     "//core",
     "core",
-    "//lynx/third_party",
-    "//lynx/core",
+    "../../../third_party",
+    "../../../core",
   ]
 }
 
@@ -20,10 +20,10 @@ group("starlight_standalone") {
     deps += [ ":starlight_standalone_android" ]
   } else {
     deps += [
-      "//lynx/core/base",
-      "//lynx/core/renderer/css",
-      "//lynx/core/renderer/starlight",
-      "//lynx/core/runtime/vm/lepus",
+      "../../base",
+      "../../renderer/css",
+      "../../renderer/starlight",
+      "../../runtime/vm/lepus",
     ]
   }
 }
@@ -34,7 +34,7 @@ starlight_source_set("starlight_standalone_android") {
     "android/starlight_android.h",
   ]
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log",
+    "../../../base/src:base",
+    "../../../base/src:base_log",
   ]
 }

@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 profile_public_header = [
   "runtime_profiler.h",
@@ -14,8 +14,8 @@ source_set("profile_public_header") {
   sources = profile_public_header
 
   public_deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/trace/native:trace_public_headers",
+    "../../../base/src:base",
+    "../../../base/trace/native:trace_public_headers",
   ]
 }
 
@@ -27,9 +27,9 @@ lynx_core_source_set("profile") {
   ]
 
   public_deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log",
-    "//lynx/base/trace/native:trace_public_headers",
+    "../../../base/src:base",
+    "../../../base/src:base_log",
+    "../../../base/trace/native:trace_public_headers",
   ]
 }
 
@@ -37,9 +37,9 @@ unittest_set("profile_testset") {
   sources = [ "runtime_profiler_unittest.cc" ]
   public_deps = [
     ":profile",
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log",
-    "//lynx/base/trace/native:trace",
+    "../../../base/src:base",
+    "../../../base/src:base_log",
+    "../../../base/trace/native:trace",
   ]
 }
 

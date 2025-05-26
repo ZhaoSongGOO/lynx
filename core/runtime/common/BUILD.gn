@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 lynx_core_source_set("utils") {
   sources = [
@@ -17,8 +17,8 @@ lynx_core_source_set("utils") {
     sources += [ "android/utils_map.cc" ]
   }
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/third_party/rapidjson",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/rapidjson",
   ]
 }
 
@@ -28,16 +28,16 @@ lynx_core_source_set("reporter") {
     "js_error_reporter.h",
   ]
   deps = [
-    "//lynx/base/src:base_log",
-    "//lynx/base/src:string_utils",
-    "//lynx/third_party/rapidjson",
+    "../../../base/src:base_log",
+    "../../../base/src:string_utils",
+    "../../../third_party/rapidjson",
   ]
 }
 
 unittest_set("utils_unittests_testset") {
   configs = [
-    "//lynx/core:lynx_public_config",
-    "//lynx/core/runtime/jsi:jsi_unittest_config",
+    "../../:lynx_public_config",
+    "../jsi:jsi_unittest_config",
   ]
 
   sources = [

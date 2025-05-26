@@ -1,9 +1,9 @@
 # Copyright 2020 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/config.gni")
-import("//lynx/oliver/oliver.gni")
-import("//lynx/testing/test.gni")
+import("../../../config.gni")
+import("../../../oliver/oliver.gni")
+import("../../../testing/test.gni")
 
 starlight_layout_sources = [
   "layout/box_info.cc",
@@ -45,7 +45,7 @@ starlight_layout_sources = [
 ]
 
 starlight_style_sources = [
-  "//lynx/core/style/color.h",
+  "../../style/color.h",
   "style/auto_gen_css_type.h",
   "style/borders_data.cc",
   "style/borders_data.h",
@@ -92,14 +92,14 @@ starlight_event_sources = [
 config("starlight_public_config") {
   include_dirs = [
     "//core",
-    "//lynx/core",
+    "../../../core",
   ]
 }
 
 config("starlight_private_config") {
   include_dirs = [
     "//core",
-    "//lynx/third_party",
+    "../../../third_party",
   ]
   defines = []
   cflags = []
@@ -141,14 +141,14 @@ source_set("starlight") {
     not_needed(starlight_event_sources)
   }
   public_deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log",
+    "../../../base/src:base",
+    "../../../base/src:base_log",
   ]
 
   public_configs = [ ":starlight_public_config" ]
   configs += [ ":starlight_private_config" ]
 
-  deps = [ "//lynx/third_party/rapidjson" ]
+  deps = [ "../../../third_party/rapidjson" ]
 }
 
 group("starlight_tests") {
@@ -158,14 +158,14 @@ group("starlight_tests") {
 }
 
 unittest_set("starlight_testset") {
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../../:lynx_public_config" ]
   sources = [
     "layout/container_node_unittest.cc",
     "style/data_ref_unittest.cc",
   ]
   public_deps = [
     ":starlight",
-    "//lynx/core/renderer/dom:dom",
+    "../dom:dom",
   ]
 }
 

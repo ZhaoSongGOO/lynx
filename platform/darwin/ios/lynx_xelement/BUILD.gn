@@ -4,8 +4,8 @@
 #
 
 import("//${lynx_dir}/build_overrides/darwin.gni")
-import("//lynx/config.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../../config.gni")
+import("../../../../tools/gn_tools/podspec_target_template.gni")
 
 group("XElement") {
   deps = [ ":XElement_podspec" ]

@@ -2,25 +2,24 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
+import("../../../../config.gni")
 
-lynx_podspec =
-    get_path_info([
-                    ":Air",
-                    ":Framework",
-                    ":JSRuntime",
-                    "//lynx/platform/darwin/common/lazy_load:LazyLoad",
-                    ":LepusNG",
-                    ":NapiBinding",
-                    ":Native",
-                    ":ReleaseResource",
-                    ":Replay",
-                    ":Trace",
-                    ":UnitTests",
-                    ":Worklet",
-                    ":Inspector",
-                  ],
-                  "abspath")
+lynx_podspec = get_path_info([
+                               ":Air",
+                               ":Framework",
+                               ":JSRuntime",
+                               "../../common/lazy_load:LazyLoad",
+                               ":LepusNG",
+                               ":NapiBinding",
+                               ":Native",
+                               ":ReleaseResource",
+                               ":Replay",
+                               ":Trace",
+                               ":UnitTests",
+                               ":Worklet",
+                               ":Inspector",
+                             ],
+                             "abspath")
 
 lynx_podspec_metadata = {
   # These variables are reserved to be consistent with the original podspec.
@@ -36,42 +35,42 @@ lynx_podspec_metadata = {
   }
 }
 
-lynx_podspec_deps = [
-  "//lynx/platform/darwin/common/lynx:Lynx_subspec",
-  "//lynx/platform/darwin/common/lynx/public:Public",
-  "//lynx/platform/darwin/ios/lynx:lynx",
-  "//lynx/platform/darwin/ios/lynx/public:Public",
-]
+lynx_podspec_deps = rebase_path([
+                                  "../../common/lynx:Lynx_subspec",
+                                  "../../common/lynx/public:Public",
+                                  ":lynx",
+                                  "public:Public",
+                                ])
 
-framework_podspec_deps = [
-  "//lynx/platform/darwin/common/lazy_load:LazyLoad",
-  "//lynx/platform/darwin/common/lynx:Lynx_subspec",
-  "//lynx/platform/darwin/common/lynx/public:Public",
-  "//lynx/platform/darwin/ios/lynx:Inspector",
-  "//lynx/platform/darwin/ios/lynx:JSRuntime",
-  "//lynx/platform/darwin/ios/lynx:LepusNG",
-  "//lynx/platform/darwin/ios/lynx:NapiBinding",
-  "//lynx/platform/darwin/ios/lynx:Native",
-  "//lynx/platform/darwin/ios/lynx:Trace",
-  "//lynx/platform/darwin/ios/lynx:Worklet",
-  "//lynx/platform/darwin/ios/lynx:lynx",
-  "//lynx/platform/darwin/ios/lynx/public:Public",
-]
+framework_podspec_deps = rebase_path([
+                                       "../../common/lazy_load:LazyLoad",
+                                       "../../common/lynx:Lynx_subspec",
+                                       "../../common/lynx/public:Public",
+                                       ":Inspector",
+                                       ":JSRuntime",
+                                       ":LepusNG",
+                                       ":NapiBinding",
+                                       ":Native",
+                                       ":Trace",
+                                       ":Worklet",
+                                       ":lynx",
+                                       "public:Public",
+                                     ])
 
-native_podspec_deps = [
-  "//lynx/platform/darwin/ios/lynx:amoeba",
-  "//lynx/platform/darwin/ios/lynx:animation",
-  "//lynx/platform/darwin/ios/lynx:animation_utils",
-  "//lynx/platform/darwin/ios/lynx:base",
-  "//lynx/platform/darwin/ios/lynx:basic_animation",
-  "//lynx/platform/darwin/ios/lynx:fml",
-  "//lynx/platform/darwin/ios/lynx:lepus",
-  "//lynx/platform/darwin/ios/lynx:lynx_basic_animator",
-  "//lynx/platform/darwin/ios/lynx:parser",
-  "//lynx/platform/darwin/ios/lynx:resource",
-  "//lynx/platform/darwin/ios/lynx:starlight",
-  "//lynx/platform/darwin/ios/lynx:tasm",
-  "//lynx/platform/darwin/ios/lynx:template_bundle",
-  "//lynx/platform/darwin/ios/lynx:third_party",
-  "//lynx/platform/darwin/ios/lynx:transforms",
-]
+native_podspec_deps = rebase_path([
+                                    ":amoeba",
+                                    ":animation",
+                                    ":animation_utils",
+                                    ":base",
+                                    ":basic_animation",
+                                    ":fml",
+                                    ":lepus",
+                                    ":lynx_basic_animator",
+                                    ":parser",
+                                    ":resource",
+                                    ":starlight",
+                                    ":tasm",
+                                    ":template_bundle",
+                                    ":third_party",
+                                    ":transforms",
+                                  ])

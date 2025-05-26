@@ -7,8 +7,8 @@ benchmark_test("base_benchmark") {
   testonly = true
   sources = []
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log",
+    "../../../base/src:base",
+    "../../../base/src:base_log",
   ]
 }
 
@@ -22,8 +22,8 @@ benchmark_test("vector_benchmark") {
     "./vector_benchmark.cc",
   ]
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/core/runtime/bindings/lepus",
+    "../../../base/src:base",
+    "../../../core/runtime/bindings/lepus",
   ]
 }
 
@@ -34,5 +34,5 @@ benchmark_test("vector_benchmark") {
 benchmark_test("linked_hash_map_benchmark") {
   testonly = true
   sources = [ "./linked_hash_map_benchmark.cc" ]
-  deps = [ "//lynx/base/src:base" ]
+  deps = [ "../../../base/src:base" ]
 }

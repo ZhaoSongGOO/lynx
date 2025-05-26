@@ -1,11 +1,11 @@
 # Copyright 2022 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/devtool/lynx_devtool/devtool.gni")
+import("devtool.gni")
 
 import("//build/util/write_cmake_config.gni")
-import("//lynx/devtool/lynx_devtool/devtool.gni")
-import("//lynx/oliver/oliver.gni")
+import("../../oliver/oliver.gni")
+import("devtool.gni")
 
 group("lynx_devtool_group") {
   deps = [
@@ -21,17 +21,17 @@ group("lynx_devtool_group") {
 
   if (!is_ios) {
     # DebugRouter for iOS provides jsoncpp
-    deps += [ "//lynx/third_party/jsoncpp" ]
+    deps += [ "../../third_party/jsoncpp" ]
   }
 }
 
 config("devtool_common_config") {
   include_dirs = [ "." ]
   if (is_android) {
-    include_dirs += [ "//lynx/devtool/lynx_devtool/build/gen" ]
+    include_dirs += [ "build/gen" ]
   }
 
-  configs = [ "//lynx/third_party/rapidjson:rapidjson_config" ]
+  configs = [ "../../third_party/rapidjson:rapidjson_config" ]
   defines = []
 
   if (enable_trace == "perfetto") {

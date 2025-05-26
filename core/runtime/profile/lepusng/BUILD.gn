@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 lynx_core_source_set("lepusng_profile") {
   sources = [
@@ -12,8 +12,8 @@ lynx_core_source_set("lepusng_profile") {
   ]
 
   public_deps = [
-    "//lynx/core/runtime/profile:profile_public_header",
-    "//lynx/core/runtime/vm/lepus:lepus",
+    "../:profile_public_header",
+    "../../vm/lepus:lepus",
   ]
 }
 
@@ -21,15 +21,15 @@ unittest_set("lepusng_profile_testset") {
   sources = [ "lepusng_profiler_unittest.cc" ]
   public_deps = [
     ":lepusng_profile",
-    "//lynx/base/trace/native:trace",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/profile:profile",
-    "//lynx/core/runtime/vm/lepus:lepus",
-    "//lynx/core/runtime/vm/lepus:lepus_ng",
-    "//lynx/testing/utils:testing_utils",
+    "../:profile",
+    "../../../../base/trace/native:trace",
+    "../../../../testing/utils:testing_utils",
+    "../../../renderer:tasm",
+    "../../../renderer/dom:dom",
+    "../../../renderer/dom:renderer_dom",
+    "../../bindings/lepus",
+    "../../vm/lepus:lepus",
+    "../../vm/lepus:lepus_ng",
   ]
 }
 

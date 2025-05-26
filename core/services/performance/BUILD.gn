@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/services_files.gni")
-import("//lynx/core/Lynx.gni")
+import("../../Lynx.gni")
 
 performance_shared_sources = [
   "memory_monitor/memory_monitor.cc",
@@ -16,5 +16,5 @@ performance_shared_sources = [
 
 lynx_core_source_set("performance") {
   sources = performance_shared_sources
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }

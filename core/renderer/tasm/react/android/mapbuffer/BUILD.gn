@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../../../testing/test.gni")
+import("../../../../../Lynx.gni")
 
 map_buffer_shared_source = [
   "compact_array_buffer.cc",
@@ -25,7 +25,7 @@ lynx_core_source_set("map_buffer") {
               "readable_map_buffer.cc",
               "readable_map_buffer.h",
             ]
-  public_deps = [ "//lynx/core/base:base" ]
+  public_deps = [ "../../../../../base:base" ]
 }
 
 group("mapbuffer_tests") {
@@ -40,7 +40,7 @@ unittest_exec("mapbuffer_unittests_exec") {
             ]
 
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/renderer/utils:lynx_env",
+    "../../../../../base",
+    "../../../../utils:lynx_env",
   ]
 }

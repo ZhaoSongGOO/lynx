@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/services_files.gni")
-import("//lynx/core/Lynx.gni")
+import("../../Lynx.gni")
 
 feature_count_shared_sources = [
                                  "feature.h",
@@ -19,7 +19,7 @@ if (is_android) {
 lynx_core_source_set("feature_count") {
   sources = feature_count_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/services/trace:service_trace",
+    "../../../base/src:base_log_headers",
+    "../trace:service_trace",
   ]
 }

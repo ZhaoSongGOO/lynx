@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 # recorder_shared_sources
 recorder_shared_sources = [
@@ -20,8 +20,8 @@ recorder_shared_sources = [
 
 if (is_ios) {
   recorder_shared_sources += [
-    "//lynx/platform/darwin/ios/lynx/recorder/LynxRecorder.h",
-    "//lynx/platform/darwin/ios/lynx/recorder/LynxRecorder.mm",
+    "../../../platform/darwin/ios/lynx/recorder/LynxRecorder.h",
+    "../../../platform/darwin/ios/lynx/recorder/LynxRecorder.mm",
     "ios/template_assembler_recorder_darwin.h",
     "ios/template_assembler_recorder_darwin.mm",
   ]
@@ -33,24 +33,24 @@ lynx_core_source_set("recorder") {
   sources = recorder_shared_sources
 
   deps = [
-    "//lynx/base/src:base",
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/base:base",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/data:data",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/third_party/modp_b64:modp_b64",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../base/src:base",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/modp_b64:modp_b64",
+    "../../../third_party/rapidjson:rapidjson",
+    "../../base:base",
+    "../../renderer:tasm",
+    "../../renderer/data:data",
+    "../../renderer/dom:dom",
+    "../../renderer/dom:renderer_dom",
+    "../../runtime",
+    "../../runtime/bindings/lepus",
+    "../../runtime/vm/lepus",
   ]
   deps += [ "//third_party/zlib" ]
 }
 
 unittest_set("record_testset") {
-  configs = [ "//lynx/core:lynx_public_config" ]
+  configs = [ "../../:lynx_public_config" ]
 
   sources = [
     "template_assembler_recorder_unittest.cc",
@@ -58,7 +58,7 @@ unittest_set("record_testset") {
   ]
   deps = [
     ":recorder",
-    "//lynx/third_party/rapidjson:rapidjson",
+    "../../../third_party/rapidjson:rapidjson",
   ]
 }
 

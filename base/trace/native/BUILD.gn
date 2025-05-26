@@ -2,14 +2,14 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/testing/test.gni")
+import("../../../config.gni")
+import("../../../testing/test.gni")
 import("hook_systrace/hook_systrace.gni")
 import("platform/platform.gni")
 
 config("trace_public_config") {
   include_dirs = [
-    "//lynx/third_party/perfetto",
+    "../../../third_party/perfetto",
     "$root_gen_dir/lynx",
   ]
   defines = []
@@ -132,22 +132,22 @@ source_set("trace") {
   sources = trace_shared_sources
 
   public_deps = [
-    "//lynx/base/src:base",
+    "../../src:base",
     # TODO(yongjie): enable log in trace.
-    # "//lynx/base/src:base_log",
+    # "../../src:base_log",
   ]
 
   if (is_android) {
     if (enable_trace == "perfetto") {
       public_deps += [ "//third_party/xhook:xhook" ]
     }
-    public_deps += [ "//lynx/base/trace/android:trace_jni_files" ]
+    public_deps += [ "../android:trace_jni_files" ]
   }
 
   if (enable_trace == "perfetto") {
     public_deps += [
-      "//lynx/third_party/perfetto:perfetto",
-      "//lynx/third_party/rapidjson:rapidjson",
+      "../../../third_party/perfetto:perfetto",
+      "../../../third_party/rapidjson:rapidjson",
     ]
   }
 

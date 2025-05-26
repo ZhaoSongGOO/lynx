@@ -13,7 +13,7 @@
 #include "core/runtime/vm/lepus/lepus_value.h"
 #include "core/shell/tasm_platform_invoker.h"
 #include "core/template_bundle/template_codec/binary_decoder/page_config.h"
-#import "darwin/common/lynx/TemplateRenderCallbackProtocol.h"
+#import "platform/darwin/common/lynx/TemplateRenderCallbackProtocol.h"
 
 namespace lynx {
 namespace shell {

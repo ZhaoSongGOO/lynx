@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../testing/test.gni")
+import("../../../Lynx.gni")
 
 component_list_shared_sources = [
   "list_container.cc",
@@ -54,19 +54,19 @@ if (disable_list_platform_implementation) {
 lynx_core_source_set("react_component_list") {
   sources = component_list_shared_sources
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/renderer/trace:renderer_trace",
+    "../../../../base/src:base_log_headers",
+    "../../trace:renderer_trace",
   ]
 }
 
 unittest_set("react_component_list_testset") {
   public_deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/vm/lepus/tasks:tasks_testset",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
+    "../../:tasm",
+    "../../../runtime/bindings/lepus",
+    "../../../runtime/vm/lepus/tasks:tasks_testset",
+    "../../../shell/testing:mock_tasm_delegate_testset",
+    "../../dom:dom",
+    "../../dom:renderer_dom",
   ]
   sources = [
     "batch_list_adapter_unittest.cc",

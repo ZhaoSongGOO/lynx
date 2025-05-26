@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-import("//lynx/config.gni")
+import("../../config.gni")
 
 if (is_win) {
   import("//build/config/win/win.gni")
@@ -52,7 +52,7 @@ if (enable_primjs_prebuilt_lib) {
     output_name = "napi"
     deps = [
       ":quickjs",
-      "//lynx/third_party/quickjs:quickjs",
+      "../quickjs:quickjs",
     ]
   }
 }
@@ -96,10 +96,10 @@ source_set("quickjs") {
 
 source_set("v8") {
   public = [ "include/napi_env_v8.h" ]
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../../core:lynx_public_config" ]
   configs += [ ":private_config" ]
   include_dirs = [
-    "//lynx/third_party/napi/include",
+    "include",
     v8_headers_search_path,
   ]
   sources = [

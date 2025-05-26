@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 
 # value_wrapper_shared_sources
 value_wrapper_shared_sources = [
@@ -29,7 +29,7 @@ if (is_apple) {
 
 lynx_core_source_set("value_wrapper") {
   sources = value_wrapper_shared_sources
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../base/src:base_log_headers" ]
 }
 
 lynx_core_source_set("value_impl_android_unittest") {
@@ -43,10 +43,10 @@ unittest_exec("value_wrapper_unittest_exec") {
 }
 
 unittest_set("value_wrapper_testset") {
-  public_configs = [ "//lynx/core:lynx_public_config" ]
+  public_configs = [ "../:lynx_public_config" ]
   sources = [ "value_impl_unittest.cc" ]
   deps = [
-    "//lynx/core/public",
-    "//lynx/core/renderer/dom:dom",
+    "../public",
+    "../renderer/dom:dom",
   ]
 }

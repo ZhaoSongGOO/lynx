@@ -14,7 +14,7 @@
 #include "core/resource/lynx_resource_setting.h"
 #include "core/resource/trace/resource_trace_event_def.h"
 #include "core/shell/ios/data_utils.h"
-#import "darwin/common/lynx/TemplateRenderCallbackProtocol.h"
+#import "platform/darwin/common/lynx/TemplateRenderCallbackProtocol.h"
 
 namespace {
 static NSString* const kFileScheme = @"file://";

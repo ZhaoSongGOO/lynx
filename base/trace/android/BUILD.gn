@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//build/toolchain/clang.gni")
-import("//lynx/config.gni")
-import("//lynx/tools/gn_tools/cmake_target_template.gni")
+import("../../../config.gni")
+import("../../../tools/gn_tools/cmake_target_template.gni")
 
 assert(is_android)
 
@@ -29,7 +29,7 @@ cmake_target("LynxTrace") {
 
   deps = [
     ":trace_jni_files",
-    "//lynx/base/trace/native:trace",
+    "../native:trace",
   ]
 
   libs = [ "log" ]
@@ -38,7 +38,7 @@ cmake_target("LynxTrace") {
 }
 
 group("trace_jni_files") {
-  exec_script("//lynx/tools/build_jni/generate_and_register_jni_files.py",
+  exec_script("../../../tools/build_jni/generate_and_register_jni_files.py",
               [
                 "-root",
                 rebase_path("//"),

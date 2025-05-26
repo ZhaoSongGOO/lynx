@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
+import("../../../config.gni")
 
 quickjs_debug_source = [
   "quickjs_inspector_client_provider.cc",
@@ -24,10 +24,10 @@ quickjs_debug_source = [
 source_set("quickjs_debug") {
   sources = quickjs_debug_source
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/devtool/fundamentals/js_inspect:js_inspect_interface",
-    "//lynx/devtool/js_inspect:inspector_const",
+    "../:inspector_const",
+    "../../../base/src:base_log_headers",
+    "../../fundamentals/js_inspect:js_inspect_interface",
   ]
-  include_dirs = [ "//lynx/third_party" ]
-  public_configs = [ "//lynx/third_party/quickjs:quickjs_public_config" ]
+  include_dirs = [ "../../../third_party" ]
+  public_configs = [ "../../../third_party/quickjs:quickjs_public_config" ]
 }

@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/oliver/oliver.gni")
+import("../core/Lynx.gni")
+import("oliver.gni")
 
 config("lynx_oliver_config") {
   include_dirs = [ "$root_gen_dir/node-addon-api" ]
@@ -64,14 +64,14 @@ config("lynx_oliver_config") {
 group("oliver") {
   if (is_wasm) {
     if (is_oliver_tasm) {
-      deps = [ "//lynx/oliver/lynx-tasm:OliverTasmWasm" ]
+      deps = [ "lynx-tasm:OliverTasmWasm" ]
     }
   } else {
     if (is_oliver_tasm) {
       if (compile_lepus_cmd) {
-        deps = [ "//lynx/oliver/lynx-tasm:LepusCmdExe" ]
+        deps = [ "lynx-tasm:LepusCmdExe" ]
       } else {
-        deps = [ "//lynx/oliver/lynx-tasm:CreateTasmNode" ]
+        deps = [ "lynx-tasm:CreateTasmNode" ]
       }
     } else {
       deps = []

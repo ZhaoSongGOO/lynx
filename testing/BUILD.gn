@@ -1,14 +1,14 @@
 # Copyright 2021 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/config.gni")
+import("../config.gni")
 
 # Targets needed for isolate script to execute.
 group("testing") {
   testonly = true
   deps = [
-    "//lynx/testing/lynx:lynx_test",
-    "//lynx/testing/lynx_devtool:devtool_unit_test",
+    "lynx:lynx_test",
+    "lynx_devtool:devtool_unit_test",
   ]
 }
 

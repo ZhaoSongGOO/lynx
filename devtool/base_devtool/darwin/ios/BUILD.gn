@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/darwin.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../../tools/gn_tools/podspec_target_template.gni")
 
 podspec_target("BaseDevtool_podspec") {
   output_name = "BaseDevtool.podspec"
@@ -64,12 +64,12 @@ podspec_target("BaseDevtool_podspec") {
 
 subspec_target("framework") {
   sources = [
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.m",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolFileLoadUtils.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolFileLoadUtils.mm",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.m",
+    "../common/utils/DevToolDownloader.h",
+    "../common/utils/DevToolDownloader.m",
+    "../common/utils/DevToolFileLoadUtils.h",
+    "../common/utils/DevToolFileLoadUtils.mm",
+    "../common/utils/DevToolToast.h",
+    "../common/utils/DevToolToast.m",
     "DevToolGlobalSlotIOS.h",
     "DevToolGlobalSlotIOS.mm",
     "DevToolSlotIOS.h",
@@ -78,17 +78,17 @@ subspec_target("framework") {
   public_header_files = [
     "DevToolGlobalSlotIOS.h",
     "DevToolSlotIOS.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolDownloader.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolToast.h",
-    "//lynx/devtool/base_devtool/darwin/common/utils/DevToolFileLoadUtils.h",
+    "../common/utils/DevToolDownloader.h",
+    "../common/utils/DevToolToast.h",
+    "../common/utils/DevToolFileLoadUtils.h",
   ]
   deps = [
-    "//lynx/devtool/base_devtool/native/js_inspect:base_devtool_js_inspect",
-    "//lynx/devtool/fundamentals/js_inspect:js_inspect_interface",
-    "//lynx/devtool/js_inspect:inspector_const",
-    "//lynx/third_party/jsoncpp:jsoncpp",
+    "../../../../third_party/jsoncpp:jsoncpp",
+    "../../../fundamentals/js_inspect:js_inspect_interface",
+    "../../../js_inspect:inspector_const",
+    "../../native/js_inspect:base_devtool_js_inspect",
   ]
-  flatten_deps = [ "//lynx/devtool/base_devtool/native:base_devtool_subspec" ]
+  flatten_deps = [ "../../native:base_devtool_subspec" ]
   if (use_flatten_deps) {
     flatten_deps += [
       ":DebugResource",
@@ -101,7 +101,7 @@ subspec_target("framework") {
     HEADER_SEARCH_PATHS = [
       "//",
       "//lynx",
-      "//lynx/third_party/jsoncpp/include/",
+      "../../../../third_party/jsoncpp/include/",
       "//PODS_ROOT/Lynx/lynx",
     ]
     GCC_PREPROCESSOR_DEFINITIONS = [
@@ -147,7 +147,7 @@ subspec_target("fml") {
       "//lynx",
     ]
   }
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../../base/src:base_log_headers" ]
   if (!use_flatten_deps) {
     dependency = [ "Lynx/Native/fml" ]
   }
@@ -194,8 +194,8 @@ subspec_target("rapidjson") {
 
 bundle_data("LynxBaseDevToolResources") {
   sources = [
-    "//lynx/devtool/base_devtool/darwin/ios/assets/logbox",
-    "//lynx/devtool/base_devtool/darwin/ios/assets/notification_cancel.png",
+    "assets/logbox",
+    "assets/notification_cancel.png",
   ]
   outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
 }

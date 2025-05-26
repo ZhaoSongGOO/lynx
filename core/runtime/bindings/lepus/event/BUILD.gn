@@ -1,8 +1,8 @@
 # Copyright 2023 The Lynx Authors. All rights reserved.
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../../../testing/test.gni")
+import("../../../../Lynx.gni")
 
 # lepus_runtime_shared_sources
 lepus_runtime_shared_sources = [
@@ -18,8 +18,8 @@ lynx_core_source_set("lepus_runtime") {
   deps = []
 
   public_deps = [
-    "//lynx/core/event",
-    "//lynx/core/runtime/bindings/common/event:runtime_common",
+    "../../../../event",
+    "../../common/event:runtime_common",
   ]
 }
 
@@ -32,14 +32,14 @@ unittest_set("lepus_runtime_testset") {
   ]
   public_deps = [
     ":lepus_runtime",
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom:dom_testset",
-    "//lynx/core/renderer/dom:renderer_dom",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
-    "//lynx/third_party/quickjs",
+    "../../../../../third_party/quickjs",
+    "../../../../renderer:tasm",
+    "../../../../renderer/dom:dom",
+    "../../../../renderer/dom:dom_testset",
+    "../../../../renderer/dom:renderer_dom",
+    "../../../../renderer/starlight",
+    "../../../../shell/testing:mock_tasm_delegate_testset",
+    "../../lepus",
   ]
   data_deps = []
 }

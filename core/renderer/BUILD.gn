@@ -2,67 +2,67 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/renderer/build.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
+import("build.gni")
 
 group("tasm_group") {
   deps = [
     ":tasm",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/dom/selector:element_selector",
-    "//lynx/core/services/event_report:event_report",
-    "//lynx/core/services/long_task_timing:long_task_timing",
-    "//lynx/core/services/performance:performance",
-    "//lynx/core/services/ssr",
-    "//lynx/core/shell:shell",
+    "../services/event_report:event_report",
+    "../services/long_task_timing:long_task_timing",
+    "../services/performance:performance",
+    "../services/ssr",
+    "../shell:shell",
+    "dom:dom",
+    "dom/selector:element_selector",
   ]
 }
 
 lepus_compile = is_android && build_lepus_compile
 
 lynx_core_source_set("tasm") {
-  include_dirs = [ "//lynx/third_party" ]
+  include_dirs = [ "../../third_party" ]
 
   # TODO(zhengsenyao): break tasm to into three targets: tasm, tasm_config & vdom_radon
-  allow_circular_includes_from = [ "//lynx/core/renderer/dom:dom_headers" ]
+  allow_circular_includes_from = [ "dom:dom_headers" ]
 
   sources = lynx_tasm_shared_sources_path
   if (!is_oliver_ssr) {
     sources += lynx_recorder_sources_path
   }
 
-  deps = [ "//lynx/core/renderer/dom:dom_headers" ]
+  deps = [ "dom:dom_headers" ]
   public_deps = [
-    "//lynx/core/animation",
-    "//lynx/core/animation/utils:animation_utils",
-    "//lynx/core/base",
-    "//lynx/core/renderer/css",
-    "//lynx/core/renderer/data",
-    "//lynx/core/renderer/dom/vdom/radon",
-    "//lynx/core/renderer/events",
-    "//lynx/core/renderer/pipeline",
-    "//lynx/core/renderer/signal:signal",
-    "//lynx/core/renderer/starlight",
-    "//lynx/core/renderer/trace:renderer_trace",
-    "//lynx/core/renderer/utils:renderer_utils",
-    "//lynx/core/runtime/bindings/lepus",
-    "//lynx/core/runtime/vm/lepus",
-    "//lynx/core/services/event_report",
-    "//lynx/core/services/long_task_timing",
-    "//lynx/core/services/performance",
-    "//lynx/core/template_bundle:template_bundle",
+    "../animation",
+    "../animation/utils:animation_utils",
+    "../base",
+    "../runtime/bindings/lepus",
+    "../runtime/vm/lepus",
+    "../services/event_report",
+    "../services/long_task_timing",
+    "../services/performance",
+    "../template_bundle:template_bundle",
+    "css",
+    "data",
+    "dom/vdom/radon",
+    "events",
+    "pipeline",
+    "signal:signal",
+    "starlight",
+    "trace:renderer_trace",
+    "utils:renderer_utils",
   ]
 
   if (!is_oliver_ssr) {
     public_deps += [
-      "//lynx/core/animation/basic_animation:basic_animation",
-      "//lynx/core/animation/lynx_basic_animator:lynx_basic_animator",
-      "//lynx/core/animation/transforms",
-      "//lynx/core/resource/lazy_bundle:lazy_bundle",
-      "//lynx/core/runtime",
-      "//lynx/core/shared_data",
-      "//lynx/core/shell",
+      "../animation/basic_animation:basic_animation",
+      "../animation/lynx_basic_animator:lynx_basic_animator",
+      "../animation/transforms",
+      "../resource/lazy_bundle:lazy_bundle",
+      "../runtime",
+      "../shared_data",
+      "../shell",
     ]
   }
 
@@ -73,31 +73,30 @@ lynx_core_source_set("tasm") {
     ]
     configs = [
       "//build/config/compiler:cxx_version_17",
-      "//lynx/core/runtime/bindings/napi:napi_config",
+      "../runtime/bindings/napi:napi_config",
     ]
     deps += [
-      "//lynx/core/base",
-      "//lynx/core/runtime/bindings/napi:napi_binding_quickjs",
-      "//lynx/core/runtime/bindings/napi/test:test_module",
-      "//lynx/third_party/quickjs",
-      "//lynx/third_party/rapidjson:rapidjson",
+      "../../third_party/quickjs",
+      "../../third_party/rapidjson:rapidjson",
+      "../base",
+      "../runtime/bindings/napi:napi_binding_quickjs",
+      "../runtime/bindings/napi/test:test_module",
     ]
     deps += [
-      "//lynx/third_party/napi:env",
-      "//lynx/third_party/napi:quickjs",
-      "//lynx/third_party/quickjs:quickjs_libc",
+      "../../third_party/napi:env",
+      "../../third_party/napi:quickjs",
+      "../../third_party/quickjs:quickjs_libc",
     ]
     if (is_mac) {
       # On MacOS, NapiBindingCore source files create JSC runtime by default.
       # And consequently all unittests should link with JSC framework and
       # depends on NapiBindingJSC.
-      deps += [ "//lynx/core/runtime/bindings/napi:napi_binding_jsc" ]
+      deps += [ "../runtime/bindings/napi:napi_binding_jsc" ]
     }
   }
 
   if (lepus_compile) {
-    public_deps +=
-        [ "//lynx/core/template_bundle/template_codec:lepus_compile" ]
+    public_deps += [ "../template_bundle/template_codec:lepus_compile" ]
   }
 }
 
@@ -107,7 +106,7 @@ unittest_exec("page_config_unittests_exec") {
   sources = [ "page_config_unittests.cc" ]
 
   deps = [
-    "//lynx/core/renderer:tasm",
-    "//lynx/core/renderer/dom:dom",
+    ":tasm",
+    "dom:dom",
   ]
 }

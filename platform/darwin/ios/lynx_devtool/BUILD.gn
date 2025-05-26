@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 import("//${lynx_dir}/build_overrides/darwin.gni")
-import("//lynx/devtool/lynx_devtool/devtool.gni")
-import("//lynx/tools/gn_tools/podspec_target_template.gni")
+import("../../../../devtool/lynx_devtool/devtool.gni")
+import("../../../../tools/gn_tools/podspec_target_template.gni")
 
 assert(is_ios)
 
@@ -123,9 +123,9 @@ subspec_target("DebugResource") {
 
 bundle_data("LynxDebugResources") {
   sources = [
-    "//lynx/platform/darwin/ios/lynx_devtool/assets/logbox",
-    "//lynx/platform/darwin/ios/lynx_devtool/assets/lynx_core_dev.js",
-    "//lynx/platform/darwin/ios/lynx_devtool/assets/switchPage",
+    "assets/logbox",
+    "assets/lynx_core_dev.js",
+    "assets/switchPage",
   ]
   outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
 }
@@ -157,7 +157,7 @@ subspec_target("Framework") {
   ]
   flatten_deps = [
     ":devtool",
-    "//lynx/platform/darwin/common/lynx_devtool:devtool",
+    "../../common/lynx_devtool:devtool",
   ]
   dependency = [ [
         "DebugRouter",
@@ -192,7 +192,7 @@ subspec_target("Framework") {
 
 subspec_target("LynxCore") {
   pattern_source_files = [
-    "//lynx/core/**/*.h",
+    "../../../../core/**/*.h",
     "//core/**/*.h",
   ]
   pattern_exclude_files = [
@@ -204,11 +204,11 @@ subspec_target("LynxCore") {
     "//**/*_darwin.h",
     "//core/build/gen/**/*",
     "//core/runtime/**/v8_*.h",
-    "//lynx/core/build/gen/**/*",
-    "//lynx/core/runtime/**/v8_*.h",
-    "//lynx/core/template_bundle/template_codec/magic_number.h",
-    "//lynx/core/runtime/bindings/jsi/interceptor/ios/request_interceptor_darwin.h",
-    "//lynx/core/services/replay/lynx_module_binding_testbench.h",
+    "../../../../core/build/gen/**/*",
+    "../../../../core/runtime/**/v8_*.h",
+    "../../../../core/template_bundle/template_codec/magic_number.h",
+    "../../../../core/runtime/bindings/jsi/interceptor/ios/request_interceptor_darwin.h",
+    "../../../../core/services/replay/lynx_module_binding_testbench.h",
   ]
   header_mappings_dir = "."
 }
@@ -223,15 +223,15 @@ subspec_target("Native") {
     HEADER_SEARCH_PATHS = Devtool_Native_includes
   }
   deps = [
-    "//lynx/devtool/lynx_devtool/agent",
-    "//lynx/devtool/lynx_devtool/base",
-    "//lynx/devtool/lynx_devtool/common",
-    "//lynx/devtool/lynx_devtool/config",
-    "//lynx/devtool/lynx_devtool/element",
-    "//lynx/devtool/lynx_devtool/recorder",
+    "../../../../devtool/lynx_devtool/agent",
+    "../../../../devtool/lynx_devtool/base",
+    "../../../../devtool/lynx_devtool/common",
+    "../../../../devtool/lynx_devtool/config",
+    "../../../../devtool/lynx_devtool/element",
+    "../../../../devtool/lynx_devtool/recorder",
   ]
   if (!enable_unittests) {
-    deps += [ "//lynx/core/renderer/css:css_decoder" ]
+    deps += [ "../../../../core/renderer/css:css_decoder" ]
   }
   if (use_flatten_deps) {
     flatten_deps = [
@@ -256,8 +256,8 @@ subspec_target("Trace") {
     HEADER_SEARCH_PATHS = [ "//" ]
   }
   deps = [
-    "//lynx/base/trace/native:trace_public_headers",
-    "//lynx/devtool/lynx_devtool/tracing",
+    "../../../../base/trace/native:trace_public_headers",
+    "../../../../devtool/lynx_devtool/tracing",
   ]
   if (!use_flatten_deps) {
     dependency = [ "Lynx/Trace" ]
@@ -284,7 +284,7 @@ subspec_target("LogBoxFramework") {
   pod_target_xcconfig = {
     HEADER_SEARCH_PATHS = [ "//devtool/lynx_devtool" ]
   }
-  deps = [ "//lynx/platform/darwin/common/lynx_devtool:logbox" ]
+  deps = [ "../../common/lynx_devtool:logbox" ]
   if (!use_flatten_deps) {
     dependency = [
       "LynxDevtool/LynxCore",
@@ -307,7 +307,7 @@ subspec_target("ThirdParty") {
     HEADER_SEARCH_PATHS = [
       "//devtool/lynx_devtool",
       "//core",
-      "//lynx/third_party/jsoncpp/include",
+      "../../../../third_party/jsoncpp/include",
       "//PODS_ROOT/Lynx",
       "//PODS_ROOT/Lynx/lynx",
       "//lynx",

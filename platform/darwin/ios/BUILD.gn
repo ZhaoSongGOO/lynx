@@ -4,8 +4,8 @@
 
 assert(is_ios)
 
-import("//lynx/core/Lynx.gni")
+import("../../../core/Lynx.gni")
 
 group("iOS") {
-  deps = [ "//lynx/platform/darwin/ios/lynx:lynx_podspec" ]
+  deps = [ "lynx:lynx_podspec" ]
 }

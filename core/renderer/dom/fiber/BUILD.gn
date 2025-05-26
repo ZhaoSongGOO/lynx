@@ -2,7 +2,7 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
+import("../../../Lynx.gni")
 
 # fiber_shared_sources
 fiber_shared_sources = [
@@ -50,7 +50,6 @@ fiber_shared_sources = [
 
 lynx_core_source_set("fiber") {
   sources = fiber_shared_sources
-  public_deps =
-      [ "//lynx/core/renderer/ui_component/list:react_component_list" ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  public_deps = [ "../../ui_component/list:react_component_list" ]
+  deps = [ "../../../../base/src:base_log_headers" ]
 }

@@ -10,7 +10,7 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import "LynxTemplateData+Converter.h"
-#import "darwin/common/lynx/TemplateRenderCallbackProtocol.h"
+#import "platform/darwin/common/lynx/TemplateRenderCallbackProtocol.h"
 
 #include "base/include/debug/lynx_assert.h"
 #include "core/renderer/dom/ios/lepus_value_converter.h"

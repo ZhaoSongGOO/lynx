@@ -99,7 +99,7 @@ test_source_set("gn_test_source") {
 }
 
 action("gn_test_action") {
-  script = "//lynx/tools/gn_tools/test/gn_test_action.py"
+  script = "gn_test_action.py"
   sources = []
   outputs = [ "$target_gen_dir/action.txt" ]
   response_file_contents = [
@@ -146,7 +146,7 @@ copy("copy_test_dirs_to_dir") {
 }
 
 action_foreach("action_foreach_test") {
-  script = "//lynx/tools/gn_tools/action_foreach_test.py"
+  script = "../action_foreach_test.py"
   sources = [
     "action_foreach/files/to/dir/sources1.cc",
     "action_foreach/files/to/dir/sources2.cc",

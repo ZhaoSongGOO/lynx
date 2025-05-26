@@ -79,7 +79,7 @@ declare_args() {
 }
 
 declare_args() {
-  v8_headers_search_path = "//lynx/third_party/v8/11.1.277/include"
+  v8_headers_search_path = rebase_path("third_party/v8/11.1.277/include")
 }
 
 if (is_android) {

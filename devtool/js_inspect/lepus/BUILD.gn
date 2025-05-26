@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/config.gni")
-import("//lynx/core/Lynx.gni")
+import("../../../config.gni")
+import("../../../core/Lynx.gni")
 
 lepus_debug_source = [
   "lepus_inspector_client_impl.cc",
@@ -31,12 +31,12 @@ config("lepus_debug_config") {
 source_set("lepus_debug") {
   sources = lepus_debug_source
   deps = [
-    "//lynx/base/src:base_log_headers",
-    "//lynx/devtool/fundamentals/js_inspect:js_inspect_interface",
-    "//lynx/devtool/js_inspect:inspector_const",
+    "../:inspector_const",
+    "../../../base/src:base_log_headers",
+    "../../fundamentals/js_inspect:js_inspect_interface",
   ]
-  include_dirs = [ "//lynx/third_party" ]
-  deps += [ "//lynx/third_party/rapidjson:rapidjson" ]
-  public_configs = [ "//lynx/third_party/quickjs:quickjs_public_config" ]
+  include_dirs = [ "../../../third_party" ]
+  deps += [ "../../../third_party/rapidjson:rapidjson" ]
+  public_configs = [ "../../../third_party/quickjs:quickjs_public_config" ]
   configs += [ ":lepus_debug_config" ]
 }

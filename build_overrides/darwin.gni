@@ -19,21 +19,23 @@ basedevtool_dependency = [ [
       "$lynx_version",
     ] ]
 
-lynx_group_extend_source = [ "//lynx/platform/darwin/common/lynx/LynxGroup.mm" ]
+lynx_group_extend_source =
+    rebase_path([ "../platform/darwin/common/lynx/LynxGroup.mm" ])
 
-darwin_config = [
-  "//lynx/platform/darwin:darwin_flag_config",
-  "//lynx/platform/darwin:darwin_include_config",
-]
+darwin_config = rebase_path([
+                              "../platform/darwin:darwin_flag_config",
+                              "../platform/darwin:darwin_include_config",
+                            ])
 
 devtool_darwin_config =
-    [ "//lynx/platform/darwin/common/lynx_devtool:public_config" ]
+    rebase_path([ "../platform/darwin/common/lynx_devtool:public_config" ])
 
 lynx_public_extend_sources =
-    [ "//lynx/platform/darwin/common/lynx/public/LynxGroup.h" ]
+    rebase_path([ "../platform/darwin/common/lynx/public/LynxGroup.h" ])
 
 public_shared_extend_sources =
-    [ "//lynx/platform/darwin/ios/lynx/public/base/LynxImageFetcher.h" ]
+    rebase_path(
+        [ "../platform/darwin/ios/lynx/public/base/LynxImageFetcher.h" ])
 
 tasm_extend_deps = []
 
@@ -54,39 +56,40 @@ PRIMJS_includes = [
   "//PODS_ROOT/PrimJS/src/napi/jsc",
 ]
 
-Native_includes = [
-                    "//",
-                    "//TARGET_BUILD_DIR/Lynx/gen/Lynx",
-                    "//lynx/core",
-                    "//lynx",
-                    "//lynx/platform",
-                  ] + PRIMJS_includes
+Native_includes = rebase_path([
+                                "//",
+                                "//TARGET_BUILD_DIR/Lynx/gen/Lynx",
+                                "../core",
+                                "//lynx",
+                                "../platform",
+                              ]) + PRIMJS_includes
 
-Devtool_Native_includes = [
-                            "//TARGET_BUILD_DIR/Devtool/gen/Lynx",
-                            "//devtool/lynx_devtool",
-                            "//core",
-                            "//",
-                            "//lynx",
-                            "//lynx/devtool/lynx_devtool",
-                            "//PODS_ROOT/Lynx/lynx",
-                            "//PODS_ROOT/BaseDevtool/lynx/",
-                          ] + PRIMJS_includes
+Devtool_Native_includes = rebase_path([
+                                        "//TARGET_BUILD_DIR/Devtool/gen/Lynx",
+                                        "//devtool/lynx_devtool",
+                                        "//core",
+                                        "//",
+                                        "//lynx",
+                                        "../devtool/lynx_devtool",
+                                        "//PODS_ROOT/Lynx/lynx",
+                                        "//PODS_ROOT/BaseDevtool/lynx/",
+                                      ]) + PRIMJS_includes
 
 Lepus_deps = [ "PrimJS/quickjs" ]
 
 devtool_extend_sources = []
 
-JSDebug_deps = [
-  "//lynx/devtool/fundamentals/js_inspect:js_inspect_interface",
-  "//lynx/devtool/js_inspect:inspector_const",
-  "//lynx/devtool/js_inspect/lepus:lepus_debug",
-  "//lynx/devtool/js_inspect/quickjs:quickjs_debug",
-  "//lynx/devtool/lynx_devtool/js_debug:devtool_common_js_debug",
-  "//lynx/devtool/lynx_devtool/js_debug:devtool_js_debug",
-  "//lynx/devtool/lynx_devtool/js_debug:devtool_quickjs_debug",
-  "//lynx/devtool/lynx_devtool/js_debug/:devtool_lepus_debug_sources",
-]
+JSDebug_deps = rebase_path(
+        [
+          "../devtool/fundamentals/js_inspect:js_inspect_interface",
+          "../devtool/js_inspect:inspector_const",
+          "../devtool/js_inspect/lepus:lepus_debug",
+          "../devtool/js_inspect/quickjs:quickjs_debug",
+          "../devtool/lynx_devtool/js_debug:devtool_common_js_debug",
+          "../devtool/lynx_devtool/js_debug:devtool_js_debug",
+          "../devtool/lynx_devtool/js_debug:devtool_quickjs_debug",
+          "../devtool/lynx_devtool/js_debug/:devtool_lepus_debug_sources",
+        ])
 
 js_debug_dependency = [
   "PrimJS/quickjs_debugger",

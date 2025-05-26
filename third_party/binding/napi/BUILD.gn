@@ -2,9 +2,9 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
-import("//lynx/third_party/binding/common/common.gni")
+import("../../../core/Lynx.gni")
+import("../../../testing/test.gni")
+import("../common/common.gni")
 
 config("napi_private_config") {
   if (use_primjs_napi) {
@@ -35,7 +35,7 @@ source_set("napi_binding_base_headers") {
 
   configs += [
     ":napi_private_config",
-    "//lynx/third_party/napi:napi_config",
+    "../../napi:napi_config",
   ]
 }
 
@@ -56,7 +56,7 @@ source_set("napi_binding_base") {
 
   configs += [
     ":napi_private_config",
-    "//lynx/third_party/napi:napi_config",
+    "../../napi:napi_config",
   ]
 }
 
@@ -64,10 +64,10 @@ unittest_exec("napi_binding_unittests_exec") {
   sources = [ "napi_binding_unittest.cc" ]
 
   deps = [
-    "//lynx/core/base",
-    "//lynx/core/runtime/bindings/napi:napi_binding_quickjs",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/third_party/napi:env",
-    "//lynx/third_party/napi:quickjs",
+    "../../../core/base",
+    "../../../core/runtime/bindings/napi:napi_binding_quickjs",
+    "../../../core/renderer/dom:dom",
+    "../../napi:env",
+    "../../napi:quickjs",
   ]
 }

@@ -3,8 +3,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/bindings_files.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../testing/test.gni")
+import("../Lynx.gni")
 import("jsi/jsc/jsc.gni")
 
 declare_args() {
@@ -18,7 +18,7 @@ lynx_core_source_set("js_common") {
     "piper/js/js_bundle.h",
     "piper/js/js_bundle_holder.h",
   ]
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../base/src:base_log_headers" ]
 }
 
 # jsbridge_shared_sources
@@ -89,20 +89,20 @@ lynx_core_source_set("runtime") {
   sources = jsbridge_shared_sources
   deps = [
     ":js_common",
+    "../../third_party/modp_b64",
+    "../../third_party/rapidjson",
     "bindings/jsi",
+    "bindings/jsi/interceptor:interceptor_factory",
     "common:reporter",
     "common:utils",
     "jsi",
     "profile",
     "profile/lepusng:lepusng_profile",
     "profile/quickjs:quickjs_profile",
-    "//lynx/core/runtime/bindings/jsi/interceptor:interceptor_factory",
-    "//lynx/third_party/modp_b64",
-    "//lynx/third_party/rapidjson",
   ]
 
   if (is_android || is_ios || enable_unittests) {
-    deps += [ "//lynx/core/runtime/profile/v8:v8_profile" ]
+    deps += [ "profile/v8:v8_profile" ]
   }
 
   public_deps = [ "jsi/quickjs" ]
@@ -146,14 +146,14 @@ unittest_set("jsbridge_testset") {
 
   deps = [
     ":runtime",
+    "../renderer/dom:dom",
+    "../renderer/utils:renderer_utils",
     "bindings/jsi:bindings_unittests_testset",
     "bindings/napi:napi_unittests_testset",
     "common:utils_unittests_testset",
     "jscache:jscache_unittests_testset",
     "jsi:jsi_unittests_testset",
     "jsi/quickjs:quickjs_unittests_testset",
-    "//lynx/core/renderer/dom:dom",
-    "//lynx/core/renderer/utils:renderer_utils",
   ]
 }
 

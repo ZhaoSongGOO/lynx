@@ -2,8 +2,8 @@
 # Licensed under the Apache License Version 2.0 that can be found in the
 # LICENSE file in the root directory of this source tree.
 
-import("//lynx/core/Lynx.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
 
 transforms_shared_sources = [
   "decomposed_transform.cc",
@@ -22,15 +22,15 @@ lynx_core_source_set("transforms") {
   sources = transforms_shared_sources
 
   public_deps = [
-    "//lynx/core/base",
-    "//lynx/third_party/rapidjson",
+    "../../../third_party/rapidjson",
+    "../../base",
   ]
 
   deps = [
-    "//lynx/core/renderer/css:css",
-    "//lynx/core/renderer/dom:dom_headers",
-    "//lynx/core/renderer/starlight:starlight",
-    "//lynx/core/style:style",
+    "../../renderer/css:css",
+    "../../renderer/dom:dom_headers",
+    "../../renderer/starlight:starlight",
+    "../../style:style",
   ]
 }
 
@@ -43,8 +43,8 @@ unittest_set("transforms_testset") {
     "transform_operations_unittest.cc",
   ]
   deps = [
-    "//lynx/core/renderer:tasm_group",
-    "//lynx/core/shell/testing:mock_tasm_delegate_testset",
+    "../../renderer:tasm_group",
+    "../../shell/testing:mock_tasm_delegate_testset",
   ]
   public_deps = [ ":transforms" ]
 }
@@ -55,7 +55,7 @@ unittest_exec("transforms_unittests_exec") {
   deps = [
     ":transforms",
     ":transforms_testset",
-    "//lynx/core/renderer/dom:dom",
+    "../../renderer/dom:dom",
   ]
 }
 

@@ -3,13 +3,13 @@
 # LICENSE file in the root directory of this source tree.
 
 import("//${lynx_dir}/build_overrides/darwin.gni")
-import("//lynx/core/Lynx.gni")
-import("//lynx/core/runtime/jsi/v8/v8.gni")
-import("//lynx/testing/test.gni")
+import("../../../testing/test.gni")
+import("../../Lynx.gni")
+import("v8/v8.gni")
 
 jsi_sources = [
-  "//lynx/core/resource/lynx_resource_setting.cc",
-  "//lynx/core/resource/lynx_resource_setting.h",
+  "../../resource/lynx_resource_setting.cc",
+  "../../resource/lynx_resource_setting.h",
   "instrumentation.h",
   "jsi-inl.h",
   "jsi.cc",
@@ -19,7 +19,7 @@ jsi_sources = [
 
 lynx_core_source_set("jsi") {
   sources = jsi_sources
-  deps = [ "//lynx/base/src:base_log_headers" ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }
 
 config("jsi_unittest_config") {
@@ -36,13 +36,13 @@ unittest_set("jsi_unittests_testset") {
 
   deps = [
     ":jsi",
-    "//lynx/base/src:base_log_headers",
-    "//lynx/core/base",
-    "//lynx/core/runtime/jsi/quickjs:quickjs",
-    "//lynx/third_party/quickjs",
+    "../../../base/src:base_log_headers",
+    "../../../third_party/quickjs",
+    "../../base",
+    "quickjs:quickjs",
   ]
   if (is_mac || is_linux) {
-    deps += [ "//lynx/third_party/quickjs:quickjs_libc" ]
+    deps += [ "../../../third_party/quickjs:quickjs_libc" ]
   }
 
   if (is_mac) {
