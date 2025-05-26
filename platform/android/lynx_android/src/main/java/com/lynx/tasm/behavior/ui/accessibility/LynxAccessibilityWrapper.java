@@ -27,6 +27,7 @@ import com.lynx.react.bridge.ReadableMap;
 import com.lynx.react.bridge.ReadableMapKeySetIterator;
 import com.lynx.tasm.PageConfig;
 import com.lynx.tasm.base.LLog;
+import com.lynx.tasm.behavior.LynxContext;
 import com.lynx.tasm.behavior.LynxUIMethodConstants;
 import com.lynx.tasm.behavior.StylesDiffMap;
 import com.lynx.tasm.behavior.ui.LynxAccessibilityNodeProvider;
@@ -110,26 +111,28 @@ public class LynxAccessibilityWrapper implements LynxAccessibilityStateHelper.On
   private LynxAccessibilityDelegate mDelegate = null;
 
   private LynxAccessibilityHelper mHelper = null;
+  private boolean mIsEmbeddedModeOn = false;
 
   public LynxAccessibilityWrapper(UIBody uiBody) {
     if (uiBody == null || uiBody.getBodyView() == null) {
       LLog.e(TAG, "Construct LynxAccessibilityWrapper with null host");
       return;
     }
-    if (uiBody.getLynxContext() != null) {
+    mWeakHostUI = new WeakReference<>(uiBody);
+    LynxContext lynxContext = uiBody.getLynxContext();
+    if (lynxContext != null) {
+      mIsEmbeddedModeOn = lynxContext.isEmbeddedModeOn();
       mAccessibilityManager = (AccessibilityManager) uiBody.getLynxContext().getSystemService(
           Service.ACCESSIBILITY_SERVICE);
     }
-    mWeakHostUI = new WeakReference<>(uiBody);
-    UIBody.UIBodyView bodyView = uiBody.getBodyView();
-    LLog.i(TAG, "Construct LynxAccessibilityNodeProvider and set default delegate.");
-    mNodeProvider = new LynxAccessibilityNodeProvider(uiBody);
-    bodyView.setAccessibilityDelegate(new View.AccessibilityDelegate() {
-      @Override
-      public AccessibilityNodeProvider getAccessibilityNodeProvider(View host) {
-        return mNodeProvider;
-      }
-    });
+    if (mIsEmbeddedModeOn) {
+      // Note: if embedded mode is on, we only construct a11y state helper to monitor system a11y
+      // state.
+      mStateHelper = new LynxAccessibilityStateHelper(mAccessibilityManager, this);
+    } else {
+      LLog.i(TAG, "Construct LynxAccessibilityNodeProvider and set default delegate.");
+      createDefaultA11yDelegate(uiBody);
+    }
   }
 
   /** Unified page config parsing logic, and set switches to mProvider or mDelegate. */
@@ -146,26 +149,73 @@ public class LynxAccessibilityWrapper implements LynxAccessibilityStateHelper.On
     mConfigEnableAccessibilityElement = config.getEnableAccessibilityElement();
     mConfigEnableOverlap = config.getEnableOverlapForAccessibilityElement();
     mConfigEnableA11yIDMutationObserver = config.getEnableA11yIDMutationObserver();
-    if (enableNodeProvider()) {
-      mNodeProvider.setConfigEnableAccessibilityElement(mConfigEnableAccessibilityElement);
-      mNodeProvider.setConfigEnableOverlapForAccessibilityElement(mConfigEnableOverlap);
+    if (mIsEmbeddedModeOn) {
+      // If embedded mode is on, we only create a11y delegate if system accessibility is enabled and
+      // touch exploration is enabled.
+      createAccessibilityDelegateForLynxViewIfNeeded();
     } else {
-      UIBody uiBody = getUIBody();
-      if (uiBody == null || uiBody.getBodyView() == null || mAccessibilityManager == null) {
-        return;
+      if (enableNodeProvider()) {
+        mNodeProvider.setConfigEnableAccessibilityElement(mConfigEnableAccessibilityElement);
+        mNodeProvider.setConfigEnableOverlapForAccessibilityElement(mConfigEnableOverlap);
+      } else {
+        UIBody uiBody = getUIBody();
+        if (uiBody == null || uiBody.getBodyView() == null || mAccessibilityManager == null) {
+          return;
+        }
+        if (mStateHelper == null) {
+          mStateHelper = new LynxAccessibilityStateHelper(mAccessibilityManager, this);
+        }
+        if (mMutationHelper == null) {
+          mMutationHelper = new LynxAccessibilityMutationHelper();
+        }
+        // Note: Here not use enableDelegate() or enableHelper() because mDelegate or mHelper is not
+        // constructed and these methods always return false.
+        if (mConfigEnableA11y) {
+          initHelperIfNeeded(uiBody, uiBody.getBodyView());
+        } else if (mConfigEnableNewAccessibility) {
+          initDelegateIfNeeded(uiBody);
+        }
       }
-      if (mStateHelper == null) {
-        mStateHelper = new LynxAccessibilityStateHelper(mAccessibilityManager, this);
+    }
+  }
+
+  private void createAccessibilityDelegateForLynxViewIfNeeded() {
+    if (!isSystemAccessibilityEnable()) {
+      return;
+    }
+    UIBody uiBody = getUIBody();
+    if (uiBody != null && uiBody.getBodyView() != null) {
+      if (!mConfigEnableA11y && !mConfigEnableNewAccessibility) {
+        createDefaultA11yDelegate(uiBody);
+        if (enableNodeProvider()) {
+          mNodeProvider.setConfigEnableAccessibilityElement(mConfigEnableAccessibilityElement);
+          mNodeProvider.setConfigEnableOverlapForAccessibilityElement(mConfigEnableOverlap);
+        }
+      } else {
+        if (mMutationHelper == null) {
+          mMutationHelper = new LynxAccessibilityMutationHelper();
+        }
+        if (mConfigEnableA11y) {
+          initHelperIfNeeded(uiBody, uiBody.getBodyView());
+        } else if (mConfigEnableNewAccessibility) {
+          initDelegateIfNeeded(uiBody);
+        }
       }
-      if (mMutationHelper == null) {
-        mMutationHelper = new LynxAccessibilityMutationHelper();
-      }
-      // Note: Here not use enableDelegate() or enableHelper() because mDelegate or mHelper is not
-      // constructed and these methods always return false.
-      if (mConfigEnableA11y) {
-        initHelperIfNeeded(uiBody, uiBody.getBodyView());
-      } else if (mConfigEnableNewAccessibility) {
-        initDelegateIfNeeded(uiBody);
+    }
+  }
+
+  private void createDefaultA11yDelegate(UIBody uiBody) {
+    if (mNodeProvider == null && uiBody != null) {
+      // Construct node provider and set it to LynxView's a11y delegate.
+      mNodeProvider = new LynxAccessibilityNodeProvider(uiBody);
+      UIBody.UIBodyView bodyView = uiBody.getBodyView();
+      if (bodyView != null) {
+        bodyView.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+          @Override
+          public AccessibilityNodeProvider getAccessibilityNodeProvider(View host) {
+            return mNodeProvider;
+          }
+        });
       }
     }
   }
@@ -429,11 +479,17 @@ public class LynxAccessibilityWrapper implements LynxAccessibilityStateHelper.On
   @Override
   public void onAccessibilityEnable(boolean enable) {
     mAccessibilityEnable = enable;
+    if (mIsEmbeddedModeOn) {
+      createAccessibilityDelegateForLynxViewIfNeeded();
+    }
   }
 
   @Override
   public void onTouchExplorationEnable(boolean enable) {
     mTouchExplorationEnable = enable;
+    if (mIsEmbeddedModeOn) {
+      createAccessibilityDelegateForLynxViewIfNeeded();
+    }
   }
 
   private boolean enableNodeProvider() {

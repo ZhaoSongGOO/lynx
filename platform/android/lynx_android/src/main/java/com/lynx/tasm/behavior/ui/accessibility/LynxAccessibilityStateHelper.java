@@ -30,6 +30,8 @@ public class LynxAccessibilityStateHelper {
     void onTouchExplorationEnable(final boolean enable);
   }
 
+  private static final boolean DEBUG = false;
+
   /** System accessibility manager */
   private AccessibilityManager mAccessibilityManager = null;
 
@@ -49,9 +51,11 @@ public class LynxAccessibilityStateHelper {
       // registering delegate.
       onStateListener.onAccessibilityEnable(isEnabled);
       onStateListener.onTouchExplorationEnable(isTouchExplorationEnabled);
-      LLog.i(TAG,
-          "Construct LynxAccessibilityStateHelper with mAccessibilityEnable = " + isEnabled
-              + ", mTouchExplorationEnable = " + isTouchExplorationEnabled);
+      if (DEBUG) {
+        LLog.i(TAG,
+            "Construct LynxAccessibilityStateHelper with mAccessibilityEnable = " + isEnabled
+                + ", mTouchExplorationEnable = " + isTouchExplorationEnabled);
+      }
       mLynxAccessibilityStateChangeListener =
           new LynxAccessibilityStateChangeListener(onStateListener);
       mAccessibilityManager.addAccessibilityStateChangeListener(
