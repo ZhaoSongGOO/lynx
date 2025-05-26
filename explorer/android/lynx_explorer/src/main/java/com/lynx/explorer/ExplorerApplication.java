@@ -10,6 +10,7 @@ import com.facebook.imagepipeline.memory.PoolConfig;
 import com.facebook.imagepipeline.memory.PoolFactory;
 import com.lynx.explorer.modules.LynxModuleAdapter;
 import com.lynx.explorer.provider.DemoTemplateProvider;
+import com.lynx.explorer.shell.TestBenchDefaultActionCallback;
 import com.lynx.service.devtool.LynxDevToolService;
 import com.lynx.service.http.LynxHttpService;
 import com.lynx.service.image.LynxImageService;
@@ -19,6 +20,7 @@ import com.lynx.tasm.service.ILynxHttpService;
 import com.lynx.tasm.service.ILynxImageService;
 import com.lynx.tasm.service.ILynxLogService;
 import com.lynx.tasm.service.LynxServiceCenter;
+import com.lynx.testbench.TestBenchPageManager;
 
 public class ExplorerApplication extends Application {
   @Override
@@ -28,10 +30,15 @@ public class ExplorerApplication extends Application {
     initLynxEnv();
     installLynxJSModule(); // register native module.
     initFresco();
+    initTestBench();
   }
 
   private void initLynxEnv() {
     LynxEnv.inst().init(this, null, new DemoTemplateProvider(), null, null);
+  }
+
+  private void initTestBench() {
+    TestBenchPageManager.getInstance().registerCallback(new TestBenchDefaultActionCallback());
   }
 
   private void initLynxService() {
