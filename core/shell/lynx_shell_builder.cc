@@ -202,12 +202,14 @@ LynxShell* LynxShellBuilder::build() {
     timing_mediator->SetEnableJSRuntime(this->shell_option_.enable_js_);
     shell->timing_mediator_ = timing_mediator.get();
 
+    // Temporarily disable TimingActor in Embedded mode
+    const auto enable_timing = !shell_option_.page_options_.IsEmbeddedModeOn();
     shell->timing_actor_ =
         std::make_shared<LynxActor<tasm::timing::TimingHandler>>(
             std::make_unique<tasm::timing::TimingHandler>(
                 std::move(timing_mediator)),
             tasm::report::EventTrackerPlatformImpl::GetReportTaskRunner(),
-            shell->instance_id_);
+            shell->instance_id_, enable_timing);
     shell->timing_actor_->Impl()->SetEnableJSRuntime(
         this->shell_option_.enable_js_);
     shell->timing_actor_->Impl()->SetThreadStrategy(this->strategy_);
