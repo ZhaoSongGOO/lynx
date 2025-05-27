@@ -382,5 +382,55 @@ bool LynxBinaryBaseCSSReader::GetEnableNewImportRule() {
                                  LYNX_VERSION_2_9);
 }
 
+#pragma region SimpleStyling Decoder
+
+bool LynxBinaryBaseCSSReader::DecodeStyleObjectRoute(
+    StyleObjectRoute& style_object_route) {
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeStyleObjectRoute");
+  uint32_t css_route_length = 0;
+  DECODE_COMPACT_U32(size);
+  for (size_t i = 0; i < size; ++i) {
+    DECODE_COMPACT_U32(start);
+    DECODE_COMPACT_U32(end);
+    css_route_length = std::max(css_route_length, end);
+    style_object_route.style_object_ranges.emplace_back(start, end);
+  }
+  style_objects_section_range_.start = static_cast<uint32_t>(stream_->offset());
+  style_objects_section_range_.end =
+      style_objects_section_range_.start + css_route_length;
+  return true;
+}
+
+bool LynxBinaryBaseCSSReader::DecodeCSSAttributes(StyleMap& attr,
+                                                  uint32_t size) {
+  DCHECK(attr.empty());
+  attr.reserve(size);
+  bool success = true;
+  for (size_t i = 0; i < size && success; ++i) {
+    DECODE_COMPACT_U32(id);
+    CSSPropertyID property_id = static_cast<CSSPropertyID>(id);
+    success = DecodeCSSValue(&attr[property_id]);
+  }
+  return success;
+}
+
+bool LynxBinaryBaseCSSReader::DecodeStyleObject(StyleMap& attr,
+                                                const CSSRange& range) {
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeStyleObject");
+  size_t descriptor_start = stream_->offset();
+  stream_->Seek(descriptor_start + range.start);
+  DECODE_COMPACT_U32(size);
+  attr.reserve(size);
+  bool success = true;
+  for (size_t i = 0; i < size && success; ++i) {
+    DECODE_COMPACT_U32(id);
+    CSSPropertyID property_id = static_cast<CSSPropertyID>(id);
+    success = DecodeCSSValue(&attr[property_id], true, false, false);
+  }
+  return success;
+}
+
+#pragma endregion
+
 }  // namespace tasm
 }  // namespace lynx

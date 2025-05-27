@@ -30,6 +30,11 @@
 #include "core/template_bundle/template_codec/template_binary.h"
 
 namespace lynx {
+
+namespace style {
+class StyleObject;
+}
+
 namespace tasm {
 class LepusChunkManager {
  public:
@@ -83,6 +88,22 @@ class LynxTemplateBundle final {
   const std::shared_ptr<CSSStyleSheetManager> &GetCSSStyleManager() const {
     return css_style_manager_;
   }
+
+  /**
+   * @brief Initializes and returns a reference to the shared pointer of the
+   * style object list.
+   *
+   * This method checks if the style object list has already been initialized.
+   * If it has, it simply returns a reference to the existing list. Otherwise,
+   * it creates a new array of pointers to `StyleObject` instances, initializes
+   * the shared pointer with a custom deleter, and sets the last element of the
+   * array to `nullptr` to mark the end of the list.
+   *
+   * @param size The size of the style object array to be created.
+   * @return A reference to the shared pointer of the style object list. The
+   * array is null` ended.
+   */
+  std::shared_ptr<style::StyleObject *> &InitStyleObjectList(size_t size);
 
   void SetLepusChunkManager(std::shared_ptr<LepusChunkManager> manager) {
     lepus_chunk_manager_ = std::move(manager);
@@ -153,6 +174,10 @@ class LynxTemplateBundle final {
 
   // body - CSS
   std::shared_ptr<CSSStyleSheetManager> css_style_manager_;
+
+  // body - StyleObjects
+
+  std::shared_ptr<style::StyleObject *> style_object_list_{nullptr};
 
   // body - APP
   std::string app_name_;

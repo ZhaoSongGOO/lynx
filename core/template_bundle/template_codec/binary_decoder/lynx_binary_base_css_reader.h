@@ -11,6 +11,7 @@
 
 #include "core/renderer/css/css_value.h"
 #include "core/renderer/css/shared_css_fragment.h"
+#include "core/renderer/simple_styling/style_object_decoder.h"
 #include "core/runtime/vm/lepus/base_binary_reader.h"
 #include "core/template_bundle/template_codec/template_binary.h"
 
@@ -26,8 +27,10 @@ namespace tasm {
 class CSSParseToken;
 class CSSSheet;
 struct CSSRoute;
+struct StyleObjectRoute;
 
-class LynxBinaryBaseCSSReader : public lepus::BaseBinaryReader {
+class LynxBinaryBaseCSSReader : public lepus::BaseBinaryReader,
+                                public style::StyleObjectDecoder {
  public:
   LynxBinaryBaseCSSReader(std::unique_ptr<lepus::InputStream> stream)
       : lepus::BaseBinaryReader(std::move(stream)){};
@@ -43,6 +46,8 @@ class LynxBinaryBaseCSSReader : public lepus::BaseBinaryReader {
   static bool EnableCssVariable(const CompileOptions& options);
   static bool EnableCssParser(const CompileOptions& options);
   static bool EnableCssVariableMultiDefaultValue(const CompileOptions& options);
+
+  bool DecodeStyleObject(StyleMap& attr, const CSSRange& range) override;
 
  protected:
   // Utils for decode css.
@@ -66,8 +71,12 @@ class LynxBinaryBaseCSSReader : public lepus::BaseBinaryReader {
 
   bool GetEnableNewImportRule();
 
+  bool DecodeStyleObjectRoute(StyleObjectRoute& style_object_route);
+  bool DecodeCSSAttributes(StyleMap& attr, uint32_t size);
+
  protected:
   Range css_section_range_;
+  Range style_objects_section_range_;
 
   bool enable_css_font_face_extension_{false};
   bool enable_css_variable_{false};

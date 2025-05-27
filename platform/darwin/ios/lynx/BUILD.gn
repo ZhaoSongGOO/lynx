@@ -628,7 +628,10 @@ subspec_target("zlib") {
 }
 
 subspec_target("amoeba") {
-  deps = [ "../../../../core/renderer/css" ]
+  deps = [
+    "../../../../core/renderer/css",
+    "../../../../core/renderer/simple_styling",
+  ]
 }
 
 subspec_target("animation") {

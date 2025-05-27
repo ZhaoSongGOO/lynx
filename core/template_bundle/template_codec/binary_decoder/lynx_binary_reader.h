@@ -55,6 +55,7 @@ class LynxBinaryReader : public LynxBinaryBaseTemplateReader {
 
   // decode css
   virtual bool DecodeCSSDescriptor() override;
+  bool DecodeStyleObjects() override;
   bool DecodeCSSDescriptorRoute();
   bool GreedyDecodeCSSDescriptor(
       CSSStyleSheetManager::CSSFragmentMap& css_fragment_map);

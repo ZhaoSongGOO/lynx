@@ -8,6 +8,7 @@
 #include "base/trace/native/trace_event.h"
 #include "core/renderer/dom/fiber/fiber_element.h"
 #include "core/renderer/dom/fiber/tree_resolver.h"
+#include "core/renderer/simple_styling/style_object.h"
 #include "core/renderer/utils/base/element_template_info.h"
 #include "core/template_bundle/template_codec/binary_decoder/binary_decoder_trace_event_def.h"
 #include "core/template_bundle/template_codec/binary_decoder/element_binary_reader.h"
@@ -165,5 +166,17 @@ std::optional<Elements> ParallelParseTaskScheduler::TryGetElements(
   return std::nullopt;
 }
 
+void ParallelParseTaskScheduler::AsyncDecodeStyleObjects(
+    const std::shared_ptr<style::StyleObject*>& style_object_list) {
+  base::TaskRunnerManufactor::PostTaskToConcurrentLoop(
+      [style_object_list]() mutable {
+        TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeStyleObjectSectionAsync");
+        for (style::StyleObject** p = style_object_list.get(); *p != nullptr;
+             p++) {
+          (*p)->FromBinary();
+        }
+      },
+      base::ConcurrentTaskType::HIGH_PRIORITY);
+}
 }  // namespace tasm
 }  // namespace lynx

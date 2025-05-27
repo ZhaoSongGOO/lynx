@@ -17,6 +17,9 @@
 #include "core/template_bundle/template_codec/template_binary.h"
 
 namespace lynx {
+namespace style {
+class StyleObject;
+}
 namespace tasm {
 
 class FiberElement;
@@ -42,6 +45,9 @@ class ParallelParseTaskScheduler {
                         bool sync);
   std::optional<Elements> TryGetElements(
       const std::string& key, const std::shared_ptr<ElementTemplateInfo>& info);
+
+  void AsyncDecodeStyleObjects(
+      const std::shared_ptr<style::StyleObject*>& style_object_list);
 
  private:
   base::OnceTaskRefptr<int32_t> generate_element_template_parse_task_;

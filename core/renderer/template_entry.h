@@ -80,6 +80,24 @@ class TemplateEntry : public VmContextHolder, public CSSStyleSheetDelegate {
   const std::shared_ptr<CSSStyleSheetManager>& GetStyleSheetManager() {
     return template_bundle_.css_style_manager_;
   }
+
+  /**
+   * @brief Get a reference to the shared pointer of the style object list.
+   *
+   * This method retrieves a constant reference to the shared pointer of the
+   * style object list stored in the template bundle. The style object list
+   * contains pointers to style objects, which are used to manage and apply
+   * styles.
+   *
+   * Should call LynxTemplateBundle::InitStyleObjectList first, or will
+   * return null.
+   *
+   * @return A constant reference to the shared pointer of the style object
+   * list.
+   */
+  const std::shared_ptr<style::StyleObject*>& StyleObjectList() {
+    return template_bundle_.style_object_list_;
+  }
   piper::JsBundle& GetJsBundle() { return template_bundle_.GetJsBundle(); }
   std::unordered_map<int32_t, std::shared_ptr<PageMould>>& page_moulds() {
     return template_bundle_.page_moulds_;

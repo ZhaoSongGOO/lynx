@@ -15,6 +15,7 @@
 #include "core/renderer/css/css_style_sheet_manager.h"
 #include "core/renderer/dom/vdom/radon/radon_component.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
+#include "core/renderer/simple_styling/style_object.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/template_assembler.h"
 #include "core/runtime/vm/lepus/function.h"
@@ -78,6 +79,64 @@ bool TemplateBinaryReader::DecodeCSSDescriptor() {
   }
 
   stream_->Seek(css_section_range_.end);
+  return true;
+}
+
+/**
+ * @brief Creates a StyleObjectDecoder instance.
+ *
+ * This function initializes a `lepus::ByteArrayInputStream` using the provided
+ * data pointer and length, then creates a `LynxBinaryBaseCSSReader` instance
+ * as a `StyleObjectDecoder` using the input stream.
+ *
+ * @param data Pointer to the start of the binary data for decoding.
+ * @param length The length of the binary data.
+ * @return A unique pointer to a `style::StyleObjectDecoder` instance.
+ */
+static std::unique_ptr<style::StyleObjectDecoder> StyleObjectDecoderCreator(
+    uint8_t* data, size_t length) {
+  auto binary_stream =
+      std::make_unique<lepus::ByteArrayInputStream>(data, length);
+  return std::unique_ptr<style::StyleObjectDecoder>(
+      new LynxBinaryBaseCSSReader(std::move(binary_stream)));
+}
+
+/**
+ * @brief Decodes style objects from the binary stream.
+ *
+ * If the simple styling feature is enabled, this function decodes the style
+ * object route information, creates an array of style objects, and schedules
+ * the decoding of these objects asynchronously on a concurrent thread. If
+ * simple styling is not enabled, it skips the decoding process.
+ *
+ * @return `true` if the decoding process succeeds or is skipped, `false`
+ * otherwise.
+ */
+bool TemplateBinaryReader::DecodeStyleObjects() {
+  if (!compile_options_.enable_simple_styling_) {
+    // simple styling is not enabled, skip this section
+    return true;
+  }
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeStyleObjectSection");
+  StyleObjectRoute route;
+  ERROR_UNLESS(DecodeStyleObjectRoute(route));
+  size_t size = route.style_object_ranges.size();
+  const auto& style_obj_array = template_bundle().InitStyleObjectList(size);
+  const int length =
+      style_objects_section_range_.end - style_objects_section_range_.start;
+  auto cursor = stream_->cursor();
+  size_t index = 0;
+
+  auto* raw_style_obj_array = style_obj_array.get();
+  for (auto i = route.style_object_ranges.begin();
+       i != route.style_object_ranges.end() && index < size; ++i, index++) {
+    auto* style_object_ref = new style::StyleObject(
+        i->start, i->end, cursor, length, StyleObjectDecoderCreator);
+    raw_style_obj_array[index] = style_object_ref;
+  }
+  EnsureParallelParseTaskScheduler();
+  task_schedular_->AsyncDecodeStyleObjects(style_obj_array);
+  stream_->Seek(style_objects_section_range_.end);
   return true;
 }
 

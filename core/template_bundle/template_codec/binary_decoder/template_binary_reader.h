@@ -83,6 +83,8 @@ class TemplateBinaryReader : public LynxBinaryReader,
  protected:
   // Async CSS Descriptor
   virtual bool DecodeCSSDescriptor() override;
+  // Async StyleObject decoder
+  bool DecodeStyleObjects() override;
   bool DecodeCSSFragmentAsync(std::shared_ptr<CSSStyleSheetManager> manager);
   bool GetCSSLazyDecode();
   bool GetCSSAsyncDecode();

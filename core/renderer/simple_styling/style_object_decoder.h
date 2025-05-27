@@ -19,6 +19,13 @@ class StyleObjectDecoder {
                                  const tasm::CSSRange& range) = 0;
 };
 
+// Define a function pointer type for creating a StyleObjectDecoder instance.
+// This type represents a function that takes a pointer to an array of uint8_t
+// data and the length of that data as parameters, and returns a unique pointer
+// to a StyleObjectDecoder.
+// @param data: Pointer to the binary data used for initializing the decoder.
+// @param length: The length of the binary data.
+// @return: A unique pointer to a StyleObjectDecoder instance.
 typedef std::unique_ptr<StyleObjectDecoder> (*DecoderCreatorFunc)(
     uint8_t* data, size_t length);
 

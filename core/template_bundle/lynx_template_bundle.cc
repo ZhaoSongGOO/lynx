@@ -4,6 +4,7 @@
 
 #include "core/template_bundle/lynx_template_bundle.h"
 
+#include "core/renderer/simple_styling/style_object.h"
 #include "core/template_bundle/template_codec/binary_decoder/element_binary_reader.h"
 
 namespace lynx {
@@ -121,6 +122,25 @@ std::optional<Elements> LynxTemplateBundle::TryGetElements(
     return std::nullopt;
   }
   return task_schedular_->TryGetElements(key, element_template_infos_[key]);
+}
+
+static void StyleObjectArrayDeleter(style::StyleObject **obj) {
+  for (auto **p = obj; *p != nullptr; p++) {
+    (*p)->Release();
+  }
+  delete[] obj;
+}
+
+std::shared_ptr<style::StyleObject *> &LynxTemplateBundle::InitStyleObjectList(
+    size_t size) {
+  if (style_object_list_) {
+    return style_object_list_;
+  }
+  style::StyleObject **style_object_array = new style::StyleObject *[size + 1];
+  style_object_list_ = std::shared_ptr<style::StyleObject *>(
+      style_object_array, StyleObjectArrayDeleter);
+  style_object_array[size] = nullptr;
+  return style_object_list_;
 }
 
 }  // namespace tasm

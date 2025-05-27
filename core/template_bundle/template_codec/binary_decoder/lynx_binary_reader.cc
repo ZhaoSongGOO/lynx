@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "core/renderer/simple_styling/style_object.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/runtime/vm/lepus/context.h"
 #include "core/template_bundle/template_codec/binary_decoder/binary_decoder_trace_event_def.h"
@@ -95,6 +96,24 @@ bool LynxBinaryReader::DecodeCSSDescriptor() {
   // make all fragments read-only
   manager->FlattenAllCSSFragment();
 
+  return true;
+}
+
+bool LynxBinaryReader::DecodeStyleObjects() {
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, "DecodeStyleObjectSection");
+  StyleObjectRoute route;
+  ERROR_UNLESS(DecodeStyleObjectRoute(route));
+  const auto& style_object_list =
+      template_bundle().InitStyleObjectList(route.style_object_ranges.size());
+  size_t index = 0;
+  for (const auto& range : route.style_object_ranges) {
+    stream_->Seek(style_objects_section_range_.start + range.start);
+    DECODE_COMPACT_U32(size);
+    StyleMap attr;
+    ERROR_UNLESS(DecodeCSSAttributes(attr, size));
+    (style_object_list.get())[index++] = new style::StyleObject(attr);
+    stream_->Seek(style_objects_section_range_.start + range.end);
+  }
   return true;
 }
 

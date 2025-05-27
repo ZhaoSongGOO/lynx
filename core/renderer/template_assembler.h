@@ -405,6 +405,11 @@ class TemplateAssembler final
     return FindEntry(entry_name)->GetStyleSheetManager();
   }
 
+  const std::shared_ptr<style::StyleObject*>& StyleObjectList(
+      const std::string& entry_name) {
+    return FindEntry(entry_name)->StyleObjectList();
+  }
+
   const std::unordered_map<int, std::shared_ptr<PageMould>>& page_moulds();
   void Destroy();
 

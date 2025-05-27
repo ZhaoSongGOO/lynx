@@ -113,6 +113,8 @@ class LynxBinaryBaseTemplateReader : public ElementBinaryReader {
   bool DecodeComponentMould(ComponentMould* mould, int offset, int length);
   // CSS Descriptor
   virtual bool DecodeCSSDescriptor() = 0;
+  // Style Objects
+  virtual bool DecodeStyleObjects() = 0;
   // Dynamic Component
   bool DecodeDynamicComponentDescriptor();
   bool DecodeDynamicComponentRoute(DynamicComponentRoute& route);
