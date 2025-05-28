@@ -19,33 +19,22 @@ import org.json.JSONObject;
 
 public class TestBenchReplayDataModule extends LynxModule {
   private static final String TAG = "TestBenchReplayDataModule";
-  // "Invoked Method Data" field from record json file
-  private static JSONArray mFunctionCall;
-  // "Callback" field from record json file
-  private static JSONObject mCallbackData;
-  // replay additional info
-  private static JSONArray mJsbIgnoredInfo;
-  // "jsbSettings" field from record json file
-  private static JSONObject mJsbSettings;
+  private JSONArray mFunctionCall;
+  private JSONObject mCallbackData;
+  private JSONArray mJsbIgnoredInfo;
+  private JSONObject mJsbSettings;
 
   public TestBenchReplayDataModule(Context context) {
     super(context);
   }
 
-  public static void addFunctionCallArray(JSONArray responseData) {
-    mFunctionCall = responseData;
-  }
-
-  public static void addCallbackDictionary(JSONObject callbackDictionary) {
-    mCallbackData = callbackDictionary;
-  }
-
-  public static void setJsbIgnoredInfo(JSONArray jsbIgnoredInfo) {
-    mJsbIgnoredInfo = jsbIgnoredInfo;
-  }
-
-  public static void setJsbSettings(JSONObject jsbSettings) {
-    mJsbSettings = jsbSettings;
+  public TestBenchReplayDataModule(Context context, Object param) {
+    super(context);
+    TestBenchReplayDataProvider provider = (TestBenchReplayDataProvider) param;
+    mFunctionCall = provider.getFunctionCall();
+    mCallbackData = provider.getCallbackData();
+    mJsbIgnoredInfo = provider.getJsbIgnoredInfo();
+    mJsbSettings = provider.getJsbSettings();
   }
 
   @LynxMethod

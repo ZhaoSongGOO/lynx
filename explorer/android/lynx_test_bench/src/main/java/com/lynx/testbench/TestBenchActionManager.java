@@ -65,7 +65,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TestBenchActionManager {
+public class TestBenchActionManager implements TestBenchReplayDataProvider {
   private static final String TAG = "TestBenchActionManager";
   private static final int UPDATE_PRE_DATA = 0;
   private static final int UPDATE_VIEW_PORT = 1;
@@ -187,6 +187,14 @@ public class TestBenchActionManager {
   private JSONObject mTemplateBundleParams;
   private TemplateBundle mTemplateBundle;
   private TemplateBundleOption mTemplateBundleOptions;
+  // "Invoked Method Data" field from record json file
+  private JSONArray mFunctionCall;
+  // "Callback" field from record json file
+  private JSONObject mCallbackData;
+  // replay additional info
+  private JSONArray mJsbIgnoredInfo;
+  // "jsbSettings" field from record json file
+  private JSONObject mJsbSettings;
 
   public static final int sEndForFirstScreen = 0;
   public static final int sEndForAll = 1;
@@ -268,18 +276,18 @@ public class TestBenchActionManager {
         if (json.has("Config") && !(json.get("Config").toString().equals("null"))) {
           mConfig = json.getJSONObject("Config");
           if (mConfig.has("jsbIgnoredInfo")) {
-            TestBenchReplayDataModule.setJsbIgnoredInfo(mConfig.getJSONArray("jsbIgnoredInfo"));
+            mJsbIgnoredInfo = mConfig.getJSONArray("jsbIgnoredInfo");
           }
 
           if (mConfig.has("jsbSettings")) {
-            TestBenchReplayDataModule.setJsbSettings(mConfig.getJSONObject("jsbSettings"));
+            mJsbSettings = mConfig.getJSONObject("jsbSettings");
           }
         }
         if (json.has("Invoked Method Data")) {
-          mockInvokeMethod(json.getJSONArray("Invoked Method Data"));
+          mFunctionCall = json.getJSONArray("Invoked Method Data");
         }
         if (json.has("Callback")) {
-          mockCallback(json.getJSONObject("Callback"));
+          mCallbackData = json.getJSONObject("Callback");
         }
         if (json.has("Component List")) {
           mockComponent(json.getJSONArray("Component List"));
@@ -701,14 +709,6 @@ public class TestBenchActionManager {
     mHandler.sendMessageDelayed(msg, delay);
   }
 
-  private void mockInvokeMethod(JSONArray invokedData) {
-    TestBenchReplayDataModule.addFunctionCallArray(invokedData);
-  }
-
-  private void mockCallback(JSONObject callbackData) {
-    TestBenchReplayDataModule.addCallbackDictionary(callbackData);
-  }
-
   private void mockComponent(JSONArray componentList) {
     mComponentList = componentList;
   }
@@ -967,7 +967,7 @@ public class TestBenchActionManager {
         builder.setEnableAirStrictMode(enableAir());
         builder.setPresetMeasuredSpec(measureSpec[0], measureSpec[1]);
         addExtraComponent(builder);
-        builder.registerModule("TestBenchReplayDataModule", TestBenchReplayDataModule.class);
+        builder.registerModule("TestBenchReplayDataModule", TestBenchReplayDataModule.class, this);
         builder.registerModule("TestBenchOpenUrlModule", TestBenchOpenUrlModule.class);
         if (BuildConfig.enable_frozen_mode) {
           builder.setThreadStrategyForRendering(ThreadStrategyForRendering.ALL_ON_UI);
@@ -1329,4 +1329,19 @@ public class TestBenchActionManager {
     }
     mHandler.removeCallbacksAndMessages(null);
   }
+
+  // The implementation part of the interface TestBenchReplayDataProvider. start
+  public JSONArray getFunctionCall() {
+    return mFunctionCall;
+  }
+  public JSONObject getCallbackData() {
+    return mCallbackData;
+  }
+  public JSONArray getJsbIgnoredInfo() {
+    return mJsbIgnoredInfo;
+  }
+  public JSONObject getJsbSettings() {
+    return mJsbSettings;
+  }
+  // The implementation part of the interface TestBenchReplayDataProvider.end
 }
