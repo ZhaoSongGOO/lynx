@@ -120,9 +120,13 @@ tools/hab sync .
 
 2. Gen Xcode workspace
 ```bash
-cd explorer/darwin/ios/LynxExplorer
+cd explorer/darwin/ios/lynx_explorer
 ./bundle_install.sh
 open LynxExplorer.xcworkspace
 ```
 
-3. Select LynxExplorerUnitTest schema and run
+3. Enter the unit test view
+
+View->Navigators->Tests
+
+4. Click to run `UTTest`
