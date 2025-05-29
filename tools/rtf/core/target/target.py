@@ -90,8 +90,9 @@ class Target:
         return True
 
     def print_log(self):
-        log_file = open(self.log_file, "r")
-        Log.error(f"{self.name} log: \n{log_file.read()}")
+        with open(self.log_file, "r") as log_file:
+            lines = log_file.readlines()
+            Log.error(f"{self.name} log: \n......\n{''.join(lines[-50:])}")
 
     def run(self):
         pass
