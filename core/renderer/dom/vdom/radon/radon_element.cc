@@ -809,7 +809,8 @@ bool RadonElement::NeedFastFlushPath(
   return style.second.IsEmpty() || LayoutNode::IsLayoutOnly(style.first) ||
          LayoutNode::IsLayoutWanted(style.first) ||
          style.first == kPropertyIDTransform ||
-         style.first == kPropertyIDColor || style.first == kPropertyIDFilter;
+         style.first == kPropertyIDColor || style.first == kPropertyIDFilter ||
+         style.first == kPropertyIDOffsetDistance;
 }
 
 void RadonElement::ConsumeTransitionStylesInAdvanceInternal(

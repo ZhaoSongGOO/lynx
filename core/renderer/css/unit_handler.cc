@@ -247,7 +247,6 @@ UnitHandler::UnitHandler() {
   AutoFontSizeHandler::Register(interceptors_);
   AutoFontSizePresetSizesHandler::Register(interceptors_);
   GapHandler::Register(interceptors_);
-  OffsetRotateHandler::Register(interceptors_);
 }
 
 }  // namespace tasm

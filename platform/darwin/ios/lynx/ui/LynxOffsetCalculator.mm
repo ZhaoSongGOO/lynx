@@ -3,7 +3,6 @@
 // LICENSE file in the root directory of this source tree.
 #import "LynxOffsetCalculator.h"
 #import <Lynx/LynxLog.h>
-#import "LRUMap.h"
 
 @implementation PathLengthCache
 - (instancetype)init {
@@ -17,8 +16,7 @@
 }
 @end
 
-static int32_t kMaxCacheSize = 10;
-static LRUMap *lruPathCache;
+static NSMapTable *pathCache;
 
 @implementation LynxOffsetCalculator
 
@@ -322,7 +320,7 @@ static void findTargetPoint(void *info, const CGPathElement *element) {
 
 + (void)initialize {
   if (self == [LynxOffsetCalculator class]) {
-    lruPathCache = [[LRUMap alloc] initWithCapacity:kMaxCacheSize];
+    pathCache = [NSMapTable weakToStrongObjectsMapTable];
   }
 }
 
@@ -332,7 +330,7 @@ static void findTargetPoint(void *info, const CGPathElement *element) {
   if (!path) return CGPointZero;
 
   progress = MAX(0, MIN(1, progress));
-  PathLengthCache *cache = [lruPathCache get:(__bridge id)path];
+  PathLengthCache *cache = [pathCache objectForKey:(__bridge id)path];
   if (!cache) {
     cache = [[PathLengthCache alloc] init];
     PathInfo info = {0,
@@ -351,9 +349,7 @@ static void findTargetPoint(void *info, const CGPathElement *element) {
     }
     CGPathApply(path, &info, calculatePathLengthFunction);
     cache.totalLength = info.totalLength;
-
-    // LRU cache
-    [lruPathCache set:(__bridge id)path value:cache];
+    [pathCache setObject:cache forKey:(__bridge id)path];
   }
   PathInfo info = {
       0, 0, CGPointZero, CGPointZero, CGPointZero, CGPointZero, NO, NO, 100, (__bridge void *)cache,
