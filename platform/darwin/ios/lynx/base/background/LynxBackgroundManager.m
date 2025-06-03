@@ -1149,7 +1149,7 @@ const LynxBorderRadii LynxBorderRadiiZero = {{0, 0}, {0, 0}, {0, 0}, {0, 0},
   CGRect rect = {.size = *newViewSize};
   // Use borderRadiusRaw for calculation and borderRadius for rendering.
   LynxCornerInsets cornerInsets = LynxGetCornerInsetsA(
-      rect, self.borderInfo.borderRadiusRaw, UIEdgeInsetsZero, _backgroundInfo->borderRadiusCalc);
+      rect, self.borderInfo.borderRadiusRaw, UIEdgeInsetsZero, _backgroundInfo.borderRadiusCalc);
   LynxBorderRadii radii = (LynxBorderRadii){.topLeftX.val = cornerInsets.topLeft.width,
                                             .topLeftX.unit = LynxBorderValueUnitDefault,
                                             .topLeftY.val = cornerInsets.topLeft.height,

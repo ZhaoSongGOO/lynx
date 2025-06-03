@@ -397,7 +397,9 @@ static const CGFloat OFFSET_ROTATE_AUTO = -1024.f;
 }
 
 - (void)updateManagerRelated {
-  _backgroundManager.backgroundInfo.paddingWidth = _padding;
+  if (!UIEdgeInsetsEqualToEdgeInsets(_backgroundManager.backgroundInfo.paddingWidth, _padding)) {
+    _backgroundManager.backgroundInfo.paddingWidth = _padding;
+  }
   [_backgroundManager applyEffect];
   if (_filter_type != LynxFilterTypeNone) {
     id filter = [self getFilterWithType:LynxFilterTypeGrayScale];
@@ -1924,17 +1926,16 @@ LYNX_PROP_DEFINE("direction", setLynxDirection, LynxDirectionType) {
 #define LYNX_CORNER_POSITION_BOTTOM_LEFT_X 6
 #define LYNX_CORNER_POSITION_BOTTOM_LEFT_Y 7
 
-#define SET_BORDER_UNIT_VAL(dst, src, dstLength, srcLength, offset)                         \
-  {                                                                                         \
-    newLength = NULL;                                                                       \
-    LBRGetBorderValueOrLength(value, offset, &newValue, &newLength);                        \
-    if (!isBorderUnitEqualA(dst, src,                                                       \
-                            _backgroundManager.backgroundInfo->borderRadiusCalc[dstLength], \
-                            srcLength)) {                                                   \
-      dst = src;                                                                            \
-      _backgroundManager.backgroundInfo->borderRadiusCalc[dstLength] = srcLength;           \
-      changed = true;                                                                       \
-    }                                                                                       \
+#define SET_BORDER_UNIT_VAL(dst, src, dstLength, srcLength, offset)                                \
+  {                                                                                                \
+    newLength = NULL;                                                                              \
+    LBRGetBorderValueOrLength(value, offset, &newValue, &newLength);                               \
+    if (!isBorderUnitEqualA(                                                                       \
+            dst, src, _backgroundManager.backgroundInfo.borderRadiusCalc[dstLength], srcLength)) { \
+      dst = src;                                                                                   \
+      _backgroundManager.backgroundInfo.borderRadiusCalc[dstLength] = srcLength;                   \
+      changed = true;                                                                              \
+    }                                                                                              \
   }
 
 #define LYNX_PROP_SET_BORDER_RADIUS(position, index)                                 \

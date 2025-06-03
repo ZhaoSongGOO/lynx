@@ -276,7 +276,6 @@ public class LynxBackgroundImageLayerInfo : NSObject {
 }
 
 public class LynxBackgroundInfo : NSObject {
-  public LynxPlatformLength* LynxBackgroundInfo::borderRadiusCalc[8] borderRadiusCalc;
   public CGFloat LynxBackgroundInfo::outlineWidth outlineWidth;
   public LynxBorderStyle LynxBackgroundInfo::outlineStyle outlineStyle;
   public UIColor* LynxBackgroundInfo::outlineColor outlineColor;
@@ -289,6 +288,7 @@ public class LynxBackgroundInfo : NSObject {
   public LynxBorderStyle LynxBackgroundInfo::borderBottomStyle borderBottomStyle;
   public LynxBorderStyle LynxBackgroundInfo::borderLeftStyle borderLeftStyle;
   public LynxBorderStyle LynxBackgroundInfo::borderRightStyle borderRightStyle;
+  public LynxPlatformLength* _Nullable __strong* _Nonnull LynxBackgroundInfo::borderRadiusCalc borderRadiusCalc;
   public LynxBorderRadii LynxBackgroundInfo::borderRadius borderRadius;
   public UIEdgeInsets LynxBackgroundInfo::borderWidth borderWidth;
   public UIEdgeInsets LynxBackgroundInfo::paddingWidth paddingWidth;

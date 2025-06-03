@@ -42,10 +42,7 @@ static inline bool isBorderUnitEqualA(LynxBorderUnitValue lhs, LynxBorderUnitVal
          ((lLength && [lLength isEqual:rLength]) || (!lLength && !rLength));
 }
 
-@interface LynxBackgroundInfo : NSObject {
- @public
-  LynxPlatformLength* borderRadiusCalc[8];
-}
+@interface LynxBackgroundInfo : NSObject
 
 #pragma mark outline info
 @property(nonatomic, assign) CGFloat outlineWidth;
@@ -65,6 +62,7 @@ static inline bool isBorderUnitEqualA(LynxBorderUnitValue lhs, LynxBorderUnitVal
 @property(nonatomic, assign) LynxBorderStyle borderLeftStyle;
 @property(nonatomic, assign) LynxBorderStyle borderRightStyle;
 
+@property(nonatomic, readonly) LynxPlatformLength* _Nullable __strong* _Nonnull borderRadiusCalc;
 @property(nonatomic, assign) LynxBorderRadii borderRadius;
 @property(nonatomic, assign) UIEdgeInsets borderWidth;
 @property(nonatomic, assign) UIEdgeInsets paddingWidth;
