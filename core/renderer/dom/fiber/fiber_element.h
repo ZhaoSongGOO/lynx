@@ -540,10 +540,7 @@ class FiberElement : public Element, public SelectorItem {
     }
   }
 
-  void ResetStyleSheet() {
-    fragment_ = nullptr;
-    style_sheet_ = nullptr;
-  };
+  void ResetStyleSheet() { style_sheet_ = nullptr; };
 
   void MarkStyleDirty(bool recursive = false);
 
@@ -652,10 +649,6 @@ class FiberElement : public Element, public SelectorItem {
                                    const lepus::Value changing_css_variables);
 
   bool HasElementContainer() { return element_container_ != nullptr; }
-
-  void set_path(const std::string path) { path_ = path; }
-
-  std::string path() { return path_; }
 
   void set_style_sheet_manager(
       const std::shared_ptr<CSSStyleSheetManager>& manager) {
@@ -991,10 +984,8 @@ class FiberElement : public Element, public SelectorItem {
 
   FiberElement* enclosing_none_wrapper_{nullptr};
 
-  std::string path_{};
-  std::shared_ptr<CSSStyleSheetManager> css_style_sheet_manager_{nullptr};
-  CSSFragment* fragment_{nullptr};
-  std::shared_ptr<CSSFragmentDecorator> style_sheet_{nullptr};
+  std::shared_ptr<CSSStyleSheetManager> css_style_sheet_manager_;
+  std::unique_ptr<CSSFragmentDecorator> style_sheet_;
 
   uint32_t dirty_{0};
   uint32_t wrapper_element_count_{false};

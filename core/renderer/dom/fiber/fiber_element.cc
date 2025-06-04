@@ -94,7 +94,6 @@ FiberElement::FiberElement(const FiberElement &element,
     : Element(element, clone_resolved_props),
       invalidation_lists_(element.invalidation_lists_),
       parent_component_unique_id_(element.parent_component_unique_id_),
-      path_(element.path_),
       dirty_(element.dirty_ | kDirtyCreated),
       css_id_(element.css_id_),
       dynamic_style_flags_(element.dynamic_style_flags_),
@@ -329,11 +328,11 @@ CSSFragment *FiberElement::GetRelatedCSSFragment() {
             static_cast<ComponentElement *>(GetParentComponentElement())
                 ->style_sheet_manager();
       }
-      if (!fragment_ && css_style_sheet_manager_) {
-        fragment_ =
-            css_style_sheet_manager_->GetCSSStyleSheetForComponent(css_id_);
-      }
-      style_sheet_ = std::make_shared<CSSFragmentDecorator>(fragment_);
+      CSSFragment *fragment =
+          css_style_sheet_manager_
+              ? css_style_sheet_manager_->GetCSSStyleSheetForComponent(css_id_)
+              : nullptr;
+      style_sheet_ = std::make_unique<CSSFragmentDecorator>(fragment);
     }
     return style_sheet_.get();
   } else {
@@ -1750,7 +1749,7 @@ void FiberElement::PrepareAndGenerateChildrenActions() {
     has_to_store_insert_remove_actions_ = (scoped_children_.size() > 0);
   }
 
-  action_param_list_.clear();
+  action_param_list_.clear_and_shrink();
 
   if (dirty_ & kDirtyReAttachContainer) {
     if (is_fixed_ && !GetEnableFixedNew()) {
@@ -3445,7 +3444,7 @@ void FiberElement::UpdateDynamicElementStyle(uint32_t style,
 
 void FiberElement::SetCSSID(int32_t id) {
   if (css_id_ != id) {
-    style_sheet_ = nullptr;
+    ResetStyleSheet();
     css_id_ = id;
   }
 }
@@ -3465,7 +3464,7 @@ void FiberElement::ResetSheetRecursively(
   }
 
   // reset style sheet.
-  style_sheet_ = nullptr;
+  ResetStyleSheet();
   for (const auto &child : children()) {
     child->ResetSheetRecursively(manager);
   }

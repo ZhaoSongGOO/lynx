@@ -325,9 +325,8 @@ TEST_P(FiberElementTest, ListItemTest) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   EXPECT_FALSE(page->is_layout_only_);
 
@@ -2034,9 +2033,8 @@ TEST_P(FiberElementTest, TestCSSResolveCase01) {
   // parent
   auto page = manager->CreateFiberPage("page", 11);
 
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child
   auto fiber_element = manager->CreateFiberNode("view");
@@ -2192,9 +2190,8 @@ TEST_P(FiberElementTest, TestCSSResolveCase02) {
   // parent
   auto page = manager->CreateFiberPage("page", 11);
 
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child
   auto fiber_element = manager->CreateFiberView();
@@ -2363,9 +2360,8 @@ TEST_P(FiberElementTest, TestOverflowAndLayoutOnly) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   EXPECT_FALSE(page->is_layout_only_);
 
@@ -2480,9 +2476,8 @@ TEST_P(FiberElementTest, TestIsLayoutOnlyUpdate) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   EXPECT_FALSE(page->is_layout_only_);
 
@@ -2550,9 +2545,8 @@ TEST_P(FiberElementTest, TestZIndexRemovedRelated) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child
   auto fiber_element = manager->CreateFiberView();
@@ -2752,11 +2746,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase00) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -2882,11 +2875,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase01) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -2975,11 +2967,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase02) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -3079,11 +3070,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase03) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -3185,11 +3175,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase04) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -3293,11 +3282,10 @@ TEST_P(FiberElementTest, FiberElementInheritCase05) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -3406,11 +3394,10 @@ TEST_P(FiberElementTest, FiberElementDirectionCase) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto root = manager->CreateFiberView();
   root->parent_component_element_ = page.get();
@@ -3503,11 +3490,10 @@ TEST_P(FiberElementTest, FiberElementDirectionCase01) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto root = manager->CreateFiberView();
   root->parent_component_element_ = page.get();
@@ -3620,11 +3606,10 @@ TEST_P(FiberElementTest, FiberElementDirectionCase_logicalCSSProperty) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto root = manager->CreateFiberView();
   root->parent_component_element_ = page.get();
@@ -4930,9 +4915,8 @@ TEST_P(FiberElementTest, GetParentComponentCSSFragment) {
   // parent
   auto page = manager->CreateFiberPage("page", 11);
 
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child component
   base::String component_id("21");
@@ -5020,9 +5004,8 @@ TEST_P(FiberElementTest, UpdateCSSVariables_0) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -5136,9 +5119,8 @@ TEST_P(FiberElementTest, UpdateCSSVariables_1) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -5288,9 +5270,8 @@ TEST_P(FiberElementTest, UpdateCSSVariables_CSS_NG_1) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -5406,9 +5387,8 @@ TEST_P(FiberElementTest, UpdateMultipleCSSVariables) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // parent
   auto parent = manager->CreateFiberView();
@@ -5596,9 +5576,8 @@ TEST_P(FiberElementTest, UpdateCSSVariables) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -5660,7 +5639,7 @@ TEST_P(FiberElementTest, UpdateCSSVariables) {
   auto counter_component = manager->CreateFiberComponent(
       component_id, css_id, entry_name, component_name, path);
   counter_component->style_sheet_ =
-      std::make_shared<CSSFragmentDecorator>(counterIndexFragment.get());
+      std::make_unique<CSSFragmentDecorator>(counterIndexFragment.get());
   counter_component->parent_component_element_ = page.get();
   fiber_element_2->InsertNode(counter_component);
 
@@ -5808,9 +5787,8 @@ TEST_P(FiberElementTest, SetKeyframes) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -5987,9 +5965,8 @@ TEST_P(FiberElementTest, SetMultipleKeyframes) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -6193,9 +6170,8 @@ TEST_P(FiberElementTest, SetKeyframes_new_animator) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -6325,9 +6301,8 @@ TEST_P(FiberElementTest, SetMultipleKeyframes_new_animator) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -6461,12 +6436,11 @@ TEST_P(FiberElementTest, ConsumeAnimationPropBundle) {
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
 
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
   manager->task_wait_timeout_ = 1000;
   // page
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // children
   auto parent = manager->CreateFiberView();
@@ -6568,12 +6542,11 @@ TEST_P(FiberElementTest, ConsumeAnimationPropBundle_new_animator) {
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
 
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
   manager->task_wait_timeout_ = 1000;
   // page
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // children
   auto parent = manager->CreateFiberView();
@@ -6717,9 +6690,8 @@ TEST_P(FiberElementTest, TestOnPseudoStatusChanged) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -7337,9 +7309,8 @@ TEST_P(FiberElementTest, GetCSSKeyframesToken) {
 
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   page->InsertNode(comp);
 
@@ -7368,9 +7339,8 @@ TEST_P(FiberElementTest, SetNativePropsCases) {
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokenMap, keyframes, font_faces);
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -7444,9 +7414,8 @@ TEST_P(FiberElementTest, TestTagSelectorCase) {
       1, dependent_ids, indexTokenMap, keyframes, font_faces);
 
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -7483,9 +7452,8 @@ TEST_P(FiberElementTest, SetNativePropsNormalCases) {
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokenMap, keyframes, font_faces);
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -7531,9 +7499,8 @@ TEST_P(FiberElementTest, SetNativePropsTextCases) {
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokenMap, keyframes, font_faces);
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -7814,9 +7781,8 @@ TEST_P(FiberElementTest, CSSVariableOrderTest) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // view1
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -9149,9 +9115,8 @@ TEST_P(FiberElementTest, CopyListItemTest) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   EXPECT_FALSE(page->is_layout_only_);
 
@@ -9706,11 +9671,10 @@ TEST_P(FiberElementTest, EventTest1) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -9831,11 +9795,10 @@ TEST_P(FiberElementTest, TestGenerateResponseChain0) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
@@ -9939,9 +9902,8 @@ TEST_P(FiberElementTest, TestGenerateResponseChain1) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child
   auto fiber_element = manager->CreateFiberView();
@@ -10199,9 +10161,8 @@ TEST_P(FiberElementTest, ClassChildSelectorTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element = manager->CreateFiberNode("view");
@@ -10298,9 +10259,8 @@ TEST_P(FiberElementTest, TagNotSelectorTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10387,9 +10347,8 @@ TEST_P(FiberElementTest, ClassNotSelectorTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view: class C
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10484,9 +10443,8 @@ TEST_P(FiberElementTest, IdNotSelectorTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view: class C
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10617,9 +10575,8 @@ TEST_P(FiberElementTest, Class_ClassCascadeForceFlushTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10718,9 +10675,8 @@ TEST_P(FiberElementTest, ID_IDCascadeForceFlushTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10819,9 +10775,8 @@ TEST_P(FiberElementTest, Class_IDCascadeForceFlushTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -10920,9 +10875,8 @@ TEST_P(FiberElementTest, ID_ClassCascadeForceFlushTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11029,9 +10983,8 @@ TEST_P(FiberElementTest, ClassChildSelectorCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element = manager->CreateFiberNode("view");
@@ -11132,9 +11085,8 @@ TEST_P(FiberElementTest, TagNotSelectorCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11224,9 +11176,8 @@ TEST_P(FiberElementTest, ClassNotSelectorCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view: class C
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11324,9 +11275,8 @@ TEST_P(FiberElementTest, IdNotSelectorCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view: class C
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11467,9 +11417,8 @@ TEST_P(FiberElementTest, Class_ClassCascadeForceFlushCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11574,9 +11523,8 @@ TEST_P(FiberElementTest, ID_IDCascadeForceFlushCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11681,9 +11629,8 @@ TEST_P(FiberElementTest, Class_IDCascadeForceFlushCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -11788,9 +11735,8 @@ TEST_P(FiberElementTest, ID_ClassCascadeForceFlushCSSParserTest) {
 
   // page
   auto page = manager->CreateFiberPage("page", 0);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // dad view
   auto fiber_element_1 = manager->CreateFiberNode("view");
@@ -12054,12 +12000,11 @@ TEST_P(FiberElementTest, TestFlushRequiredPropagateWithInheritance) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   // page
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // component-parent
   auto parent = manager->CreateFiberView();
@@ -12146,12 +12091,10 @@ TEST_P(FiberElementTest, TestAsyncResolveProperty) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-
   // page
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // parent
   auto parent = manager->CreateFiberView();
@@ -12196,12 +12139,10 @@ TEST_P(FiberElementTest, TestAsyncResolveProperty_ReplaceElements) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-
   // page
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   auto parent = manager->CreateFiberView();
   parent->parent_component_element_ = page.get();
@@ -12292,11 +12233,10 @@ TEST_P(FiberElementTest, TestAsyncResolveProperty_CheckElementResolveStatus02) {
   CSSFontFaceRuleMap fontfaces;
   auto indexFragment = std::make_shared<SharedCSSFragment>(
       1, dependent_ids, indexTokensMap, keyframes, fontfaces);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
 
   auto page = manager->CreateFiberPage("page", 11);
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
   auto element0 = manager->CreateFiberNode("view");
   element0->parent_component_element_ = page.get();
   auto element_before_black = manager->CreateFiberNode("view");
@@ -12546,9 +12486,8 @@ TEST_P(FiberElementTest, TestTransitionInResetMapAndUpdateMap) {
 
   // parent
   auto page = manager->CreateFiberPage("page", 11);
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  page->style_sheet_ = style_sheet;
+  page->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
 
   // child
   auto fiber_element = manager->CreateFiberView();
@@ -13005,14 +12944,13 @@ TEST_P(FiberElementTest, RadonFiberArchFontFace) {
   auto comp = manager->CreateFiberComponent(component_id, css_id, entry_name,
                                             component_name, path);
   comp->arch_type_ = RadonArch;
-  auto style_sheet =
-      std::make_shared<CSSFragmentDecorator>(indexFragment.get());
-  comp->style_sheet_ = style_sheet;
-  EXPECT_FALSE(style_sheet->GetFontFaceRuleMap().empty());
-  EXPECT_FALSE(style_sheet->HasFontFacesResolved());
+  comp->style_sheet_ =
+      std::make_unique<CSSFragmentDecorator>(indexFragment.get());
+  EXPECT_FALSE(comp->style_sheet_->GetFontFaceRuleMap().empty());
+  EXPECT_FALSE(comp->style_sheet_->HasFontFacesResolved());
 
   comp->PrepareForFontFaceIfNeeded();
-  EXPECT_TRUE(style_sheet->HasFontFacesResolved());
+  EXPECT_TRUE(comp->style_sheet_->HasFontFacesResolved());
 }
 
 TEST_P(FiberElementTest, MarkRenderRootElementTest) {
