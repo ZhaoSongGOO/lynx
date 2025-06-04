@@ -5,7 +5,7 @@
 #import "DemoTemplateResourceFetcher.h"
 #import <Lynx/LynxService.h>
 #import <Lynx/LynxServiceDevToolProtocol.h>
-#import <TestBenchReplay/TestBenchEnv.h>
+#import <LynxDevtool/TestBenchEnv.h>
 
 @implementation DemoTemplateResourceFetcher
 

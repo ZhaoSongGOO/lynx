@@ -8,8 +8,8 @@
 #import <Lynx/LynxResourceProvider.h>
 #import <Lynx/LynxTemplateBundle.h>
 #import <Lynx/LynxTemplateBundleOption.h>
-#import <LynxDevtool/LynxInspectorOwner.h>
 #import <third_party/zlib/zlib.h>
+#import "LynxDevtool/LynxInspectorOwner.h"
 #import "TestBenchDynamicComponentFetcher.h"
 #import "TestBenchEntranceViewController.h"
 #import "TestBenchEnv.h"
@@ -408,8 +408,10 @@ static const int kVirtual = 1 << 2;
 }
 
 - (NSString*)replayTimeEnvJScript {
-  NSString* jsonPath = [[NSBundle mainBundle] pathForResource:@"Resource/testBench/testBench"
-                                                       ofType:@"js"];
+  NSString* bundlePath = [[NSBundle mainBundle] pathForResource:@"LynxDebugResources"
+                                                         ofType:@"bundle"];
+  NSBundle* resourceBundle = [NSBundle bundleWithPath:bundlePath];
+  NSString* jsonPath = [resourceBundle pathForResource:@"testBench" ofType:@"js"];
   NSData* data = [NSData dataWithContentsOfFile:jsonPath];
   NSString* script = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 

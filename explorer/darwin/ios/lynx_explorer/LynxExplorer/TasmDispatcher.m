@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 #import "TasmDispatcher.h"
-#import <TestBenchReplay/TestBenchViewController.h>
+#import <LynxDevtool/TestBenchViewController.h>
 #import "AppDelegate.h"
 #import "DemoTemplateResourceFetcher.h"
 #import "LynxViewShellViewController.h"

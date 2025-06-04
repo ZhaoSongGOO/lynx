@@ -102,6 +102,7 @@ podspec_target("devtool_podspec") {
     deps = [
       ":Framework",
       ":LynxCore",
+      ":TestBenchReplay",
       ":UnitTests",
     ]
   } else {
@@ -111,6 +112,7 @@ podspec_target("devtool_podspec") {
       ":LogBoxFramework",
       ":LynxCore",
       ":Native",
+      ":TestBenchReplay",
       ":ThirdParty",
       ":UnitTests",
     ]
@@ -126,6 +128,7 @@ bundle_data("LynxDebugResources") {
     "assets/logbox",
     "assets/lynx_core_dev.js",
     "assets/switchPage",
+    "lynx_test_bench/testBench.js",
   ]
   outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
 }
@@ -343,4 +346,46 @@ subspec_target("UnitTests") {
     "XcodeCoverage",
     "OCMock",
   ]
+}
+
+testbench_public_headers = [
+  "./lynx_test_bench/TestBenchActionManager.h",
+  "./lynx_test_bench/TestBenchDynamicComponentFetcher.h",
+  "./lynx_test_bench/TestBenchEntranceViewController.h",
+  "./lynx_test_bench/TestBenchEnv.h",
+  "./lynx_test_bench/TestBenchOpenUrlModule.h",
+  "./lynx_test_bench/TestBenchPageManager.h",
+  "./lynx_test_bench/TestBenchReplayConfig.h",
+  "./lynx_test_bench/TestBenchReplayDataModule.h",
+  "./lynx_test_bench/TestBenchStateReplayView.h",
+  "./lynx_test_bench/TestBenchTouchHelper.h",
+  "./lynx_test_bench/TestBenchUIHelper.h",
+  "./lynx_test_bench/TestBenchURLAnalyzer.h",
+  "./lynx_test_bench/TestBenchView.h",
+  "./lynx_test_bench/TestBenchViewClient.h",
+  "./lynx_test_bench/TestBenchViewController.h",
+]
+
+subspec_target("TestBenchReplay") {
+  sources = [
+    "./lynx_test_bench/TestBenchActionManager.mm",
+    "./lynx_test_bench/TestBenchDynamicComponentFetcher.m",
+    "./lynx_test_bench/TestBenchEntranceViewController.m",
+    "./lynx_test_bench/TestBenchEnv.m",
+    "./lynx_test_bench/TestBenchOpenUrlModule.m",
+    "./lynx_test_bench/TestBenchPageManager.m",
+    "./lynx_test_bench/TestBenchReplayConfig.m",
+    "./lynx_test_bench/TestBenchReplayDataModule.m",
+    "./lynx_test_bench/TestBenchReplayStateView.m",
+    "./lynx_test_bench/TestBenchUIHelper.m",
+    "./lynx_test_bench/TestBenchURLAnalyzer.m",
+    "./lynx_test_bench/TestBenchView.m",
+    "./lynx_test_bench/TestBenchViewClient.m",
+    "./lynx_test_bench/TestBenchViewController.m",
+  ]
+
+  sources += testbench_public_headers
+
+  public_header_files = testbench_public_headers
+  dependency = [ "LynxDevtool/Framework" ]
 }
