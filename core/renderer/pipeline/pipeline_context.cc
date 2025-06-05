@@ -24,6 +24,14 @@ const std::unique_ptr<PipelineContext> PipelineContext::Create(
   return pipeline_context;
 }
 
+bool PipelineContext::EnableUnifiedPipelineContext() const {
+  if (!options_) {
+    LOGE("options is nullptr");
+    return false;
+  }
+  return options_->enable_unified_pixel_pipeline;
+}
+
 bool PipelineContext::IsResolveRequested() const {
   if (!options_) {
     LOGE("options is nullptr");

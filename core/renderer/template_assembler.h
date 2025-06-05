@@ -242,7 +242,7 @@ class TemplateAssembler final
   };
 
   TemplateAssembler(Delegate& delegate, std::unique_ptr<ElementManager> client,
-                    int32_t instance_id);
+                    int32_t instance_id, bool enable_unified_pipeline = false);
   ~TemplateAssembler() override;
 
   void LoadTemplate(const std::string& url, std::vector<uint8_t> source,

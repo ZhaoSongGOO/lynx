@@ -31,6 +31,8 @@ class PipelineContext {
   const PipelineVersion& GetVersion() const { return version_; }
   std::size_t GetHash();
 
+  bool EnableUnifiedPipelineContext() const;
+
   // Set and get switches for pipeline stage and reload flags.
   bool IsResolveRequested() const;
   bool IsLayoutRequested() const;

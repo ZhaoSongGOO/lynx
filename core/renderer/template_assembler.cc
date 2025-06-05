@@ -202,7 +202,8 @@ TemplateAssembler::Scope::~Scope() {
 
 TemplateAssembler::TemplateAssembler(Delegate& delegate,
                                      std::unique_ptr<ElementManager> client,
-                                     int32_t instance_id)
+                                     int32_t instance_id,
+                                     bool enable_unified_pipeline)
     : page_proxy_(this, std::move(client), &delegate),
       support_component_js_(false),
       target_sdk_version_("null"),
@@ -220,6 +221,7 @@ TemplateAssembler::TemplateAssembler(Delegate& delegate,
       font_scale_(1.0),
       component_loader_(nullptr),
       pipeline_context_manager_(std::make_unique<PipelineContextManager>(
+          enable_unified_pipeline ||
           LynxEnv::GetInstance().EnableUnifiedPixelPipeline())) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_CONSTRUCTOR);
   page_proxy()->element_manager()->SetElementManagerDelegate(
@@ -3299,6 +3301,11 @@ void TemplateAssembler::OnLayoutAfter() {
                     "pipeline_id", pipeline_option->pipeline_id);
               });
 
+  // TODO(@nihao.royal): ResetCurrentPipelineContext here to make flush occurs
+  // after pipeline ends, later we will support a micro task to do flush things.
+  // current pipeline ends, reset current pipeline context to nullptr;
+  pipeline_context_manager_->ResetCurrentPipelineContext();
+
   // TODO(@yangguangzhao.solace): Advance Pipeline Lifecycle State;
   // Execute Flush UI OP;
   if (current_pipeline_context->IsFlushUIOperationRequested()) {
@@ -3314,9 +3321,6 @@ void TemplateAssembler::OnLayoutAfter() {
   }
 
   // TODO(@yangguangzhao.solace): Advance Pipeline Lifecycle State;
-
-  // current pipeline ends, reset current pipeline context to nullptr;
-  pipeline_context_manager_->ResetCurrentPipelineContext();
 }
 
 }  // namespace tasm

@@ -71,6 +71,12 @@ LynxShellBuilder& LynxShellBuilder::SetLazyBundleLoader(
   return *this;
 }
 
+LynxShellBuilder& LynxShellBuilder::SetEnableUnifiedPipeline(
+    bool enable_unified_pipeline) {
+  this->enable_unified_pipeline_ = enable_unified_pipeline;
+  return *this;
+}
+
 LynxShellBuilder& LynxShellBuilder::SetWhiteBoard(
     const std::shared_ptr<lynx::tasm::WhiteBoard>& white_board) {
   this->white_board_ = white_board;
@@ -340,7 +346,8 @@ std::unique_ptr<lynx::shell::LynxEngine> LynxShellBuilder::CreateLynxEngine(
       instance_id, this->element_manager_vsync_monitor_,
       this->enable_diff_without_layout_);
   auto tasm = std::make_shared<lynx::tasm::TemplateAssembler>(
-      *tasm_mediator, std::move(element_manager), instance_id);
+      *tasm_mediator, std::move(element_manager), instance_id,
+      this->enable_unified_pipeline_);
   tasm->SetEnableLayoutOnly(this->enable_layout_only_);
   if (this->loader_ != nullptr) {
     tasm->SetLazyBundleLoader(this->loader_);

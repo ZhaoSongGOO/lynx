@@ -98,6 +98,8 @@ class LynxShellBuilder {
   LynxShellBuilder& SetForceLayoutOnBackgroundThread(
       bool force_layout_on_background_thread);
 
+  LynxShellBuilder& SetEnableUnifiedPipeline(bool enable_unified_pipeline);
+
   LynxShell* build();
 
  private:
@@ -129,6 +131,7 @@ class LynxShellBuilder {
   bool enable_layout_only_{true};
   bool enable_pre_update_data_{false};
   bool enable_diff_without_layout_{false};
+  bool enable_unified_pipeline_{false};
 
   std::string locale_;
 

@@ -9,6 +9,7 @@
 #include "base/include/fml/make_copyable.h"
 #include "base/trace/native/trace_event.h"
 #include "core/renderer/dom/element.h"
+#include "core/renderer/pipeline/pipeline_context.h"
 #include "core/renderer/tasm/config.h"
 #include "core/runtime/piper/js/lynx_runtime.h"
 #include "core/runtime/piper/js/runtime_constant.h"
@@ -133,7 +134,10 @@ void LayoutMediator::OnLayoutAfter(
                         node_manager = node_manager_,
                         page_options = page_options_](auto &engine) mutable {
       options->has_layout = has_layout;
-      HandlePendingLayoutTask(queue, catalyzer, options, page_options);
+      auto tasm = engine->GetTasm();
+      auto *pipeline_context = tasm->GetCurrentPipelineContext();
+      HandlePendingLayoutTask(queue, catalyzer, options, page_options, nullptr,
+                              pipeline_context);
 
       // TODO(chennengshi): Refactor this with LayoutResult;
       engine->GetTasm()->OnLayoutAfter();
@@ -257,7 +261,8 @@ void LayoutMediator::HandlePendingLayoutTask(
     TASMOperationQueue *queue, tasm::Catalyzer *catalyzer,
     std::shared_ptr<tasm::PipelineOptions> options,
     const tasm::PageOptions &page_options,
-    const std::vector<TASMOperationQueue::TASMOperationWrapper> *operations) {
+    const std::vector<TASMOperationQueue::TASMOperationWrapper> *operations,
+    tasm::PipelineContext *current_pipeline_context) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY, LAYOUT_MEDIATOR_HANDLE_PENDING_LAYOUT_TASK);
   if (catalyzer == nullptr) {
     return;
@@ -287,7 +292,13 @@ void LayoutMediator::HandlePendingLayoutTask(
 
   // ensure FinishLayoutOperation in the end before Flush
   catalyzer->painting_context()->FinishLayoutOperation(options);
-  catalyzer->painting_context()->Flush();
+
+  if (current_pipeline_context &&
+      current_pipeline_context->EnableUnifiedPipelineContext()) {
+    current_pipeline_context->RequestFlushUIOperation();
+  } else {
+    catalyzer->painting_context()->Flush();
+  }
 
 #if ENABLE_TRACE_PERFETTO
   catalyzer->DumpElementTree();

@@ -11,6 +11,7 @@
 #include "core/public/page_options.h"
 #include "core/public/pipeline_option.h"
 #include "core/renderer/dom/element_manager.h"
+#include "core/renderer/pipeline/pipeline_context.h"
 #include "core/renderer/ui_wrapper/layout/layout_context.h"
 #include "core/renderer/ui_wrapper/painting/catalyzer.h"
 #include "core/services/timing_handler/timing_handler.h"
@@ -84,7 +85,8 @@ class LayoutMediator : public tasm::LayoutContext::Delegate,
       std::shared_ptr<tasm::PipelineOptions> option,
       const tasm::PageOptions &page_options,
       const std::vector<TASMOperationQueue::TASMOperationWrapper> *operations =
-          nullptr);
+          nullptr,
+      tasm::PipelineContext *current_pipeline_context = nullptr);
   static void HandleListOrComponentUpdated(
       tasm::NodeManager *node_manager,
       const std::shared_ptr<tasm::PipelineOptions> &options);

@@ -188,6 +188,7 @@ LYNX_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder*)aDecoder)
   _enableVSyncAlignedMessageLoop = builder.enableVSyncAlignedMessageLoop;
   _enableAsyncHydration = builder.enableAsyncHydration;
   _enableJSGroupThread = builder.group.enableJSGroupThread;
+  _enableUnifiedPipeline = builder.enableUnifiedPipeline;
   // First prepare env
   if (!builder.enableAsyncCreateRender) {
     [self setUpEnvWidthScreenSize:screenSize];
@@ -350,6 +351,7 @@ LYNX_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder*)aDecoder)
           .SetEnableLayoutOnly(_enableLayoutOnly)
           .SetWhiteBoard(_runtimeOptions.group ? _runtimeOptions.group.whiteBoard : nullptr)
           .SetLazyBundleLoader(loader)
+          .SetEnableUnifiedPipeline(_enableUnifiedPipeline)
           .SetTasmLocale(std::string([[[LynxEnv sharedInstance] locale] UTF8String]))
           .SetEnablePreUpdateData(_enablePreUpdateData)
           .SetLayoutContextPlatformImpl(ui_delegate->CreateLayoutContext())
