@@ -5,37 +5,14 @@
 #import <Lynx/LynxBackgroundUtils.h>
 #import <Lynx/LynxUI.h>
 
-@interface LynxBackgroundLazyInfo : NSObject {
- @public
-  LynxPlatformLength* borderRadiusCalc[8];
-}
-@property(nonatomic, assign) LynxBorderRadii borderRadius;
-@property(nonatomic, assign) UIEdgeInsets paddingWidth;
-@end
-
-@implementation LynxBackgroundLazyInfo
-
-- (instancetype)init {
-  self = [super init];
-  if (self) {
-    memset(borderRadiusCalc, 0, sizeof(LynxPlatformLength*) * 8);
-  }
-  return self;
-}
-@end
-
 @implementation LynxBackgroundInfo {
   LynxBorderStyle _borderStyles[4];
-  LynxBackgroundLazyInfo* _lynxBackgroundLazyInfo;
 }
 
 @dynamic borderTopStyle;
 @dynamic borderRightStyle;
 @dynamic borderBottomStyle;
 @dynamic borderLeftStyle;
-@dynamic borderRadius;
-@dynamic paddingWidth;
-@dynamic borderRadiusCalc;
 
 - (instancetype)init {
   self = [super init];
@@ -43,15 +20,9 @@
     _borderChanged = _BGChangedImage = _BGChangedNoneImage = NO;
     memset(_borderStyles, 0, sizeof(LynxBorderStyle) * 4);
     _outlineStyle = LynxBorderStyleNone;
+    memset(borderRadiusCalc, 0, sizeof(LynxPlatformLength*) * 8);
   }
   return self;
-}
-
-- (LynxBackgroundLazyInfo*)lynxBackgroundLazyInfo {
-  if (!_lynxBackgroundLazyInfo) {
-    _lynxBackgroundLazyInfo = [[LynxBackgroundLazyInfo alloc] init];
-  }
-  return _lynxBackgroundLazyInfo;
 }
 
 #pragma mark outline info
@@ -82,12 +53,12 @@
                                    _borderBottomColor.CGColor, _borderRightColor.CGColor};
   LynxBorderStyles borderStyles = {_borderStyles[LynxBorderTop], _borderStyles[LynxBorderLeft],
                                    _borderStyles[LynxBorderBottom], _borderStyles[LynxBorderRight]};
-  return LynxGetBorderLayerImage(borderStyles, viewSize, self.borderRadius, _borderWidth,
-                                 borderColors, NO);
+  return LynxGetBorderLayerImage(borderStyles, viewSize, _borderRadius, _borderWidth, borderColors,
+                                 NO);
 }
 
 - (CGPathRef)getBorderLayerPathWithSize:(CGSize)viewSize {
-  return LynxCreateBorderCenterPath(viewSize, self.borderRadius, _borderWidth);
+  return LynxCreateBorderCenterPath(viewSize, _borderRadius, _borderWidth);
 }
 
 #pragma mark border colors
@@ -192,30 +163,8 @@
 }
 
 - (void)setBorderRadius:(LynxBorderRadii)borderRadius {
-  self.lynxBackgroundLazyInfo.borderRadius = borderRadius;
+  _borderRadius = borderRadius;
   _borderChanged = _BGChangedNoneImage = _BGChangedImage = YES;
-}
-
-- (LynxBorderRadii)borderRadius {
-  if (!_lynxBackgroundLazyInfo) {
-    return LynxBorderRadiiZero;
-  }
-  return self.lynxBackgroundLazyInfo.borderRadius;
-}
-
-- (LynxPlatformLength* __strong*)borderRadiusCalc {
-  return self.lynxBackgroundLazyInfo->borderRadiusCalc;
-}
-
-- (void)setPaddingWidth:(UIEdgeInsets)paddingWidth {
-  self.lynxBackgroundLazyInfo.paddingWidth = paddingWidth;
-}
-
-- (UIEdgeInsets)paddingWidth {
-  if (!_lynxBackgroundLazyInfo) {
-    return UIEdgeInsetsZero;
-  }
-  return self.lynxBackgroundLazyInfo.paddingWidth;
 }
 
 - (BOOL)updateOutlineWidth:(CGFloat)outlineWidth {
@@ -280,21 +229,25 @@
 
 - (CGRect)getContentRect:(CGRect)paddingRect {
   CGRect contentRect = paddingRect;
-  contentRect.origin.x += self.paddingWidth.left;
-  contentRect.origin.y += self.paddingWidth.top;
-  contentRect.size.width -= (self.paddingWidth.left + self.paddingWidth.right);
-  contentRect.size.height -= (self.paddingWidth.top + self.paddingWidth.bottom);
+  contentRect.origin.x += _paddingWidth.left;
+  contentRect.origin.y += _paddingWidth.top;
+  contentRect.size.width -= (_paddingWidth.left + _paddingWidth.right);
+  contentRect.size.height -= (_paddingWidth.top + _paddingWidth.bottom);
   return contentRect;
 }
 
 - (UIEdgeInsets)getPaddingInsets {
   const UIEdgeInsets paddingInsets = {
-      .top = _borderWidth.top + self.paddingWidth.top,
-      .right = _borderWidth.right + self.paddingWidth.right,
-      .bottom = _borderWidth.bottom + self.paddingWidth.bottom,
-      .left = _borderWidth.left + self.paddingWidth.left,
+      .top = _borderWidth.top + _paddingWidth.top,
+      .right = _borderWidth.right + _paddingWidth.right,
+      .bottom = _borderWidth.bottom + _paddingWidth.bottom,
+      .left = _borderWidth.left + _paddingWidth.left,
   };
   return paddingInsets;
+}
+
+- (LynxBorderRadii)getBorderRadius {
+  return _borderRadius;
 }
 
 - (UIEdgeInsets)getBorderWidth {
@@ -335,7 +288,7 @@
 }
 
 - (BOOL)hasDifferentBorderRadius {
-  return [self hasBorder] && !internalHasSameBorderRadius(self.borderRadius);
+  return !internalHasSameBorderRadius(_borderRadius);
 }
 
 - (BOOL)isSimpleBorder {
