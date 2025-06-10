@@ -8,6 +8,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.memory.PoolConfig;
 import com.facebook.imagepipeline.memory.PoolFactory;
+import com.lynx.devtool.testbench.TestBenchPageManager;
 import com.lynx.explorer.modules.LynxModuleAdapter;
 import com.lynx.explorer.provider.DemoTemplateProvider;
 import com.lynx.explorer.shell.TestBenchDefaultActionCallback;
@@ -20,7 +21,6 @@ import com.lynx.tasm.service.ILynxHttpService;
 import com.lynx.tasm.service.ILynxImageService;
 import com.lynx.tasm.service.ILynxLogService;
 import com.lynx.tasm.service.LynxServiceCenter;
-import com.lynx.testbench.TestBenchPageManager;
 
 public class ExplorerApplication extends Application {
   @Override

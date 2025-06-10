@@ -4,11 +4,11 @@
 
 package com.lynx.explorer.shell;
 
+import com.lynx.devtool.testbench.TestBenchActionCallback;
+import com.lynx.devtool.testbench.TestBenchActionManager;
 import com.lynx.tasm.LynxGroup;
 import com.lynx.tasm.LynxGroup.LynxGroupBuilder;
 import com.lynx.tasm.LynxViewBuilder;
-import com.lynx.testbench.TestBenchActionCallback;
-import com.lynx.testbench.TestBenchActionManager;
 
 public class TestBenchDefaultActionCallback implements TestBenchActionCallback {
   @Override

@@ -1,7 +1,7 @@
 // Copyright 2023 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-package com.lynx.testbench;
+package com.lynx.devtool.testbench;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.lynx.testbench.R;
+import com.example.lynxdevtool.R;
 import java.util.ArrayList;
 
 public class TestBenchReplayStateView extends LinearLayout {

@@ -1,7 +1,7 @@
 // Copyright 2024 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-package com.lynx.testbench;
+package com.lynx.devtool.testbench;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -17,12 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.example.lynxdevtool.R;
 import com.google.gson.Gson;
 import com.lynx.devtoolwrapper.LynxDevtoolGlobalHelper;
 import com.lynx.tasm.LynxEnv;
 import com.lynx.tasm.provider.AbsTemplateProvider;
 import com.lynx.tasm.utils.DisplayMetricsHolder;
-import com.lynx.testbench.R;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;

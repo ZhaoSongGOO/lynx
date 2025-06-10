@@ -1,7 +1,7 @@
 // Copyright 2023 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-package com.lynx.testbench;
+package com.lynx.devtool.testbench;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -24,11 +24,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
+import com.example.lynxdevtool.R;
 import com.lynx.devtoolwrapper.LynxDevtoolGlobalHelper;
 import com.lynx.tasm.LynxGroup;
 import com.lynx.tasm.LynxView;
 import com.lynx.tasm.utils.DisplayMetricsHolder;
-import com.lynx.testbench.R;
 import java.util.ArrayList;
 
 public class TestBenchActivity

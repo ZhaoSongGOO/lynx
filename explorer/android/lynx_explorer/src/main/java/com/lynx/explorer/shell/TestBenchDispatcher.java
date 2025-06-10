@@ -5,8 +5,8 @@ package com.lynx.explorer.shell;
 
 import android.content.Context;
 import android.content.Intent;
-import com.lynx.testbench.TestBenchActivity;
-import com.lynx.testbench.TestBenchEnv;
+import com.lynx.devtool.testbench.TestBenchActivity;
+import com.lynx.devtool.testbench.TestBenchEnv;
 import java.util.Map;
 
 public class TestBenchDispatcher extends TemplateDispatcher {

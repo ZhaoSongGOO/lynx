@@ -15,8 +15,6 @@ include ':LynxProcessor'
 project(":LynxProcessor").projectDir = new File(rootProject.projectDir, '../../platform/android/lynx_processor')
 include ':TestingBase'
 project(":TestingBase").projectDir = new File(rootProject.projectDir, '../../platform/android/testing_base')
-include ':LynxTestBench'
-project(":LynxTestBench").projectDir = new File(rootProject.projectDir, './lynx_test_bench')
 
 include ':lynx_service_log'
 project(":lynx_service_log").projectDir = new File(rootProject.projectDir, '../../platform/android/lynx_service/lynx_service_log')

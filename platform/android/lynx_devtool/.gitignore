@@ -6,5 +6,6 @@
 /libs
 /CMakeLists_impl
 src/main/assets/devtool_switch
+src/main/assets/switchPage
 src/main/assets/logbox
 src/main/res/drawable/notification_cancel.png

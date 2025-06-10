@@ -249,7 +249,8 @@ dependencies {
     implementation project(':LynxAndroid')
     implementation project(':LynxTrace')
 
-    compileOnly('androidx.appcompat:appcompat:1.0.0')
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation('androidx.appcompat:appcompat:1.6.1')
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:4.8.1'
@@ -261,6 +262,7 @@ dependencies {
     
     compileOnly("com.squareup.okhttp3:okhttp:3.10.0")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:3.10.0")
+    androidTestImplementation "androidx.appcompat:appcompat:1.6.1"
 
     api project(':BaseDevtool')
 }

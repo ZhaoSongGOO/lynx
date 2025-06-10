@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-package com.lynx.testbench;
+package com.lynx.devtool.testbench;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
