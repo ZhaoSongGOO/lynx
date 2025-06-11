@@ -23,13 +23,13 @@ The following dependencies are needed:
 
     We recommend using Homebrew to install the OpenJDK distribution called Zulu, which is provided by Azul.
 
-    ```
+    ```bash
     brew install --cask zulu@11
     ```
 
     You can use the following command to confirm whether the installation is successful.
 
-    ```
+    ```bash
     javac --version
     ```
 
@@ -39,13 +39,13 @@ The following dependencies are needed:
 
     On Ubuntu or Debian:
 
-    ```
+    ```bash
     sudo apt install openjdk-11-jdk 
     ```
 
     On RHEL or CentOS:
 
-    ```
+    ```bash
     sudo yum install openjdk-11-jdk 
     ```
 
@@ -53,17 +53,17 @@ The following dependencies are needed:
 
     We recommend using winget to install the OpenJDK distribution.
 
-    ```
+    ```powershell
     winget install -e --id ojdkbuild.openjdk.11.jdk
     ```
 
     You can use the following command to confirm whether the installation is successful.
 
-    ```
+    ```powershell
     javac --version
     ```
 
-    If the installation is successful, the terminal will output javac version number 11.x.xx.
+    If the installation is successful, the terminal will output javac version number 11.x.xx (minor version might vary).
 
 #### Update JAVA_HOME
 
@@ -77,26 +77,29 @@ Add the following statement to your environment configuration file (it may be ~/
 
 - MacOS
 
-    ```
+    ```bash
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
     export PATH=$JAVA_HOME/bin:$PATH
     ```
 
 - Linux 
 
-    ```
+    ```bash
     export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
     export PATH=$JAVA_HOME/bin:$PATH
     ```
 
 - Windows
 
-    ```
-    $JDK_PATH='C:\Program Files\ojdkbuild\java-11-openjdk-11.0.15-1'
+    ```powershell
+    # the minor version of openjdk might vary
+    $JDK_PATH="$env:ProgramFiles\ojdkbuild\java-11-openjdk-11.x.xx"
     [Environment]::SetEnvironmentVariable('JAVA_HOME', $JDK_PATH, 'User')
     $EXISTING_PATH = [Environment]::GetEnvironmentVariable('PATH', 'User')
     [Environment]::SetEnvironmentVariable('PATH', "$JDK_PATH;$EXISTING_PATH", 'User')
     ```
+
+    Manually adding `%ProgramFiles%\ojdkbuild\java-11-openjdk-11.x.xx` to user scope's environment variables Path and JAVA_HOME is also viable.
 
 ### Android Development Environment
 
@@ -106,21 +109,23 @@ Configuring the Android development environment required by Lynx includes the fo
 
 Add the ANDROID_HOME variable to your environment configuration file(maybe ~/.zshrc or ~/.bash_profile or ~/.bashrc, depending on your terminal environment).
 
-If you have installed the Android SDK before, please set ANDROID_HOME to the installation directory of the Android SDK.(If you have previously installed Android SDK by Android Studio, the installation path of the Android SDK is usually located at /Users/your-username/Library/Android/sdk on MacOS and Linux or C:\Users\Admin\AppData\Local\Android\Sdk on Windows)
+If you have installed the Android SDK before, please set ANDROID_HOME to the installation directory of the Android SDK.(If you have previously installed Android SDK by Android Studio, the installation path of the Android SDK is usually located at $HOME/Library/Android/sdk on MacOS and Linux or %USERPROFILE%\AppData\Local\Android\Sdk on Windows)
 
 If you have NOT installed the Android SDK before, you can set ANDROID_HOME to the path where you want the Android SDK to be installed. We have tools to help you install the Android SDK to ANDROID_HOME.
 
 - MacOS and Linux
 
-    ```
+    ```bash
     export ANDROID_HOME=<path-to-android-sdk>
     ```
 
 - Windows
 
-    ```
+    ```powershell
     [Environment]::SetEnvironmentVariable('ANDROID_HOME', $path-to-android-sdk, 'User')
     ```
+
+    Also, manually adding Android SDK's path to user scope's environment variables ANDROID_HOME is also viable.
 
 ### Python Library
 
@@ -153,7 +158,7 @@ After getting the project repository, execute the following commands in the root
 
 - MacOS and Linux
 
-    ```
+    ```bash
     cd src/lynx
     source tools/envsetup.sh
     tools/hab sync .
@@ -161,11 +166,13 @@ After getting the project repository, execute the following commands in the root
 
 - Windows
 
-    ```
+    ```powershell
     cd src\lynx
     tools\envsetup.ps1
     tools\hab.ps1 sync .
     ```
+
+    > notice: tools/envsetup.ps1 will add ninja to user scope's Path environment variable for building.
 
 ### Install the Android Components
 
@@ -174,6 +181,8 @@ Execute the following commands, which will install the Android components requir
 ```
 python3 tools/android_tools/prepare_android_build.py
 ```
+
+> There might be no alias python3 on Windows, use `python` instead.
 
 ## Build and Run
 
@@ -235,3 +244,5 @@ If the adb command is not found, you can add the path to the adb command in the 
     ```
     [Environment]::SetEnvironmentVariable('PATH', "$ANDROID_HOME/platform-tools;$PATH", 'User')
     ```
+
+    Also, manually adding it to user scope's environment variables Path is also viable.
