@@ -21,11 +21,10 @@ using namespace lynx::tasm;
 using namespace lynx::lepus;
 
 @implementation LynxTemplateData {
-  std::shared_ptr<lynx::lepus::Value> value_;
+  lynx::lepus::Value value_;
+  lynx::lepus::Value value_for_js_;
   NSString* _processerName;
   BOOL _readOnly;
-
-  lynx::lepus::Value value_for_js_;
   NSMutableArray* _updateActions;
   BOOL _useBoolLiterals;
 }
@@ -35,7 +34,6 @@ using namespace lynx::lepus;
     _processerName = nil;
     _readOnly = false;
 
-    value_for_js_ = lynx::lepus::Value();
     _updateActions = [[NSMutableArray alloc] init];
   }
   return self;
@@ -157,14 +155,14 @@ lepus_value RecursiveLynxConvertToLepusValue(id data, NSMutableSet* allObjects,
 
 lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
   if (data == nil) return nullptr;
-  return data->value_.get();
+  return &data->value_;
 }
 
 - (instancetype)initWithDictionary:(NSDictionary*)dictionary useBoolLiterals:(BOOL)useBoolLiterals {
   self = [self init];
   _useBoolLiterals = useBoolLiterals;
   if (self) {
-    value_ = std::make_shared<lynx::lepus::Value>(lynx::lepus::Dictionary::Create());
+    value_ = lynx::lepus::Value(lynx::lepus::Dictionary::Create());
     if (dictionary) {
       [self updateWithDictionary:dictionary];
     }
@@ -176,34 +174,32 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
   return [self initWithDictionary:dictionary useBoolLiterals:DEFAULT_USE_BOOL_LITERALS];
 }
 
-- (void)updateWithTemplateData:(LynxTemplateData*)value {
-  if (value == nil) {
+- (void)updateWithTemplateData:(LynxTemplateData*)inputData {
+  if (inputData == nil) {
     return;
   }
 
-  [self addObjectToUpdateActions:[value copyUpdateActions]];
-  [self updateWithLepusValue:LynxGetLepusValueFromTemplateData(value)];
+  [self addObjectToUpdateActions:[inputData copyUpdateActions]];
+  [self updateWithLepusValue:inputData->value_];
 }
 
-- (void)updateWithLepusValue:(lynx::lepus::Value*)value {
+- (void)updateWithLepusValue:(const lynx::lepus::Value&)inputValue {
   if (_readOnly) {
     NSLog(@"can not update readOnly TemplateData");
     return;
   }
-  auto baseValue = value_.get();
-  if (baseValue->IsTable() && baseValue->Table()->IsConst()) {
-    value_ = std::make_shared<lynx::lepus::Value>(lynx::lepus::Value::Clone(*baseValue));
-    baseValue = value_.get();
+  if (value_.IsTable() && value_.Table()->IsConst()) {
+    value_ = lynx::lepus::Value::Clone(value_);
   }
-  if (value->IsTable()) {
-    lynx::lepus::Dictionary* dict = value->Table().get();
+  if (inputValue.IsTable()) {
+    auto dict = inputValue.Table();
     for (auto iter = dict->begin(); iter != dict->end(); iter++) {
       if (iter->second.IsTable()) {
-        lynx::lepus::Value oldValue = baseValue->GetProperty(iter->first);
+        lynx::lepus::Value oldValue = value_.GetProperty(iter->first);
         if (oldValue.IsTable()) {
           if (oldValue.Table()->IsConst()) {
             oldValue = lynx::lepus::Value::Clone(oldValue);
-            baseValue->SetProperty(iter->first, oldValue);
+            value_.SetProperty(iter->first, oldValue);
           }
           lynx::lepus::Dictionary* table = iter->second.Table().get();
           for (auto it = table->begin(); it != table->end(); it++) {
@@ -212,7 +208,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
           continue;
         }
       }
-      baseValue->SetProperty(iter->first, iter->second);
+      value_.SetProperty(iter->first, iter->second);
     }
   }
 }
@@ -231,13 +227,8 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
 }
 
 - (BOOL)checkIsLegalData {
-  lynx::lepus::Value* value = value_.get();
-  if (value == nullptr || value->IsNil() ||
-      (value->IsTable() && value->Table().get()->size() == 0) ||
-      (value->IsArray() && value->Array().get()->size() == 0)) {
-    return false;
-  }
-  return true;
+  return !(value_.IsNil() || (value_.IsTable() && value_.Table()->size() == 0) ||
+           (value_.IsArray() && value_.Array()->size() == 0));
 }
 
 - (void)updateWithJson:(NSString*)json {
@@ -256,7 +247,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
   [self addObjectToUpdateActions:dict];
 
   lepus_value value = LynxConvertToLepusValue(dict, _useBoolLiterals);
-  [self updateWithLepusValue:&value];
+  [self updateWithLepusValue:value];
 }
 
 - (void)setObject:(id)object withKey:(NSString*)key {
@@ -275,7 +266,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
                                                        : [NSNull null]}];
 
   lepus_value value = LynxConvertToLepusValue(object, _useBoolLiterals);
-  value_->Table()->SetValue(lynx::base::String([key UTF8String]), value);
+  value_.Table()->SetValue(lynx::base::String([key UTF8String]), value);
 }
 
 - (void)updateBool:(BOOL)value forKey:(NSString*)key {
@@ -286,7 +277,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
 
   [self addObjectToUpdateActions:@{key != nil ? key : @"" : @(value)}];
 
-  value_->Table()->SetValue(lynx::base::String([key UTF8String]), (bool)value);
+  value_.Table()->SetValue(lynx::base::String([key UTF8String]), (bool)value);
 }
 
 - (void)updateInteger:(NSInteger)value forKey:(NSString*)key {
@@ -297,7 +288,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
 
   [self addObjectToUpdateActions:@{key != nil ? key : @"" : @(value)}];
 
-  value_->Table()->SetValue(lynx::base::String([key UTF8String]), (int64_t)value);
+  value_.Table()->SetValue(lynx::base::String([key UTF8String]), (int64_t)value);
 }
 
 - (void)updateDouble:(CGFloat)value forKey:(NSString*)key {
@@ -308,13 +299,13 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
 
   [self addObjectToUpdateActions:@{key != nil ? key : @"" : @(value)}];
 
-  value_->Table()->SetValue(lynx::base::String([key UTF8String]), (double)value);
+  value_.Table()->SetValue(lynx::base::String([key UTF8String]), (double)value);
 }
 
 - (LynxTemplateData*)deepClone {
   auto base_value = *LynxGetLepusValueFromTemplateData(self);
   LynxTemplateData* data = [[LynxTemplateData alloc] init];
-  data->value_ = std::make_shared<lynx::lepus::Value>(lynx::lepus::Value::Clone(base_value));
+  data->value_ = lynx::lepus::Value::Clone(base_value);
   data->_processerName = self.processorName;
   data->_readOnly = self.isReadOnly;
   [data addObjectToUpdateActions:[self copyUpdateActions]];
@@ -364,7 +355,7 @@ lynx::lepus::Value* LynxGetLepusValueFromTemplateData(LynxTemplateData* data) {
 }
 
 - (NSDictionary*)dictionary {
-  id dict = convertLepusValueToNSObject(*value_);
+  id dict = convertLepusValueToNSObject(value_);
 
   if ([dict isKindOfClass:[NSDictionary class]]) {
     return dict;
