@@ -202,8 +202,7 @@ TemplateAssembler::Scope::~Scope() {
 
 TemplateAssembler::TemplateAssembler(Delegate& delegate,
                                      std::unique_ptr<ElementManager> client,
-                                     int32_t instance_id,
-                                     bool enable_unified_pipeline)
+                                     int32_t instance_id)
     : page_proxy_(this, std::move(client), &delegate),
       support_component_js_(false),
       target_sdk_version_("null"),
@@ -221,7 +220,6 @@ TemplateAssembler::TemplateAssembler(Delegate& delegate,
       font_scale_(1.0),
       component_loader_(nullptr),
       pipeline_context_manager_(std::make_unique<PipelineContextManager>(
-          enable_unified_pipeline ||
           LynxEnv::GetInstance().EnableUnifiedPixelPipeline())) {
   TRACE_EVENT(LYNX_TRACE_CATEGORY, TEMPLATE_ASSEMBLER_CONSTRUCTOR);
   page_proxy()->element_manager()->SetElementManagerDelegate(

@@ -4563,7 +4563,6 @@ public class LynxViewBuilder : NSObject {
   public BOOL LynxViewBuilder::enableLynxResourceServiceLoaderInjection enableLynxResourceServiceLoaderInjection;
   public LynxBackgroundJsRuntimeType LynxViewBuilder::backgroundJsRuntimeType backgroundJsRuntimeType;
   public BOOL LynxViewBuilder::enableBytecode enableBytecode;
-  public BOOL LynxViewBuilder::enableUnifiedPipeline enableUnifiedPipeline;
   public NSString* LynxViewBuilder::bytecodeUrl bytecodeUrl;
   public LynxBackgroundRuntimeOptions* LynxViewBuilder()::lynxBackgroundRuntimeOptions lynxBackgroundRuntimeOptions;
   public id<LynxUIRendererProtocol> LynxViewBuilder()::lynxUIRenderer lynxUIRenderer;
@@ -6176,7 +6175,6 @@ public enum LynxInterceptGestureState {
   public NSString* const KEY_LYNX_RUNTIME_TYPE KEY_LYNX_RUNTIME_TYPE;
   public NSString* const KEY_LYNX_ENABLE_BYTECODE KEY_LYNX_ENABLE_BYTECODE;
   public NSString* const KEY_LYNX_BYTECODE_URL KEY_LYNX_BYTECODE_URL;
-  public NSString* const KEY_LYNX_ENABLE_UNIFIED_PIPELINE KEY_LYNX_ENABLE_UNIFIED_PIPELINE;
   public NSString* const KEY_LYNX_ENABLE_VSYNC_ALIGNED_MESSAGE_LOOP KEY_LYNX_ENABLE_VSYNC_ALIGNED_MESSAGE_LOOP;
 
   typedef struct LBSPathConsumer LBSPathConsumer

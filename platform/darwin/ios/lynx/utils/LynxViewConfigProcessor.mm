@@ -46,11 +46,6 @@
     lynxViewBuilder.enableVSyncAlignedMessageLoop =
         [(NSNumber *)enableVSyncAlignedMessageLoop intValue] == 1;
   }
-
-  id enableUnifiedPipeline = [dictionary objectForKey:KEY_LYNX_ENABLE_UNIFIED_PIPELINE];
-  if ([enableUnifiedPipeline isKindOfClass:NSString.class]) {
-    lynxViewBuilder.enableUnifiedPipeline = [enableUnifiedPipeline isEqual:@"true"];
-  }
 }
 
 @end

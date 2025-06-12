@@ -59,7 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
   BOOL _enableMultiAsyncThread;
   BOOL _enableJSGroupThread;
   BOOL _enableVSyncAlignedMessageLoop;
-  BOOL _enableUnifiedPipeline;
 
   LynxConfig* _config;
   LynxContext* _context;

@@ -90,12 +90,6 @@
  */
 @property(nonatomic, assign) BOOL enableBytecode;
 
-/**
- * Set enableUnifiedPipeline explicitly, It's now used for testing;
- * DO NOT USE IT !!!
- */
-@property(nonatomic, assign) BOOL enableUnifiedPipeline;
-
 /** Only when enableBytecode is YES, it will take effect.
  * Set bytecode key for current lynxview.
  */
