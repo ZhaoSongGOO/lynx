@@ -3135,6 +3135,13 @@ public class LynxTemplateRender : NSObject, <LynxTemplateRenderProtocol>, <Templ
   public LynxPerformanceController * LynxTemplateRender()::performanceController();
   public void LynxTemplateRender()::setAttachLynxPageUICallback:(attachLynxPageUI callback);
   public lynx::piper::ModuleFactoryDarwin * LynxTemplateRender()::getModuleFactory();
+  public void LynxTemplateRender(Helper)::setUpWithBuilder:screenSize:(LynxViewBuilder *builder, [screenSize] CGSize screenSize);
+  public void LynxTemplateRender(Helper)::reset:(int32_t lastInstanceId);
+}
+
+public interface LynxTemplateRender(Helper) {
+  public void LynxTemplateRender(Helper)::setUpWithBuilder:screenSize:(LynxViewBuilder *builder,[screenSize] CGSize screenSize);
+  public void LynxTemplateRender(Helper)::reset:(int32_t lastInstanceId);
 }
 
 public protocol LynxTemplateRenderDelegate-p : <NSObject> {

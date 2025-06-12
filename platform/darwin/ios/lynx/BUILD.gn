@@ -115,6 +115,8 @@ subspec_target("lynx") {
     "LynxTemplateRender+Internal.h",
     "LynxTemplateRender+Protected.h",
     "LynxTemplateRender.mm",
+    "LynxTemplateRenderHelper.h",
+    "LynxTemplateRenderHelper.mm",
     "LynxUIRenderer.h",
     "LynxUIRenderer.mm",
     "LynxUIRendererProtocol.h",
