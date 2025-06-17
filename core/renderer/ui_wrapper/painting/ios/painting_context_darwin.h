@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-#import "LynxPerformanceController.h"
 #include "core/public/prop_bundle.h"
 #include "core/renderer/ui_wrapper/painting/painting_context.h"
 #include "core/shell/dynamic_ui_operation_queue.h"
@@ -55,14 +54,12 @@ class PaintingContextDarwinRef : public PaintingCtxPlatformRef {
                                            float delta_y,
                                            bool is_init_scroll_offset,
                                            bool from_layout) override;
-  void SetNeedMarkPaintEndTiming(const tasm::PipelineID& pipeline_id) override;
-  void SetPerformanceController(LynxPerformanceController* controller) {
-    perf_controller_ = controller;
-  }
+  void SetNeedMarkDrawEndTiming(
+      std::weak_ptr<shell::TimingCollectorPlatform> weak_timing_collector,
+      const tasm::PipelineID& pipeline_id) override;
 
  private:
   __weak LynxUIOwner* uiOwner_;
-  __weak LynxPerformanceController* perf_controller_;
 };
 
 class PaintingContextDarwin : public PaintingCtxPlatformImpl {

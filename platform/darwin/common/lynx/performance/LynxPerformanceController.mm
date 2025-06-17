@@ -131,12 +131,6 @@ std::unique_ptr<std::unordered_map<std::string, std::string>> ConvertNSDictToUno
   }];
 }
 
-- (void)MarkPaintEndTimingIfNeeded {
-  [self ActAsync:^(const std::unique_ptr<performance::PerformanceController>& controller) {
-    controller->GetTimingHandler().SetPaintEndTimingIfNeeded(lynx::base::CurrentTimeMicroseconds());
-  }];
-}
-
 - (void)onPipelineStart:(NSString*)pipelineId
          pipelineOrigin:(NSString*)pipelineOrigin
               timestamp:(uint64_t)timestamp {

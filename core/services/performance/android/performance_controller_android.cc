@@ -151,22 +151,12 @@ static void SetTiming(JNIEnv* env, jobject jcaller, jlong nativePtr,
   });
 }
 
-static void SetPaintEndTimingIfNeeded(JNIEnv* env, jobject jcaller,
-                                      jlong nativePtr, jlong usTimestamp) {
+static void MarkPaintEndTimingIfNeeded(JNIEnv* env, jobject jcaller,
+                                       jlong nativePtr, jlong usTimestamp) {
   if (nativePtr == 0) {
     return;
   }
-  auto* wrapper =
-      reinterpret_cast<lynx::tasm::performance::PerformanceControllerAndroid*>(
-          nativePtr);
-  auto& nativeActorPtr = wrapper->GetActor();
-  if (!nativeActorPtr) {
-    return;
-  }
-  nativeActorPtr->Act([usTimestamp](auto& controller) mutable {
-    controller->GetTimingHandler().SetPaintEndTimingIfNeeded(
-        static_cast<lynx::tasm::timing::TimestampUs>(usTimestamp));
-  });
+  // TODO: implment after timinghandler is ready.
 }
 
 namespace lynx {

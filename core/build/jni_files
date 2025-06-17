@@ -15,6 +15,7 @@ com/lynx/tasm/behavior/PlatformExtraBundleHolder.java
 com/lynx/tasm/behavior/shadow/LayoutNode.java
 com/lynx/tasm/LynxWhiteBoard.java
 com/lynx/tasm/NativeFacade.java
+com/lynx/tasm/NativeFacadeReporter.java
 com/lynx/tasm/TemplateData.java
 com/lynx/tasm/LynxGetUIResult.java
 com/lynx/tasm/utils/CallStackUtil.java

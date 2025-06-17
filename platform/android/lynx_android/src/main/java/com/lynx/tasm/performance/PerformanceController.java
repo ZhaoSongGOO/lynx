@@ -117,7 +117,7 @@ public class PerformanceController implements IMemoryMonitor, ITimingCollector {
       if (mNativePerformanceActorPtr == 0) {
         return;
       }
-      nativeSetPaintEndTimingIfNeeded(mNativePerformanceActorPtr, usTimestamp);
+      nativeMarkPaintEndTimingIfNeeded(mNativePerformanceActorPtr, usTimestamp);
     });
   }
 
@@ -180,5 +180,5 @@ public class PerformanceController implements IMemoryMonitor, ITimingCollector {
       long nativePtr, String category, float sizeKb, String detailKey, String detailValue);
   private native void nativeSetTiming(
       long nativePtr, String key, long usTimestamp, String pipelineID);
-  private native void nativeSetPaintEndTimingIfNeeded(long nativePtr, long usTimestamp);
+  private native void nativeMarkPaintEndTimingIfNeeded(long nativePtr, long usTimestamp);
 }

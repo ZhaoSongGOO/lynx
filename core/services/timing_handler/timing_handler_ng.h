@@ -14,7 +14,6 @@
 #include "base/include/fml/thread.h"
 #include "base/include/vector.h"
 #include "core/public/pipeline_option.h"
-#include "core/services/performance/performance_event_sender.h"
 #include "core/services/timing_handler/timing.h"
 #include "core/services/timing_handler/timing_constants.h"
 #include "core/services/timing_handler/timing_handler_delegate.h"
@@ -29,7 +28,7 @@ namespace tasm {
 namespace timing {
 class TimingHandlerNg {
  public:
-  explicit TimingHandlerNg(performance::PerformanceEventSender *sender);
+  TimingHandlerNg(TimingHandlerDelegate *delegate = nullptr);
 
   // Methods for setting timing information.
   void SetTiming(const TimestampKey &timing_key, const TimestampUs us_timestamp,
@@ -65,7 +64,7 @@ class TimingHandlerNg {
  private:
   // Internal storage and delegate for timing information.
   TimingInfoNg timing_info_;
-  performance::PerformanceEventSender *sender_;
+  TimingHandlerDelegate *delegate_;
   std::unordered_map<PipelineID, base::InlineVector<TimingFlag, 2>>
       pipeline_id_to_timing_flags_map_;
 
@@ -104,7 +103,6 @@ class TimingHandlerNg {
   // Internal methods for checking which pipeline type.
   bool IsLoadBundlePipeline(const PipelineID &pipeline_id) const;
   bool ReadyToDispatch() const;
-  void SendOrPendingPerformanceEntry(std::unique_ptr<lynx::pub::Value> entry);
   void SendPerformanceEntry(std::unique_ptr<lynx::pub::Value> entry);
 
   void ReleasePipelineTiming(const PipelineID &pipeline_id);

@@ -259,9 +259,8 @@ void LynxRuntimeWrapperAndroid::TransitionToFullRuntime() {
 }
 
 void LynxRuntimeWrapperAndroid::DestroyRuntime() {
-  runtime_standalone_bundle_.perf_controller_actor_->Act(
-      [instance_id =
-           runtime_standalone_bundle_.perf_controller_actor_->GetInstanceId()](
+  runtime_standalone_bundle_.timing_actor_->Act(
+      [instance_id = runtime_standalone_bundle_.timing_actor_->GetInstanceId()](
           auto &facade) {
         facade = nullptr;
         lynx::tasm::report::FeatureCounter::Instance()->ClearAndReport(
@@ -269,8 +268,7 @@ void LynxRuntimeWrapperAndroid::DestroyRuntime() {
       });
 
   runtime_standalone_bundle_.native_runtime_facade_->Act(
-      [instance_id =
-           runtime_standalone_bundle_.perf_controller_actor_->GetInstanceId()](
+      [instance_id = runtime_standalone_bundle_.timing_actor_->GetInstanceId()](
           auto &facade) {
         facade = nullptr;
         lynx::tasm::report::FeatureCounter::Instance()->ClearAndReport(

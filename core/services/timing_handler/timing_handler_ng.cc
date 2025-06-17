@@ -15,10 +15,10 @@ namespace lynx {
 namespace tasm {
 namespace timing {
 
-TimingHandlerNg::TimingHandlerNg(performance::PerformanceEventSender* sender)
-    : sender_(sender) {
-  if (sender_) {
-    timing_info_.SetValueFactory(sender_->GetValueFactory());
+TimingHandlerNg::TimingHandlerNg(TimingHandlerDelegate* delegate)
+    : delegate_(delegate) {
+  if (delegate_) {
+    timing_info_.SetValueFactory(delegate_->GetValueFactory());
   }
 }
 
@@ -130,7 +130,7 @@ void TimingHandlerNg::DispatchInitContainerEntryIfNeeded(
   if (init_container_entry == nullptr) {
     return;
   }
-  SendOrPendingPerformanceEntry(std::move(init_container_entry));
+  SendPerformanceEntry(std::move(init_container_entry));
 }
 
 void TimingHandlerNg::DispatchInitLynxViewEntryIfNeeded(
@@ -139,7 +139,7 @@ void TimingHandlerNg::DispatchInitLynxViewEntryIfNeeded(
   if (init_lynxview_entry == nullptr) {
     return;
   }
-  SendOrPendingPerformanceEntry(std::move(init_lynxview_entry));
+  SendPerformanceEntry(std::move(init_lynxview_entry));
 }
 
 void TimingHandlerNg::DispatchInitBackgroundRuntimeEntryIfNeeded(
@@ -149,7 +149,7 @@ void TimingHandlerNg::DispatchInitBackgroundRuntimeEntryIfNeeded(
   if (init_background_runtime_entry == nullptr) {
     return;
   }
-  SendOrPendingPerformanceEntry(std::move(init_background_runtime_entry));
+  SendPerformanceEntry(std::move(init_background_runtime_entry));
 }
 
 void TimingHandlerNg::DispatchMetricFcpEntryIfNeeded(
@@ -161,7 +161,7 @@ void TimingHandlerNg::DispatchMetricFcpEntryIfNeeded(
   if (entry == nullptr) {
     return;
   }
-  SendOrPendingPerformanceEntry(std::move(entry));
+  SendPerformanceEntry(std::move(entry));
 }
 
 void TimingHandlerNg::DispatchMetricFmpEntryIfNeeded(
@@ -189,7 +189,7 @@ void TimingHandlerNg::DispatchMetricFmpEntryIfNeeded(
   if (entry == nullptr) {
     return;
   }
-  SendOrPendingPerformanceEntry(std::move(entry));
+  SendPerformanceEntry(std::move(entry));
 }
 
 void TimingHandlerNg::DispatchPipelineEntryIfNeeded(
@@ -225,11 +225,11 @@ void TimingHandlerNg::DispatchPipelineEntryIfNeeded(
         return;
       }
       pipeline_entry->PushStringToMap(kIdentifier, flag);
-      SendOrPendingPerformanceEntry(std::move(pipeline_entry));
+      SendPerformanceEntry(std::move(pipeline_entry));
       has_dispatched_timing_flags_.emplace(flag);
     }
   } else {
-    SendOrPendingPerformanceEntry(std::move(pipeline_entry));
+    SendPerformanceEntry(std::move(pipeline_entry));
   }
 
   if (!IsLoadBundlePipeline(pipeline_id)) {
@@ -238,7 +238,8 @@ void TimingHandlerNg::DispatchPipelineEntryIfNeeded(
 }
 
 void TimingHandlerNg::FlushPendingPerformanceEntries() {
-  if (!sender_) {
+  if (!delegate_) {
+    pending_dispatched_performance_entries_.clear();
     return;
   }
 
@@ -246,33 +247,24 @@ void TimingHandlerNg::FlushPendingPerformanceEntries() {
       std::move(pending_dispatched_performance_entries_);
   for (auto& entry : temp_pending_entries) {
     if (entry) {
-      SendPerformanceEntry(std::move(entry));
+      delegate_->OnPerformanceEvent(std::move(entry),
+                                    timing_info_.GetEnableEngineCallback());
     }
-  }
-}
-
-void TimingHandlerNg::SendOrPendingPerformanceEntry(
-    std::unique_ptr<lynx::pub::Value> entry) {
-  if (ReadyToDispatch()) {
-    SendPerformanceEntry(std::move(entry));
-  } else {
-    pending_dispatched_performance_entries_.emplace_back(std::move(entry));
   }
 }
 
 void TimingHandlerNg::SendPerformanceEntry(
     std::unique_ptr<lynx::pub::Value> entry) {
-  if (!sender_) {
+  if (!delegate_) {
     return;
   }
-  performance::EventType env = performance::kEventTypePlatform;
-  if (timing_info_.GetEnableEngineCallback()) {
-    env |= performance::kEventTypeMTSEngine;
+
+  if (ReadyToDispatch()) {
+    delegate_->OnPerformanceEvent(std::move(entry),
+                                  timing_info_.GetEnableEngineCallback());
+  } else {
+    pending_dispatched_performance_entries_.emplace_back(std::move(entry));
   }
-  if (timing_info_.GetEnableBackgroundRuntime()) {
-    env |= performance::kEventTypeBTSEngine;
-  }
-  sender_->OnPerformanceEvent(std::move(entry), env);
 }
 
 bool TimingHandlerNg::ReadyToDispatch() const {

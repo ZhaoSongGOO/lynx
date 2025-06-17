@@ -25,8 +25,7 @@
 - (std::weak_ptr<lynx::piper::LynxModuleManager>)moduleManagerPtr;
 - (LynxBackgroundRuntimeOptions *)options;
 - (std::shared_ptr<lynx::shell::LynxActor<lynx::runtime::LynxRuntime>>)runtimeActor;
-- (std::shared_ptr<lynx::shell::LynxActor<lynx::tasm::performance::PerformanceController>>)
-    perfControllerActor;
+- (std::shared_ptr<lynx::shell::LynxActor<lynx::tasm::timing::TimingHandler>>)timingActor;
 - (LynxDevtool *)devtool;
 - (BOOL)attachToLynxView;
 - (void)setRuntimeObserver:
