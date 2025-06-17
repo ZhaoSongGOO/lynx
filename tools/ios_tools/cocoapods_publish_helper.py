@@ -49,6 +49,17 @@ def generate_zip_file(src_dir, tag, component):
                 print(f'Generating zip file for {podspec_name}')
                 run_command(f'export PACKAGE_ENV=prod && geniospkg --output_type zip --repo {podspec_name} --tag {tag} --cache_path lynx --no_json')
 
+def get_enable_trace_param(tag: str) -> str:
+    """
+    Returns '--enable-trace' if the tag ends with '-dev', otherwise returns an empty string.
+    Args:
+        tag (str): The tag string to check.
+    Returns:
+        str: '--enable-trace' if tag ends with '-dev', else ''.
+    """
+    if tag.endswith('-dev'):
+        return '--enable-trace'
+    return ''
 
 def prepare_cocoapods_publish_source(tag, component):
     repo_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -62,7 +73,7 @@ def prepare_cocoapods_publish_source(tag, component):
     replace_lynx_version(tag)
 
     print('2. Generate podspec files')
-    run_command(f'python3 lynx/tools/ios_tools/generate_podspec_scripts_by_gn.py --root {root_path}')
+    run_command(f'python3 lynx/tools/ios_tools/generate_podspec_scripts_by_gn.py --root {root_path} {get_enable_trace_param(tag)}')
     copy_podspec(repo_path, root_path)
 
     print('3. Generate lynx_core.js')
