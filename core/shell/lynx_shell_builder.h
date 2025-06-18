@@ -9,8 +9,9 @@
 #include <string>
 
 #include "core/renderer/ui_wrapper/common/prop_bundle_creator_default.h"
-#include "core/services/performance/performance_controller.h"
+#include "core/services/timing_handler/timing_collector_platform_impl.h"
 #include "core/shell/lynx_shell.h"
+#include "core/shell/native_facade_reporter.h"
 #include "core/shell/tasm_platform_invoker.h"
 
 namespace lynx {
@@ -25,6 +26,9 @@ class LynxShellBuilder {
 
   LynxShellBuilder& SetNativeFacade(
       std::unique_ptr<shell::NativeFacade> native_facade);
+
+  LynxShellBuilder& SetNativeFacadeReporter(
+      std::unique_ptr<shell::NativeFacadeReporter> native_facade_reporter);
 
   LynxShellBuilder& SetUseInvokeUIMethodFunction(
       bool use_invoke_ui_method_func);
@@ -75,13 +79,13 @@ class LynxShellBuilder {
   LynxShellBuilder& SetRuntimeActor(
       const std::shared_ptr<LynxActor<runtime::LynxRuntime>>& runtime_actor);
 
-  LynxShellBuilder& SetPerfControllerActor(
-      const std::shared_ptr<
-          LynxActor<tasm::performance::PerformanceController>>& perf_actor);
+  LynxShellBuilder& SetTimingActor(
+      const std::shared_ptr<LynxActor<tasm::timing::TimingHandler>>&
+          timing_actor);
 
-  LynxShellBuilder& SetPerformanceControllerPlatform(
-      std::unique_ptr<tasm::performance::PerformanceControllerPlatformImpl>
-          performance_controller_platform);
+  LynxShellBuilder& SetTimingCollectorPlatform(
+      const std::shared_ptr<tasm::timing::TimingCollectorPlatformImpl>&
+          timing_collector_platform);
 
   LynxShellBuilder& SetShellOption(const ShellOption& shell_option);
 
@@ -106,6 +110,10 @@ class LynxShellBuilder {
       int32_t instance_id, LynxShell* shell);
 
   std::unique_ptr<shell::NativeFacade> native_facade_;
+  // TODO(nihao.royal): The timing_mediator uses this to send performanceEntry
+  // to the reporter thread. This should be refactored after native_facade_ can
+  // send events to the async thread.
+  std::unique_ptr<shell::NativeFacadeReporter> native_facade_reporter_;
 
   bool use_invoke_ui_method_func_;
 
@@ -142,10 +150,9 @@ class LynxShellBuilder {
       on_engine_actor_created_;
 
   std::shared_ptr<LynxActor<runtime::LynxRuntime>> runtime_actor_{};
-  std::shared_ptr<LynxActor<tasm::performance::PerformanceController>>
-      perf_controller_actor_{};
-  std::unique_ptr<tasm::performance::PerformanceControllerPlatformImpl>
-      performance_controller_platform_;
+  std::shared_ptr<LynxActor<tasm::timing::TimingHandler>> timing_actor_{};
+  std::shared_ptr<tasm::timing::TimingCollectorPlatformImpl>
+      timing_collector_platform_{};
 
   ShellOption shell_option_;
 

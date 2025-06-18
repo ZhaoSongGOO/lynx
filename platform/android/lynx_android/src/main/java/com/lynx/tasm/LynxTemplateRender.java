@@ -66,10 +66,9 @@ import com.lynx.tasm.core.LynxLayoutProxy;
 import com.lynx.tasm.core.resource.LynxResourceLoader;
 import com.lynx.tasm.event.LynxCustomEvent;
 import com.lynx.tasm.eventreport.LynxEventReporter;
-import com.lynx.tasm.performance.PerformanceController;
+import com.lynx.tasm.performance.TimingCollector;
 import com.lynx.tasm.performance.TimingOption;
 import com.lynx.tasm.performance.longtasktiming.LynxLongTaskMonitor;
-import com.lynx.tasm.performance.timing.TimingConstants;
 import com.lynx.tasm.provider.*;
 import com.lynx.tasm.resourceprovider.LynxResourceCallback;
 import com.lynx.tasm.resourceprovider.LynxResourceRequest;
@@ -174,7 +173,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
 
   private LynxInfoReportHelper mReportHelper = new LynxInfoReportHelper();
 
-  private PerformanceController mPerformanceController = new PerformanceController();
+  private TimingCollector mTimingCollector;
 
   // LynxView render phase consts
   @Retention(RetentionPolicy.SOURCE)
@@ -211,6 +210,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   private CleanupReference mCleanupReference = null;
 
   private NativeFacade mNativeFacade;
+  // TODO(nihao.royal): The timing_mediator in c++ uses this to send performanceEntry to the
+  //    reporter thread. This should be refactored after NativeFacadeV2 can send events to the async
+  //    thread.
+  private NativeFacadeReporter mNativeFacadeReporter;
   private long mNativePtr = 0;
 
   @Nullable private LynxResourceLoader mLoader;
@@ -273,8 +276,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     mEnableAirStrictMode = builder.enableAirStrictMode;
     builder.lynxBackgroundRuntime = null;
 
-    if (mLynxView != null) {
-      mLynxView.setTimingCollector(mPerformanceController);
+    if (mLynxView != null && mTimingCollector != null) {
+      mLynxView.setTimingCollector(mTimingCollector, lynxUIRenderer());
     }
     mGenericInfo = new LynxGenericInfo();
     mLynxRuntimeOptions = builder.lynxRuntimeOptions;
@@ -416,10 +419,6 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     return mLynxContext;
   }
 
-  public PerformanceController getPerformanceController() {
-    return mPerformanceController;
-  }
-
   public UIGroup<UIBody.UIBodyView> getLynxRootUI() {
     ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
     return (lynxUIRenderer != null) ? lynxUIRenderer.getLynxRootUI() : null;
@@ -477,13 +476,18 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
   }
 
   private void setMsTiming(final String key, final long msTimestamp, final String pipelineID) {
-    mPerformanceController.setMsTiming(key, msTimestamp, pipelineID);
+    if (mTimingCollector == null) {
+      return;
+    }
+    mTimingCollector.setMsTiming(key, msTimestamp, pipelineID);
   }
 
   public void setExtraTiming(TimingHandler.ExtraTimingInfo extraTiming) {
     String eventName = "LynxTemplateRender.setExtraTiming";
     onTraceEventBegin(eventName);
-    mPerformanceController.setExtraTiming(extraTiming);
+    if (mTimingCollector != null) {
+      mTimingCollector.setExtraTiming(extraTiming);
+    }
     onTraceEventEnd(eventName);
   }
 
@@ -636,6 +640,14 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     if (!mIsDestroyed.compareAndSet(true, false)) {
       return;
     }
+    if (mLynxContext.enableTiming()) {
+      mTimingCollector = new TimingCollector();
+      mTimingCollector.init();
+      if (mLynxView != null) {
+        mLynxView.setTimingCollector(mTimingCollector, lynxUIRenderer());
+      }
+    }
+
     TraceEvent.beginSection(TraceEventDef.TEMPLATE_RENDER_CREATE_TASM);
     // recreate
     LayoutTick layoutTick;
@@ -662,20 +674,22 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
         mLynxContext.getTemplateResourceFetcher(), mLynxContext.getGenericResourceFetcher());
     mLynxContext.setEnableAutoExpose(mLynxViewBuilder.enableAutoExpose);
     mNativeFacade = new NativeFacade(mLynxViewBuilder.enableJSRuntime());
+    mNativeFacadeReporter = new NativeFacadeReporter();
     DisplayMetrics screenMetrics = mLynxContext.getScreenMetrics();
     long runtimeWrapperPtr = (mRuntime == null) ? 0 : mRuntime.getNativePtr();
     long whiteBoardPtr = (mGroup == null) ? 0 : mGroup.getWhiteBoardPtr();
 
     ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
-    lynxUIRenderer.onCreateTemplateRenderer(mLynxContext, mPageLoadListener,
+    lynxUIRenderer.onCreateTemplateRenderer(mLynxContext, mTimingCollector, mPageLoadListener,
         mThreadStrategyForRendering, mLynxViewBuilder.behaviorRegistry, layoutTick);
 
     boolean enableVSyncAligned = mLynxViewBuilder.enableVSyncAlignedMessageLoop
         || LynxEnv.inst().enableVSyncAlignedMessageLoopGlobal();
-    mNativePtr = nativeCreate(runtimeWrapperPtr, mNativeFacade, mPerformanceController, mLoader,
-        mThreadStrategyForRendering.id(), mLynxViewBuilder.enableLayoutSafepoint,
-        mLynxViewBuilder.enableLayoutOnly, screenMetrics.widthPixels, screenMetrics.heightPixels,
-        screenMetrics.density, LynxEnv.inst().getLocale(), mLynxViewBuilder.enableJSRuntime(),
+    mNativePtr = nativeCreate(lynxUIRenderer.getNativeTimingCollectorPtr(), runtimeWrapperPtr,
+        mNativeFacade, mNativeFacadeReporter, mLoader, mThreadStrategyForRendering.id(),
+        mLynxViewBuilder.enableLayoutSafepoint, mLynxViewBuilder.enableLayoutOnly,
+        screenMetrics.widthPixels, screenMetrics.heightPixels, screenMetrics.density,
+        LynxEnv.inst().getLocale(), mLynxViewBuilder.enableJSRuntime(),
         mLynxViewBuilder.enableMultiAsyncThread, mLynxViewBuilder.enablePreUpdateData,
         mAutoConcurrency, enableVSyncAligned, mLynxViewBuilder.enableAsyncHydration,
         mGroup != null && mGroup.enableJSGroupThread(), getJSGroupThreadNameIfNeed(),
@@ -1135,8 +1149,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     // Update the url info to generic info after the shell is rebuilt, because the rebuilt shell
     // generates a new instance ID.
     updateGenericInfoURL(mUrl);
-    if (mPerformanceController != null) {
-      mPerformanceController.setPerformanceObserver(mClientV2);
+    if (mNativeFacadeReporter != null) {
+      mNativeFacadeReporter.setTemplateLoadClientV2(mClientV2);
     }
     if (mNativeFacade != null) {
       mNativeFacade.setTemplateLoadClient(mClient);
@@ -1184,10 +1198,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       return;
     }
 
-    TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+    TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
     long currentTimeMillis = System.currentTimeMillis();
-    timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-    timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
     this.prepareLynxEngineIfNeeded();
     if (mNativePtr != 0) {
       loadTemplate(template, initData, getTemplateUrl(), new TASMCallback(), timingOption);
@@ -1208,10 +1222,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       return;
     }
 
-    TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+    TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
     long currentTimeMillis = System.currentTimeMillis();
-    timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-    timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
     this.prepareLynxEngineIfNeeded();
     if (mNativePtr != 0) {
       loadTemplate(template, templateData, getTemplateUrl(), new TASMCallback(), timingOption);
@@ -1260,10 +1274,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       return;
     }
 
-    TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+    TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
     long currentTimeMillis = System.currentTimeMillis();
-    timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-    timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
     setUrl(baseUrl);
     this.prepareLynxEngineIfNeeded();
     LLog.i(TAG, formatLynxMessage("renderTemplate"));
@@ -1302,10 +1316,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       mLynxContext.setInPreLoad(true);
     }
 
-    TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+    TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
     long currentTimeMillis = System.currentTimeMillis();
-    timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-    timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
     setUrl(metaData.getUrl());
     renderWithLoadMeta(metaData, timingOption);
     LLog.i(TAG, formatLynxMessage("renderTemplate"));
@@ -1607,10 +1621,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     String eventName = "LynxTemplateRender.reloadTemplate";
     onTraceEventBegin(eventName);
 
-    TimingOption timingOption = new TimingOption(TimingConstants.RELOAD_BUNDLE_FROM_NATIVE);
+    TimingOption timingOption = new TimingOption(TimingCollector.RELOAD_BUNDLE_FROM_NATIVE);
     long currentTimeMillis = System.currentTimeMillis();
-    timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-    timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+    timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
     if (prepareUpdateData(data)) {
       if (newGlobalProps != null) {
         globalProps = newGlobalProps;
@@ -1629,7 +1643,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
        * but these two kinds of props' nativePtr are both 0. So have to pass the object to let
        * native know what kind of props Java is passing
        */
-      timingOption.setTiming(TimingConstants.FFI_START, System.currentTimeMillis());
+      timingOption.setTiming(TimingCollector.FFI_START, System.currentTimeMillis());
       nativeReloadTemplate(mNativePtr, mNativeLifecycle, data.getNativePtr(), propsNativePtr,
           data.processorName(), data.isReadOnly(), newGlobalProps, data,
           timingOption.toJavaOnlyMap());
@@ -2128,10 +2142,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
             renderTemplate(template, templateData);
           } else {
             // if loading with LynxLoadMeta.
-            TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+            TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
             long currentTimeMillis = System.currentTimeMillis();
-            timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-            timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+            timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+            timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
             metaData.binaryData = template;
             renderWithLoadMeta(metaData, timingOption);
           }
@@ -2168,10 +2182,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
         renderTemplateBundle(templateBundle, templateData, mUrl);
       } else {
         // if loading with LynxLoadMeta.
-        TimingOption timingOption = new TimingOption(TimingConstants.LOAD_BUNDLE);
+        TimingOption timingOption = new TimingOption(TimingCollector.LOAD_BUNDLE);
         long currentTimeMillis = System.currentTimeMillis();
-        timingOption.setTiming(TimingConstants.PIPELINE_START, currentTimeMillis);
-        timingOption.setTiming(TimingConstants.LOAD_BUNDLE_START, currentTimeMillis);
+        timingOption.setTiming(TimingCollector.PIPELINE_START, currentTimeMillis);
+        timingOption.setTiming(TimingCollector.LOAD_BUNDLE_START, currentTimeMillis);
         metaData.bundle = templateBundle;
         renderWithLoadMeta(metaData, timingOption);
       }
@@ -2421,6 +2435,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     ILynxUIRenderer lynxUIRenderer = lynxUIRenderer();
     mLynxView = lynxView;
     mLynxView.mLynxUIRender = lynxUIRenderer;
+    mLynxView.setTimingCollector(mTimingCollector, lynxUIRenderer);
+
     if (mDevTool != null) {
       mDevTool.attachContext(mContext);
     }
@@ -2428,7 +2444,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     if (mViewLayoutTick != null) {
       mViewLayoutTick.attach(mLynxView);
     }
-    mLynxView.setTimingCollector(mPerformanceController);
+
     lynxUIRenderer.attachLynxView(lynxView, mLynxContext, mContext);
     if (curActivity != null) {
       lynxUIRenderer.setContextFree(false);
@@ -2932,7 +2948,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
       mDevTool.attachToDebugBridge(url);
     }
     PageConfig.attachPageConfig(bundle.getPageConfig(), mLynxContext, lynxUIRenderer());
-    timingOption.setTiming(TimingConstants.FFI_START, System.currentTimeMillis());
+    timingOption.setTiming(TimingCollector.FFI_START, System.currentTimeMillis());
     nativeLoadTemplateBundleByPreParsedData(mNativePtr, mNativeLifecycle, url,
         bundle.getNativePtr(), isPrePainting ? 1 : 0, nativePtr, read_only, processorName, initData,
         enableDumpElementTree, timingOption.toJavaOnlyMap());
@@ -3008,10 +3024,10 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
         LynxServiceCenter.inst().getService(ILynxSecurityService.class);
     if (securityService != null) {
       // Do Security Check;
-      timingOption.setTiming(TimingConstants.VERIFY_TASM_START, System.currentTimeMillis());
+      timingOption.setTiming(TimingCollector.VERIFY_TASM_START, System.currentTimeMillis());
       SecurityResult result = securityService.verifyTASM(
           mLynxView, template, url, ILynxSecurityService.LynxTasmType.TYPE_TEMPLATE);
-      timingOption.setTiming(TimingConstants.VERIFY_TASM_END, System.currentTimeMillis());
+      timingOption.setTiming(TimingCollector.VERIFY_TASM_END, System.currentTimeMillis());
       if (!result.isVerified()) {
         mNativeFacade.reportError(new LynxError(
             LynxSubErrorCode.E_APP_BUNDLE_VERIFY_INVALID_SIGNATURE, result.getErrorMsg()));
@@ -3020,7 +3036,7 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     }
 
     // SecurityService is null, or Verified;
-    timingOption.setTiming(TimingConstants.FFI_START, System.currentTimeMillis());
+    timingOption.setTiming(TimingCollector.FFI_START, System.currentTimeMillis());
     long nativePtr = templateData == null ? 0 : templateData.getNativePtr();
     nativeLoadTemplateByPreParsedData(mNativePtr, mNativeLifecycle, url, template, isPrePainting,
         enableRecycleTemplateBundle, nativePtr, readOnly, processorName, templateData,
@@ -3428,8 +3444,8 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     }
   }
 
-  private static native long nativeCreate(long runtimePtr, Object nativeFacade,
-      Object performanceController, Object loader, int renderStrategy,
+  private static native long nativeCreate(long timingCollector, long runtimePtr,
+      Object nativeFacade, Object nativeFacadeV2, Object loader, int renderStrategy,
       boolean enableLayoutSafePoint, boolean enableLayoutOnly, int screenWidth, int screenHeight,
       float density, String locale, boolean enableJSRuntime, boolean enableMultiAsyncThread,
       boolean enablePreUpdateData, boolean enableAutoConcurrency,

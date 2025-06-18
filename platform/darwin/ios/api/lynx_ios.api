@@ -419,7 +419,7 @@ public class LynxBackgroundRuntime : NSObject {
   public std::weak_ptr< lynx::piper::LynxModuleManager > LynxBackgroundRuntime()::moduleManagerPtr();
   public LynxBackgroundRuntimeOptions * LynxBackgroundRuntime()::options();
   public std::shared_ptr< lynx::shell::LynxActor< lynx::runtime::LynxRuntime > > LynxBackgroundRuntime()::runtimeActor();
-  public std::shared_ptr< lynx::shell::LynxActor< lynx::tasm::performance::PerformanceController > > LynxBackgroundRuntime()::perfControllerActor();
+  public std::shared_ptr< lynx::shell::LynxActor< lynx::tasm::timing::TimingHandler > > LynxBackgroundRuntime()::timingActor();
   public LynxDevtool * LynxBackgroundRuntime()::devtool();
   public BOOL LynxBackgroundRuntime()::attachToLynxView();
   public void LynxBackgroundRuntime()::setRuntimeObserver:(const std::shared_ptr< lynx::piper::InspectorRuntimeObserverNG > &observer);
@@ -3108,7 +3108,6 @@ public class LynxTemplateRender : NSObject, <LynxTemplateRenderProtocol>, <Templ
   public void LynxTemplateRender()::markDirty();
   public id< LynxUIRendererProtocol > LynxTemplateRender()::lynxUIRenderer();
   public LynxUIOwner * LynxTemplateRender()::uiOwner();
-  public LynxPerformanceController * LynxTemplateRender()::performanceController();
   public void LynxTemplateRender()::setAttachLynxPageUICallback:(attachLynxPageUI callback);
   public lynx::piper::ModuleFactoryDarwin * LynxTemplateRender()::getModuleFactory();
 }
@@ -3383,7 +3382,6 @@ public class LynxThreadManager : NSObject {
 public protocol LynxTimingCollectorProtocol-p : <NSObject> {
   public void LynxTimingCollectorProtocol-p::markTiming:pipelineID:(NSString *key,[pipelineID] nullable NSString *pipelineID);
   public void LynxTimingCollectorProtocol-p::setTiming:key:pipelineID:(uint64_t timestamp,[key] NSString *key,[pipelineID] nullable NSString *pipelineID);
-  public void LynxTimingCollectorProtocol-p::MarkPaintEndTimingIfNeeded();
   public void LynxTimingCollectorProtocol-p::resetTimingBeforeReload();
   public void LynxTimingCollectorProtocol-p::onPipelineStart:pipelineOrigin:timestamp:(NSString *pipelineID,[pipelineOrigin] NSString *pipelineOrigin,[timestamp] uint64_t timestamp);
 }

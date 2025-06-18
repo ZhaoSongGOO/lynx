@@ -36,9 +36,7 @@
 #import <Lynx/UIDevice+Lynx.h>
 #import "LynxCallStackUtil.h"
 #import "LynxEnv+Internal.h"
-#import "LynxPerformanceController.h"
 #import "LynxTemplateData+Converter.h"
-#import "LynxTemplateRender+Internal.h"
 #import "LynxTimingConstants.h"
 #import "LynxTouchHandler+Internal.h"
 #import "LynxUI+Gesture.h"
@@ -219,11 +217,20 @@ void PaintingContextDarwinRef::RemoveListItemPaintingNode(int32_t list_id, int32
   [uiOwner_ removeListComponent:list_id componentSign:child_id];
 }
 
-void PaintingContextDarwinRef::SetNeedMarkPaintEndTiming(const tasm::PipelineID& pipeline_id) {
+void PaintingContextDarwinRef::SetNeedMarkDrawEndTiming(
+    std::weak_ptr<shell::TimingCollectorPlatform> weak_timing_collector,
+    const tasm::PipelineID& pipeline_id) {
+  TRACE_EVENT(LYNX_TRACE_CATEGORY, UI_OPERATION_QUEUE_SET_NEED_MARK_TIMING);
+
+  if (auto timing_collector_platform = weak_timing_collector.lock()) {
+    timing_collector_platform->SetNeedMarkDrawEndTiming(pipeline_id);
+  }
+
   // For Darwin, we mock the paint_end timing by dispatching a task to the main queue.
-  LynxPerformanceController* performanceController = perf_controller_;
   dispatch_async(dispatch_get_main_queue(), ^{
-    [performanceController MarkPaintEndTimingIfNeeded];
+    if (auto timing_collector_platform = weak_timing_collector.lock()) {
+      timing_collector_platform->MarkDrawEndTimingIfNeeded();
+    }
   });
 }
 

@@ -14,7 +14,6 @@
 #include "core/public/lynx_resource_loader.h"
 #include "core/public/lynx_runtime_proxy.h"
 #include "core/public/painting_ctx_platform_impl.h"
-#include "core/public/perf_controller_proxy.h"
 namespace lynx {
 namespace tasm {
 
@@ -43,7 +42,6 @@ class UIDelegate {
   virtual void OnLynxCreate(
       const std::shared_ptr<shell::LynxEngineProxy>& engine_proxy,
       const std::shared_ptr<shell::LynxRuntimeProxy>& runtime_proxy,
-      const std::shared_ptr<shell::PerfControllerProxy>& perf_controller_proxy,
       const std::shared_ptr<pub::LynxResourceLoader>& resource_loader,
       const fml::RefPtr<fml::TaskRunner>& ui_task_runner,
       const fml::RefPtr<fml::TaskRunner>& layout_task_runner) = 0;

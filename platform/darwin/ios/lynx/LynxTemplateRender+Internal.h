@@ -12,7 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class LynxError;
 @class LynxEngineProxy;
 @class LynxGestureArenaManager;
-@class LynxPerformanceController;
 
 @protocol LynxUIRendererProtocol;
 
@@ -42,8 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<LynxUIRendererProtocol>)lynxUIRenderer;
 
 - (LynxUIOwner *)uiOwner;
-
-- (LynxPerformanceController *)performanceController;
 
 - (void)setAttachLynxPageUICallback:(attachLynxPageUI)callback;
 
