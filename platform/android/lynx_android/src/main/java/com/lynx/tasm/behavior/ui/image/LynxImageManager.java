@@ -222,7 +222,83 @@ public class LynxImageManager implements Drawable.Callback {
 
   private boolean mIsPixelated = false;
 
-  private final ImageLoadListener mSrcLoadListener = new ImageLoadListener() {
+  private static class ImageRequestHandle implements ImageLoadListener {
+    private final ImageLoadListener mSrcLoadListenerImpl;
+    private final ArrayList<Runnable> mRunnableList = new ArrayList<>();
+
+    public ImageRequestHandle(ImageLoadListener srcLoadListener) {
+      mSrcLoadListenerImpl = srcLoadListener;
+    }
+
+    synchronized public void tryHandleResult() {
+      if (mRunnableList.isEmpty()) {
+        return;
+      }
+
+      for (Runnable runnable : mRunnableList) {
+        runnable.run();
+      }
+
+      mRunnableList.clear();
+    }
+
+    private void handleCallback(Runnable runnable) {
+      if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+        runnable.run();
+      } else {
+        mRunnableList.add(runnable);
+        UIThreadUtils.runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            tryHandleResult();
+          }
+        });
+      }
+    }
+
+    @Override
+    synchronized public void onRequestSubmit(ImageRequestInfo imageRequestInfo) {
+      handleCallback(new Runnable() {
+        @Override
+        public void run() {
+          mSrcLoadListenerImpl.onRequestSubmit(imageRequestInfo);
+        }
+      });
+    }
+
+    @Override
+    synchronized public void onSuccess(
+        @Nullable ImageContent imageContent, ImageRequestInfo requestInfo, ImageInfo imageInfo) {
+      handleCallback(new Runnable() {
+        @Override
+        public void run() {
+          mSrcLoadListenerImpl.onSuccess(imageContent, requestInfo, imageInfo);
+        }
+      });
+    }
+
+    @Override
+    synchronized public void onFailure(int errorCode, Throwable throwable) {
+      handleCallback(new Runnable() {
+        @Override
+        public void run() {
+          mSrcLoadListenerImpl.onFailure(errorCode, throwable);
+        }
+      });
+    }
+
+    @Override
+    synchronized public void onImageMonitorInfo(JSONObject monitorInfo) {
+      handleCallback(new Runnable() {
+        @Override
+        public void run() {
+          mSrcLoadListenerImpl.onImageMonitorInfo(monitorInfo);
+        }
+      });
+    }
+  }
+
+  private final ImageLoadListener mSrcLoadListenerInner = new ImageLoadListener() {
     @Override
     public void onRequestSubmit(ImageRequestInfo imageRequestInfo) {}
 
@@ -286,6 +362,7 @@ public class LynxImageManager implements Drawable.Callback {
     }
   };
 
+  private final ImageRequestHandle mSrcLoadListener = new ImageRequestHandle(mSrcLoadListenerInner);
   private final ImageLoadListener mPlaceHolderListener = new ImageLoadListener() {
     @Override
     public void onRequestSubmit(ImageRequestInfo imageRequestInfo) {}
@@ -704,7 +781,14 @@ public class LynxImageManager implements Drawable.Callback {
       needRequest = false;
     }
     if (needRequest) {
-      tryFetchImageFromService(width, height);
+      int finalWidth = width;
+      int finalHeight = height;
+      LynxThreadPool.postUIOperationTask(new Runnable() {
+        @Override
+        public void run() {
+          tryFetchImageFromService(finalWidth, finalHeight);
+        }
+      });
     }
     TraceEvent.endSection(TraceEventDef.IMAGE_MANAGER_UPDATE_IMAGE_SOURCE);
   }
@@ -885,6 +969,8 @@ public class LynxImageManager implements Drawable.Callback {
   }
 
   public void onDraw(Canvas canvas) {
+    mSrcLoadListener.tryHandleResult();
+
     canvas.save();
     if (mInnerClipPathForBorderRadius != null && mInnerClipPathForBorderRadius.path != null) {
       canvas.clipPath(mInnerClipPathForBorderRadius.path);
