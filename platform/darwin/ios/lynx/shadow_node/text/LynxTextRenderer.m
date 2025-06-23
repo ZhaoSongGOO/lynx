@@ -561,7 +561,7 @@
              [truncatedLineStr
                  rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]
                                  options:NSBackwardsSearch]
-                     .location == truncationPositionIndex - 1) {
+                     .location == truncatedLineStr.length - 1) {
         truncatedLineStr = [truncatedLineStr substringToIndex:truncatedLineStr.length - 1];
         truncationPositionIndex--;
       }

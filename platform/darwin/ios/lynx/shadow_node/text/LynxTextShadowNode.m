@@ -569,14 +569,29 @@ LYNX_REGISTER_SHADOW_NODE("text")
   NSLayoutManager *layoutManager = self.textRenderer.layoutManager;
   NSMutableDictionary *layoutInfo = [NSMutableDictionary new];
   NSMutableArray *lineInfo = [NSMutableArray new];
+  NSRange layoutGlyphRange =
+      [layoutManager glyphRangeForTextContainer:layoutManager.textContainers[0]];
 
   __block NSInteger lineCount = 0;
-  [layoutManager enumerateLineFragmentsForGlyphRange:NSMakeRange(0, self.attrString.length)
+  __block NSRange lastLineGlyphRange;
+  [layoutManager enumerateLineFragmentsForGlyphRange:layoutGlyphRange
                                           usingBlock:^(CGRect rect, CGRect usedRect,
                                                        NSTextContainer *_Nonnull textContainer,
                                                        NSRange glyphRange, BOOL *_Nonnull stop) {
                                             lineCount++;
+                                            lastLineGlyphRange = glyphRange;
                                           }];
+
+  // If the last character is a newline character, the real number of lines needs to be incremented
+  // by one.
+  if ([layoutManager truncatedGlyphRangeInLineFragmentForGlyphAtIndex:lastLineGlyphRange.location]
+          .location == NSNotFound) {
+    NSString *string = self.attrString.string;
+    if (string.length > 0 && [string characterAtIndex:string.length - 1] == '\n') {
+      lineCount++;
+    }
+  }
+
   NSInteger actualLineCount = lineCount;
   if (self.maxLineNum != LynxNumberNotSet && self.maxLineNum < lineCount) {
     actualLineCount = self.maxLineNum;
@@ -584,7 +599,7 @@ LYNX_REGISTER_SHADOW_NODE("text")
 
   __block NSInteger index = 0;
   [layoutManager
-      enumerateLineFragmentsForGlyphRange:NSMakeRange(0, self.attrString.length)
+      enumerateLineFragmentsForGlyphRange:layoutGlyphRange
                                usingBlock:^(CGRect rect, CGRect usedRect,
                                             NSTextContainer *_Nonnull textContainer,
                                             NSRange glyphRange, BOOL *_Nonnull stop) {
@@ -622,6 +637,15 @@ LYNX_REGISTER_SHADOW_NODE("text")
 
                                  index++;
                                }];
+
+  // Add newline info.
+  if ((NSInteger)lineInfo.count < actualLineCount) {
+    NSMutableDictionary *lastLineInfo = [NSMutableDictionary new];
+    [lastLineInfo setObject:@(self.attrString.length) forKey:@"start"];
+    [lastLineInfo setObject:@(self.attrString.length) forKey:@"end"];
+    [lastLineInfo setObject:@(0) forKey:@"ellipsisCount"];
+    [lineInfo addObject:lastLineInfo];
+  }
 
   [layoutInfo setObject:@(actualLineCount) forKey:@"lineCount"];
   [layoutInfo setObject:lineInfo forKey:@"lines"];
