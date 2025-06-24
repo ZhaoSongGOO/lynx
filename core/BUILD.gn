@@ -93,6 +93,13 @@ config("lynx_public_config") {
     defines += [ "JS_ENGINE_TYPE=0" ]
   }
 
+  if (is_harmony) {
+    defines += [ "OS_HARMONY=1" ]
+    if (enable_inspector) {
+      defines += [ "EXPORT_SYMBOLS_FOR_DEVTOOL=1" ]
+    }
+  }
+
   # Attach arguments to turn on Lynx Clang static checker plugin.
   if (enable_lynx_clang_plugin) {
     if (host_os == "linux") {
