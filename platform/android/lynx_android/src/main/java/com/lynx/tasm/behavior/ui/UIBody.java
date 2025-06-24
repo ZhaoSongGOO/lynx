@@ -47,7 +47,6 @@ public class UIBody extends UIGroup<UIBodyView> {
     mBodyView = view;
     initialize();
   }
-
   public UIBodyView getBodyView() {
     return mBodyView;
   }
@@ -57,10 +56,20 @@ public class UIBody extends UIGroup<UIBodyView> {
    * @param view
    */
   public void attachUIBodyView(UIBodyView view) {
+    if (mContext.isEnginePoolEnabled()) {
+      if (mBodyView == view) {
+        return;
+      }
+
+      if (mBodyView != null) {
+        detachUIBodyView();
+      }
+    }
+
     mBodyView = view;
     initialize();
 
-    if (!mContext.isEmbeddedModeOn()) {
+    if (!mContext.isEnginePoolEnabled()) {
       return;
     }
 
@@ -72,6 +81,12 @@ public class UIBody extends UIGroup<UIBodyView> {
     mCreateViewUI = new ArrayList<>();
     attachToView();
     mBodyView.removeExistingViews();
+  }
+
+  @Override
+  protected void attachToView() {
+    mContext.getLynxView().obtainViewAccordingToNodeIndex(mNodeIndex);
+    super.attachToView();
   }
 
   public void detachUIBodyView() {

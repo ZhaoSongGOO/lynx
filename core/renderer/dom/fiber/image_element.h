@@ -38,8 +38,7 @@ class ImageElement : public FiberElement {
   void SetAttributeInternal(const base::String& key,
                             const lepus::Value& value) override;
 
- private:
-  base::String src_;
+  AttrUMap attr_map_;
 };
 
 }  // namespace tasm

@@ -57,7 +57,7 @@ public abstract class UIGroup<T extends ViewGroup>
     super.initialize();
     mDrawingOrderHelper = new ViewGroupDrawingOrderHelper(getView());
     if (mView instanceof IDrawChildHookBinding) {
-      if (mContext.isEmbeddedModeOn()) {
+      if (mContext.isEnginePoolEnabled()) {
         mViewInfo = new ViewInfo(this, mView);
         ((IDrawChildHookBinding) mView).bindDrawChildHook(mViewInfo);
       } else {

@@ -32,14 +32,12 @@ void ImageElement::ConvertToInlineElement() {
 
 void ImageElement::SetAttributeInternal(const base::String& key,
                                         const lepus::Value& value) {
+  // TODO(songshourui.null): we can process image's attribute in C++ to optimize
+  // the performance.
   if (EnableLayoutInElementMode()) {
-    if (key.IsEqual(kSrc)) {
-      src_ = value.String();
-    }
-    // TODO(linxs): other attributes
-  } else {
-    FiberElement::SetAttributeInternal(key, value);
+    attr_map_[key] = value;
   }
+  FiberElement::SetAttributeInternal(key, value);
 }
 
 void ImageElement::BuildAttributedStringProps(size_t start, size_t end,
@@ -50,7 +48,7 @@ void ImageElement::BuildAttributedStringProps(size_t start, size_t end,
 
   // src
   props->AddProp(kPropImageSrc);
-  props->AddProp(src_.c_str());
+  props->AddProp(attr_map_[kSrc].CString());
 
   // mode
   // TBD
