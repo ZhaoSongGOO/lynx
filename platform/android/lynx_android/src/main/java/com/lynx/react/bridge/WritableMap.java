@@ -8,7 +8,6 @@
 package com.lynx.react.bridge;
 
 import androidx.annotation.Keep;
-import java.nio.ByteBuffer;
 
 /**
  * Interface for a mutable map. Used to pass arguments from Java to JS.
@@ -26,6 +25,5 @@ public interface WritableMap extends ReadableMap {
   void putByteArrayAsString(byte[] key, byte[] value);
   void putByteArray(String key, byte[] value);
   void putPiperData(String key, PiperData value);
-  void putByteBuffer(String key, ByteBuffer value);
   void merge(ReadableMap source);
 }

@@ -41,6 +41,8 @@ class QuickjsCacheGenerator : public CacheGenerator {
                        const std::shared_ptr<const Buffer> &buffer,
                        std::string &contents);
 
+  std::string source_url_;
+  std::shared_ptr<const Buffer> src_buffer_;
   bool enable_strip_{false};
 };
 

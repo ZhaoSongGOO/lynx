@@ -17,13 +17,13 @@ namespace lynx {
 namespace piper {
 namespace cache {
 
-V8CacheGenerator::V8CacheGenerator(const std::string &origin_url,
+V8CacheGenerator::V8CacheGenerator(std::string origin_url,
                                    std::shared_ptr<const Buffer> src_buffer)
-    : CacheGenerator(origin_url, std::move(src_buffer)) {}
+    : origin_url_(std::move(origin_url)), src_buffer_(std::move(src_buffer)) {}
 
 std::shared_ptr<Buffer> V8CacheGenerator::GenerateCache() {
   std::string cache;
-  if (!GenerateCacheImpl(source_url_, src_buffer_, cache)) {
+  if (!GenerateCacheImpl(origin_url_, src_buffer_, cache)) {
     return nullptr;
   }
   return std::make_shared<StringBuffer>(std::move(cache));

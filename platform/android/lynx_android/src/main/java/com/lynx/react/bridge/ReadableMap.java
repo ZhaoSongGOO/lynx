@@ -8,7 +8,6 @@
 package com.lynx.react.bridge;
 
 import androidx.annotation.Keep;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 /**
@@ -30,7 +29,6 @@ public interface ReadableMap {
   ReadableMap getMap(String name);
   byte[] getByteArray(String name);
   PiperData getPiperData(String name);
-  ByteBuffer getByteBuffer(String name);
 
   // Get method with default value, this is a safe method
   boolean getBoolean(String name, boolean defaultValue);

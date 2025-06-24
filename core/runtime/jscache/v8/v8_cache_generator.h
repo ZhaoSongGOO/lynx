@@ -16,7 +16,7 @@ namespace cache {
 
 class V8CacheGenerator : public CacheGenerator {
  public:
-  V8CacheGenerator(const std::string &origin_url,
+  V8CacheGenerator(std::string origin_url,
                    std::shared_ptr<const Buffer> src_buffer);
 
   std::shared_ptr<Buffer> GenerateCache() override;
@@ -25,6 +25,9 @@ class V8CacheGenerator : public CacheGenerator {
   bool GenerateCacheImpl(const std::string &origin_url,
                          const std::shared_ptr<const Buffer> &buffer,
                          std::string &contents);
+
+  std::string origin_url_;
+  std::shared_ptr<const Buffer> src_buffer_;
 };
 
 }  // namespace cache

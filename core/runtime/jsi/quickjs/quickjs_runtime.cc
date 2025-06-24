@@ -7,7 +7,6 @@
 #include <chrono>
 #include <limits>
 #include <utility>
-#include <vector>
 
 #include "base/include/timer/time_utils.h"
 #include "base/trace/native/trace_event.h"
@@ -231,11 +230,11 @@ QuickjsRuntime::evaluatePreparedJavaScript(
     defined(QUICKJS_CACHE_UNITTEST)
     const auto source = preparation->Source();
     if (enable_user_bytecode_ && source) {
-      std::vector<std::unique_ptr<cache::CacheGenerator>> generators;
-      generators.push_back(std::make_unique<cache::QuickjsCacheGenerator>(
-          preparation->SourceUrl(), source));
       cache::JsCacheManager::GetQuickjsInstance().RequestCacheGeneration(
-          bytecode_source_url_, std::move(generators), true);
+          preparation->SourceUrl(), bytecode_source_url_, source,
+          std::make_unique<cache::QuickjsCacheGenerator>(
+              preparation->SourceUrl(), source),
+          true);
     }
 #endif
   }

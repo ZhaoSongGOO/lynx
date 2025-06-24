@@ -41,7 +41,7 @@ namespace {
 report_func CacheGenerator::trig_mem_info_event_ = nullptr;
 QuickjsCacheGenerator::QuickjsCacheGenerator(
     std::string source_url, std::shared_ptr<const Buffer> src_buffer)
-    : CacheGenerator(std::move(source_url), std::move(src_buffer)) {}
+    : source_url_(std::move(source_url)), src_buffer_(std::move(src_buffer)) {}
 
 std::shared_ptr<Buffer> QuickjsCacheGenerator::GenerateCache() {
   std::string cache;

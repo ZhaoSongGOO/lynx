@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "base/include/closure.h"
 #include "core/runtime/jscache/js_cache_manager.h"
@@ -20,7 +19,6 @@ class LynxTemplateBundle;
 namespace piper {
 class StringBuffer;
 class Buffer;
-class JsContent;
 enum class JSRuntimeType;
 
 namespace cache {
@@ -41,26 +39,26 @@ class JsCacheManagerFacade {
       JSRuntimeType engine_type,
       std::unique_ptr<BytecodeGenerateCallback> callback = nullptr);
 
+  static void PostCacheGenerationTask(
+      const std::string& source_url, const std::string& template_url,
+      const std::shared_ptr<const StringBuffer>& source,
+      JSRuntimeType engine_type,
+      std::unique_ptr<BytecodeGenerateCallback> callback = nullptr);
+
   static void ClearBytecode(const std::string& template_url,
                             JSRuntimeType engine_type);
 
  private:
-  static void PostCacheGenerationTask(
-      const std::string& template_url,
-      std::unordered_map<std::string, JsContent> js_contents,
-      JSRuntimeType engine_type,
-      std::unique_ptr<BytecodeGenerateCallback> callback = nullptr);
-
   static inline void PostCacheGenerationTaskQuickJs(
-      const std::string& template_url,
-      std::unordered_map<std::string, JsContent> js_contents,
+      const std::string& source_url, const std::string& template_url,
+      const std::shared_ptr<const StringBuffer>& buffer,
       std::unique_ptr<BytecodeGenerateCallback> callback);
 
 #ifdef QUICKJS_CACHE_UNITTEST
  public:
   static inline void (*post_cache_generation_task_quickjs_for_testing)(
-      const std::string& template_url,
-      std::unordered_map<std::string, JsContent> js_contents) = nullptr;
+      const std::string& source_url, const std::string& template_url,
+      const std::shared_ptr<const StringBuffer>& buffer) = nullptr;
 #endif
 };
 }  // namespace cache

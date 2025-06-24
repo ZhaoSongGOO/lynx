@@ -5690,7 +5690,7 @@ public enum ELynxConsumer {
   public FOUNDATION_EXPORT NSInteger const ECLynxExceptionPlatform ECLynxExceptionPlatform;
   public FOUNDATION_EXPORT NSInteger const ECLynxExceptionJNI ECLynxExceptionJNI;
 
-  typedef void(^ LynxBytecodeResponseBlock) (NSString *_Nullable errorMsg, NSDictionary< NSString *, NSData * > *_Nullable buffers)
+  typedef void(^ LynxBytecodeResponseBlock) (NSString *_Nullable errorMsg, NSData *_Nullable buffer)
 
   typedef void(^ LynxTemplateLoadBlock) (id data, NSError *error)
 

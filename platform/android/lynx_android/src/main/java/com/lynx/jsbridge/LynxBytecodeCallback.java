@@ -8,7 +8,6 @@
 package com.lynx.jsbridge;
 
 import androidx.annotation.Keep;
-import com.lynx.react.bridge.JavaOnlyMap;
 import com.lynx.tasm.base.CalledByNative;
 import java.nio.ByteBuffer;
 
@@ -20,10 +19,7 @@ public interface LynxBytecodeCallback {
   /**
    * response when bytecode generate finish.
    * @param errorMsg when success, errorMsg will be null, otherwise is error.
-   * @param buffers when success, this will be bytecode result.Each key is sourceUrl, value is
-   * bytecode result.Note: Please note that the current ByteBuffer is constructed using
-   * DirectByteBuffer. If you need to use it, please make a copy yourself and do not store this
-   * object directly.
+   * @param buffer when success, this will be bytecode result.
    */
-  @CalledByNative void onResponse(String errorMsg, JavaOnlyMap buffers);
+  @Keep @CalledByNative void onResponse(String errorMsg, ByteBuffer buffer);
 }

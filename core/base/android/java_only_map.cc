@@ -143,16 +143,6 @@ void JavaOnlyMap::PushByteArray(const std::string& key, uint8_t* buffer,
                                 jni_byte_array_ref.Get());
 }
 
-void JavaOnlyMap::PushByteBuffer(const std::string& key, jobject byte_buffer) {
-  JNIEnv* env = base::android::AttachCurrentThread();
-  base::android::ScopedLocalJavaRef<jobject> jni_byte_buffer_ref(env,
-                                                                 byte_buffer);
-  base::android::ScopedLocalJavaRef<jstring> jni_key =
-      base::android::JNIConvertHelper::ConvertToJNIStringUTF(env, key);
-  Java_JavaOnlyMap_putByteBuffer(env, jni_object_.Get(), jni_key.Get(),
-                                 jni_byte_buffer_ref.Get());
-}
-
 void JavaOnlyMap::PushJavaValue(const std::string& key,
                                 const JavaValue& value) {
   JavaValue::JavaValueType type = value.type();

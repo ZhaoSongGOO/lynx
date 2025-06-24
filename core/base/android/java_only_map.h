@@ -48,7 +48,6 @@ class JavaOnlyMap {
   void PushArray(const char* key, JavaOnlyArray* value);
   void PushByteArray(const std::string& key, uint8_t* buffer, int length);
   void PushJavaValue(const std::string& key, const JavaValue& value);
-  void PushByteBuffer(const std::string& key, jobject byte_buffer);
 
   bool Contains(const char* key) const;
 

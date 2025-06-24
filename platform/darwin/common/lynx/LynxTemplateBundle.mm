@@ -106,25 +106,17 @@
     std::unique_ptr<lynx::piper::cache::BytecodeGenerateCallback> bytecode_callback = nullptr;
     if (callback) {
       bytecode_callback = std::make_unique<lynx::piper::cache::BytecodeGenerateCallback>(
-          [callback](
-              std::string error_msg,
-              std::unordered_map<std::string, std::shared_ptr<lynx::piper::Buffer>> buffers) {
-            NSString* errorInfo =
+          [callback](std::string error_msg, lynx::piper::Buffer* buffer) {
+            NSString* error_info =
                 error_msg.empty() ? nil : [NSString stringWithUTF8String:error_msg.c_str()];
-            NSMutableDictionary* dict = nil;
-            if (buffers.size() > 0) {
-              dict = [[NSMutableDictionary alloc] init];
-              for (const auto& iter : buffers) {
-                NSData* byteBuffer =
-                    [NSData dataWithBytesNoCopy:const_cast<void*>(
-                                                    static_cast<const void*>(iter.second->data()))
-                                         length:iter.second->size()
-                                   freeWhenDone:NO];
-                [dict setObject:byteBuffer
-                         forKey:[NSString stringWithUTF8String:iter.first.c_str()]];
-              }
+            NSData* byte_buffer = nil;
+            if (buffer) {
+              byte_buffer = [NSData
+                  dataWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(buffer->data()))
+                               length:buffer->size()
+                         freeWhenDone:NO];
             }
-            callback(errorInfo, dict);
+            callback(error_info, byte_buffer);
           });
     }
     lynx::piper::cache::JsCacheManagerFacade::PostCacheGenerationTask(

@@ -13,7 +13,6 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
-#include <vector>
 
 #ifdef QUICKJS_CACHE_UNITTEST
 #include <thread>
@@ -33,9 +32,8 @@
 namespace lynx {
 namespace piper {
 namespace cache {
-using BytecodeGenerateCallback = base::MoveOnlyClosure<
-    void, std::string,
-    std::unordered_map<std::string, std::shared_ptr<Buffer>>>;
+using BytecodeGenerateCallback =
+    base::MoveOnlyClosure<void, std::string, piper::Buffer *>;
 
 class JsCacheManager {
  public:
@@ -54,20 +52,23 @@ class JsCacheManager {
       GENERATE_CACHE_IF_NEEDED,
     } type;
 
-    std::string template_key;                 // template unique key
+    JsFileIdentifier identifier;              // information of source js file
     std::optional<std::string> md5_optional;  // md5 of source js file
-    std::vector<std::unique_ptr<CacheGenerator>>
-        cache_generators;  // functions to generate cache
+    std::shared_ptr<const Buffer> js_buffer;  // source code of js file
+    std::unique_ptr<CacheGenerator>
+        cache_generator;  // function to generate cache
     std::unique_ptr<BytecodeGenerateCallback> callback;
 
-    TaskInfo(TaskType type, std::string template_url,
+    TaskInfo(TaskType type, JsFileIdentifier identifier,
              std::optional<std::string> md5_optional,
-             std::vector<std::unique_ptr<CacheGenerator>> generators,
+             std::shared_ptr<const Buffer> js_buffer,
+             std::unique_ptr<CacheGenerator> generator,
              std::unique_ptr<BytecodeGenerateCallback> callback = nullptr)
         : type(type),
-          template_key(std::move(template_url)),
+          identifier(std::move(identifier)),
           md5_optional(std::move(md5_optional)),
-          cache_generators(std::move(generators)),
+          js_buffer(std::move(js_buffer)),
+          cache_generator(std::move(generator)),
           callback(std::move(callback)) {}
   };
 
@@ -93,16 +94,19 @@ class JsCacheManager {
    *
    * Won't read cache file from storage, so it won't check if the cache file is
    * broken.
+   * @param source_url url of js file.
    * @param template_url url of the template.
-   * @param generators functions to generate cache.
+   * @param buffer source code of js file.
+   * @param cache_generator function to generate cache.
    * @param force If true, it will generate cache file even if it's already
    * existed.
    * @param callback this can be null. If it's not null, when exec finished,
    * pass result to it.
    */
   void RequestCacheGeneration(
-      const std::string &template_url,
-      std::vector<std::unique_ptr<CacheGenerator>> &&generators, bool force,
+      const std::string &source_url, const std::string &template_url,
+      const std::shared_ptr<const Buffer> &buffer,
+      std::unique_ptr<CacheGenerator> cache_generator, bool force,
       std::unique_ptr<BytecodeGenerateCallback> callback = nullptr);
 
   /**
@@ -161,8 +165,9 @@ UNITTEST_PUBLIC:
   /**
    * Generate cache file and save to storage.
    * @param task info of the cache generation task.
+   * @return If the task succeed.
    */
-  void RunTask(TaskInfo &task);
+  bool RunTask(TaskInfo &task);
 
   /**
    * Try to load cache file from storage.

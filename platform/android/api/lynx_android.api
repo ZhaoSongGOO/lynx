@@ -2662,8 +2662,6 @@ public class com::lynx::react::bridge::JavaOnlyMap : HashMap< String, Object >, 
   public void com.lynx.react.bridge.JavaOnlyMap.putByteArrayAsString(byte[] key, byte[] value);
   public void com.lynx.react.bridge.JavaOnlyMap.putByteArray(String key, byte[] value);
   public void com.lynx.react.bridge.JavaOnlyMap.putPiperData(String key, PiperData value);
-  public ByteBuffer com.lynx.react.bridge.JavaOnlyMap.getByteBuffer(String name);
-  public void com.lynx.react.bridge.JavaOnlyMap.putByteBuffer(String key, ByteBuffer value);
   public HashMap< String, Object > com.lynx.react.bridge.JavaOnlyMap.toHashMap();
   public HashMap< String, Object > com.lynx.react.bridge.JavaOnlyMap.asHashMap();
   public JSONObject com.lynx.react.bridge.JavaOnlyMap.toJSONObject();
@@ -3740,7 +3738,7 @@ public enum com::lynx::tasm::LynxBooleanOption {
 }
 
 public interface com::lynx::jsbridge::LynxBytecodeCallback {
-  public void com.lynx.jsbridge.LynxBytecodeCallback.onResponse(String errorMsg, JavaOnlyMap buffers);
+  public void com.lynx.jsbridge.LynxBytecodeCallback.onResponse(String errorMsg, ByteBuffer buffer);
 }
 
 public class com::lynx::tasm::navigator::LynxCardManager : com.lynx.tasm.navigator.LynxRouteLruCache.LynxRouteCacheListener {
@@ -7672,7 +7670,6 @@ public interface com::lynx::react::bridge::ReadableMap {
   public ReadableMap com.lynx.react.bridge.ReadableMap.getMap(String name);
   public byte[] com.lynx.react.bridge.ReadableMap.getByteArray(String name);
   public PiperData com.lynx.react.bridge.ReadableMap.getPiperData(String name);
-  public ByteBuffer com.lynx.react.bridge.ReadableMap.getByteBuffer(String name);
   public boolean com.lynx.react.bridge.ReadableMap.getBoolean(String name, boolean defaultValue);
   public double com.lynx.react.bridge.ReadableMap.getDouble(String name, double defaultValue);
   public int com.lynx.react.bridge.ReadableMap.getInt(String name, int defaultValue);
@@ -7754,7 +7751,6 @@ public enum com::lynx::react::bridge::ReadableType {
   public com.lynx.react.bridge.ReadableType.ByteArray ByteArray;
   public com.lynx.react.bridge.ReadableType.PiperData PiperData;
   public com.lynx.react.bridge.ReadableType.LynxObject LynxObject;
-  public com.lynx.react.bridge.ReadableType.ByteBuffer ByteBuffer;
 }
 
 public class com::lynx::tasm::performance::performanceobserver::ReloadBundleEntry : com.lynx.tasm.performance.performanceobserver.PipelineEntry {
@@ -9731,7 +9727,6 @@ public interface com::lynx::react::bridge::WritableMap {
   public void com.lynx.react.bridge.WritableMap.putByteArrayAsString(byte[] key, byte[] value);
   public void com.lynx.react.bridge.WritableMap.putByteArray(String key, byte[] value);
   public void com.lynx.react.bridge.WritableMap.putPiperData(String key, PiperData value);
-  public void com.lynx.react.bridge.WritableMap.putByteBuffer(String key, ByteBuffer value);
   public void com.lynx.react.bridge.WritableMap.merge(ReadableMap source);
 }
 

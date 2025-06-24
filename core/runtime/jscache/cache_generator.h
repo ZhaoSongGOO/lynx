@@ -6,8 +6,6 @@
 #define CORE_RUNTIME_JSCACHE_CACHE_GENERATOR_H_
 
 #include <memory>
-#include <string>
-#include <utility>
 
 #include "core/runtime/jsi/jsi.h"
 
@@ -16,9 +14,6 @@ namespace piper {
 namespace cache {
 class CacheGenerator {
  public:
-  CacheGenerator(const std::string& source_url,
-                 std::shared_ptr<const Buffer> src_buffer)
-      : source_url_(source_url), src_buffer_(std::move(src_buffer)) {}
   virtual ~CacheGenerator() = default;
 
   virtual std::shared_ptr<Buffer> GenerateCache() = 0;
@@ -26,13 +21,8 @@ class CacheGenerator {
     trig_mem_info_event_ = func;
   }
 
-  const std::string SourceUrl() { return source_url_; }
-  std::shared_ptr<const Buffer>& SrcBuffer() { return src_buffer_; }
-
  protected:
   static report_func trig_mem_info_event_;
-  std::string source_url_;
-  std::shared_ptr<const Buffer> src_buffer_;
 };
 }  // namespace cache
 }  // namespace piper
