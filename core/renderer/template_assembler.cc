@@ -902,6 +902,11 @@ void TemplateAssembler::LoadTemplateInternal(
     std::shared_ptr<PipelineOptions>& pipeline_options,
     base::MoveOnlyClosure<bool, const std::shared_ptr<TemplateEntry>&>
         entry_initializer) {
+#ifdef AS_PLUGIN
+  LOGE("lynx_plugin: load lynx plugin so");
+#else
+  LOGE("lynx_plugin: load original lynx so");
+#endif
   // Trace LoadTemplate
   TRACE_EVENT(
       LYNX_TRACE_CATEGORY_VITALS, LYNX_LOAD_TEMPLATE,
