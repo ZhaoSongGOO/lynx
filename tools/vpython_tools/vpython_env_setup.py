@@ -32,7 +32,8 @@ def create_venv(python_bin_path):
     # TODO(yongjie): delete it later.
     if system != "Windows":
       cmd_prefix = 'unset PYTHONPATH && '
-    cmd = f'{cmd_prefix}"{sys.executable}" -m venv {VENV_PATH}'
+    # Use python.exe to create venv on windows, to avoid the problem that "The system cannot find the file specified".
+    cmd = f'{cmd_prefix}"{sys.executable.replace("python3.exe", "python.exe")}" -m venv {VENV_PATH}'
     subprocess.run(cmd, check=True, shell=True, stderr=subprocess.PIPE)
     return True
   except subprocess.CalledProcessError as e:
