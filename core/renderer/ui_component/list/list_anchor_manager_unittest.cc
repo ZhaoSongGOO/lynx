@@ -43,7 +43,7 @@ class ListAnchorManagerTest : public ::testing::Test {
   std::shared_ptr<::testing::NiceMock<test::MockTasmDelegate>> tasm_mediator;
   fml::RefPtr<list::MockListElement> list_element_ref;
   std::unique_ptr<ListContainerImpl> list_container;
-  ListLayoutManager* layout_mananger;
+  ListLayoutManager* layout_manager;
   ListAnchorManager* anchor_manager;
   ListAdapter* adapter;
   ListChildrenHelper* children_helper;
@@ -73,10 +73,10 @@ class ListAnchorManagerTest : public ::testing::Test {
     list_element_ref->height_ = 500;
     list_container =
         std::make_unique<ListContainerImpl>(list_element_ref.get());
-    layout_mananger = list_container->list_layout_manager_.get();
+    layout_manager = list_container->list_layout_manager_.get();
     adapter = list_container->list_adapter_.get();
     children_helper = list_container->list_children_helper_.get();
-    anchor_manager = layout_mananger->list_anchor_manager_.get();
+    anchor_manager = layout_manager->list_anchor_manager_.get();
     list::DiffResult diff_result{
         .item_keys = {"A_0", "B_1", "C_2", "D_3", "E_4", "F_5", "G_6", "H_7",
                       "I_8", "J_9"},
@@ -98,7 +98,7 @@ TEST_F(ListAnchorManagerTest, IsValidInitialScrollIndex) {
 }
 
 TEST_F(ListAnchorManagerTest, FindAnchor1) {
-  layout_mananger->SetContentOffset(0);
+  layout_manager->SetContentOffset(0);
   ListAnchorManager::AnchorInfo anchor_info;
   anchor_manager->RetrieveAnchorInfoBeforeLayout(anchor_info,
                                                  list::kInvalidIndex);
@@ -107,7 +107,7 @@ TEST_F(ListAnchorManagerTest, FindAnchor1) {
 }
 
 TEST_F(ListAnchorManagerTest, FindAnchor2) {
-  layout_mananger->SetContentOffset(0);
+  layout_manager->SetContentOffset(0);
   ListAnchorManager::AnchorInfo anchor_info_0;
   anchor_manager->RetrieveAnchorInfoBeforeLayout(anchor_info_0,
                                                  list::kInvalidIndex);
@@ -129,14 +129,14 @@ TEST_F(ListAnchorManagerTest, FindAnchor2) {
 }
 
 TEST_F(ListAnchorManagerTest, FindAnchor3) {
-  layout_mananger->SetContentOffset(0);
+  layout_manager->SetContentOffset(0);
   ListAnchorManager::AnchorInfo anchor_info_0;
   anchor_manager->RetrieveAnchorInfoBeforeLayout(anchor_info_0,
                                                  list::kInvalidIndex);
   EXPECT_TRUE(anchor_info_0.valid_);
   EXPECT_EQ(anchor_info_0.index_, 0);
 
-  layout_mananger->LayoutInvalidItemHolder(0);
+  layout_manager->LayoutInvalidItemHolder(0);
   children_helper->ForEachChild([](ItemHolder* item_holder) {
     if (item_holder->index_ < 5) {
       item_holder->dirty_ = false;
@@ -145,10 +145,10 @@ TEST_F(ListAnchorManagerTest, FindAnchor3) {
     }
     return false;
   });
-  layout_mananger->content_size_ = layout_mananger->GetTargetContentSize();
-  layout_mananger->content_offset_ = 150.f;
+  layout_manager->content_size_ = layout_manager->GetTargetContentSize();
+  layout_manager->content_offset_ = 150.f;
   children_helper->UpdateOnScreenChildren(
-      layout_mananger->list_orientation_helper_.get(), 150.f);
+      layout_manager->list_orientation_helper_.get(), 150.f);
 
   list::DiffResult diff_result{
       .item_keys = {"A_0", "B_1", "C_2", "D_3", "E_4", "F_5", "G_6", "H_7",
@@ -204,8 +204,8 @@ TEST_F(ListAnchorManagerTest, RetrieveAnchorInfoBeforeLayout2) {
 
 TEST_F(ListAnchorManagerTest, AdjustContentOffsetWithAnchor1) {
   ListAnchorManager::AnchorInfo anchor_info;
-  layout_mananger->LayoutInvalidItemHolder(0);
-  layout_mananger->content_size_ = layout_mananger->GetTargetContentSize();
+  layout_manager->LayoutInvalidItemHolder(0);
+  layout_manager->content_size_ = layout_manager->GetTargetContentSize();
   anchor_info.valid_ = true;
   anchor_info.index_ = 2;
   anchor_info.item_holder_ =
@@ -213,9 +213,9 @@ TEST_F(ListAnchorManagerTest, AdjustContentOffsetWithAnchor1) {
   anchor_info.start_offset_ = 200.f;
   anchor_info.start_alignment_delta_ = 20.f;
   anchor_manager->AdjustContentOffsetWithAnchor(
-      anchor_info, layout_mananger->content_offset_);
+      anchor_info, layout_manager->content_offset_);
   EXPECT_TRUE(base::FloatsEqual(
-      layout_mananger->content_offset_,
+      layout_manager->content_offset_,
       anchor_info.start_offset_ - anchor_info.start_alignment_delta_));
 }
 
@@ -223,11 +223,79 @@ TEST_F(ListAnchorManagerTest, AdjustContentOffsetWithAnchor2) {
   ListAnchorManager::AnchorInfo anchor_info;
   anchor_info.Reset();
   float content_offset = 100.f;
-  layout_mananger->LayoutInvalidItemHolder(0);
-  layout_mananger->content_size_ = layout_mananger->GetTargetContentSize();
+  layout_manager->LayoutInvalidItemHolder(0);
+  layout_manager->content_size_ = layout_manager->GetTargetContentSize();
   anchor_manager->AdjustContentOffsetWithAnchor(anchor_info, content_offset);
   EXPECT_TRUE(
-      base::FloatsEqual(layout_mananger->content_offset_, content_offset));
+      base::FloatsEqual(layout_manager->content_offset_, content_offset));
+}
+
+TEST_F(ListAnchorManagerTest, AdjustAnchorInfoAfterLayout0) {
+  // Test valid initail scroll index
+  int estimated_height_px = 50;
+  int item_count = 10;
+  list::DiffResult diff_result{
+      .item_keys = {"A_0", "B_1", "C_2", "D_3", "E_4", "F_5", "G_6", "H_7",
+                    "I_8", "J_9"},
+      .update_from = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+      .update_to = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+      .estimated_height_pxs = std::vector<int>(item_count, estimated_height_px),
+  };
+  adapter->UpdateDataSource(lepus_value(diff_result.GenerateDiffResult()));
+  adapter->UpdateItemHolderToLatest(children_helper);
+  list_element_ref->width_ = 400;
+  list_element_ref->height_ = 450;
+  // Set initial scroll index.
+  int initial_scroll_index = 2;
+  anchor_manager->SetInitialScrollIndex(initial_scroll_index);
+  ListAnchorManager::AnchorInfo anchor_info;
+  anchor_manager->RetrieveAnchorInfoBeforeLayout(anchor_info,
+                                                 list::kInvalidIndex);
+  layout_manager->LayoutInvalidItemHolder(0);
+  layout_manager->content_size_ = layout_manager->GetTargetContentSize();
+  anchor_manager->AdjustAnchorInfoAfterLayout(anchor_info);
+  EXPECT_TRUE(base::FloatsEqual(layout_manager->content_offset_,
+                                estimated_height_px * initial_scroll_index));
+  EXPECT_TRUE(base::FloatsEqual(anchor_info.start_offset_,
+                                estimated_height_px * initial_scroll_index));
+}
+
+TEST_F(ListAnchorManagerTest, AdjustAnchorInfoAfterLayout1) {
+  // Test valid scroll to position
+  int estimated_height_px = 50;
+  int item_count = 10;
+  list::DiffResult diff_result{
+      .item_keys = {"A_0", "B_1", "C_2", "D_3", "E_4", "F_5", "G_6", "H_7",
+                    "I_8", "J_9"},
+      .update_from = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+      .update_to = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+      .estimated_height_pxs = std::vector<int>(item_count, estimated_height_px),
+  };
+  adapter->UpdateDataSource(lepus_value(diff_result.GenerateDiffResult()));
+  adapter->UpdateItemHolderToLatest(children_helper);
+  list_element_ref->width_ = 400;
+  list_element_ref->height_ = 450;
+  // Set scroll to position.
+  int scroll_to_position_index = 2;
+  int scrolling_offset = 0;
+  anchor_manager->ResetScrollInfo();
+  anchor_manager->InvalidateScrollInfoPosition();
+  anchor_manager->InitScrollToPositionParam(
+      adapter->GetItemHolderForIndex(scroll_to_position_index),
+      scroll_to_position_index, scrolling_offset,
+      static_cast<int>(list::ScrollingInfoAlignment::kTop), false);
+  ListAnchorManager::AnchorInfo anchor_info;
+  anchor_manager->RetrieveAnchorInfoBeforeLayout(anchor_info,
+                                                 list::kInvalidIndex);
+  layout_manager->LayoutInvalidItemHolder(0);
+  layout_manager->content_size_ = layout_manager->GetTargetContentSize();
+  anchor_manager->AdjustAnchorInfoAfterLayout(anchor_info);
+  EXPECT_TRUE(
+      base::FloatsEqual(layout_manager->content_offset_,
+                        estimated_height_px * scroll_to_position_index));
+  EXPECT_TRUE(
+      base::FloatsEqual(anchor_info.start_offset_,
+                        estimated_height_px * scroll_to_position_index));
 }
 
 }  // namespace testing

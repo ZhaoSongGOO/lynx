@@ -52,24 +52,26 @@ void ListAnchorManager::AdjustAnchorInfoAfterLayout(AnchorInfo& anchor_info) {
     //      Use initial-scroll-index as anchor and fill a screen size area
     float start =
         list_orientation_helper_->GetDecoratedStart(anchor_info.item_holder_);
-    list_layout_manager_->SetContentOffset(start);
+    list_layout_manager_->SetContentOffset(start, false);
     anchor_info.start_offset_ = start;
   } else if (scrolling_info_.IsValidNonSmoothScrollTarget()) {
     // un-smoothed scroll
     //      Use target index as anchor and fill a screen size area
     float start =
         list_orientation_helper_->GetDecoratedStart(anchor_info.item_holder_);
-    list_layout_manager_->SetContentOffset(start);
+    list_layout_manager_->SetContentOffset(start, false);
     anchor_info.start_offset_ = start;
   } else {
-    // Note: Need update anchor layout coordinate after invoking
+    // Note: The anchor_info.start_offset_ is firstly updated in FindAnchor()
+    // which is invoked before LayoutInvalidItemHolder(). Here need update
+    // anchor layout coordinate(start_offset_) after invoking
     // LayoutInvalidItemHolder(0) because it is possible to insert or delete
     // some items before the anchor.
     float coordinate =
         list_orientation_helper_->GetDecoratedStart(anchor_info.item_holder_);
+    float content_offset = list_layout_manager_->content_offset();
     list_layout_manager_->SetContentOffset(
-        list_layout_manager_->content_offset() + coordinate -
-        anchor_info.start_offset_);
+        content_offset + coordinate - anchor_info.start_offset_, false);
     // Rest anchor's coordinate
     anchor_info.start_offset_ = coordinate;
   }

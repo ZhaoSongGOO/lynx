@@ -5,6 +5,7 @@
 #ifndef CORE_RENDERER_UI_COMPONENT_LIST_LIST_LAYOUT_MANAGER_H_
 #define CORE_RENDERER_UI_COMPONENT_LIST_LIST_LAYOUT_MANAGER_H_
 
+#include <algorithm>
 #include <memory>
 
 #include "base/include/float_comparison.h"
@@ -116,8 +117,10 @@ class ListLayoutManager {
   }
   float content_offset() const { return content_offset_; }
   // Only use this in UpdateListLayoutManager.
-  void SetContentOffset(float content_offset) {
-    content_offset_ = ClampContentOffsetToEdge(content_offset, content_size_);
+  void SetContentOffset(float content_offset, bool with_clamp = true) {
+    content_offset_ =
+        with_clamp ? ClampContentOffsetToEdge(content_offset, content_size_)
+                   : std::max(content_offset, 0.f);
   }
   bool IsHorizontal() const {
     return orientation_ == list::Orientation::kHorizontal;
