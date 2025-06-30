@@ -173,9 +173,11 @@ void TasmMediator::OnPipelineStart(
 }
 
 void TasmMediator::ResetMediatorActor(
+    const std::shared_ptr<LynxActor<tasm::LayoutContext>>& layout_actor,
     const std::shared_ptr<LynxActor<NativeFacade>>& facade_actor,
     const std::shared_ptr<LynxActor<tasm::performance::PerformanceController>>&
         perf_actor) {
+  layout_actor_ = layout_actor;
   facade_actor_ = facade_actor;
   perf_actor_ = perf_actor;
 }

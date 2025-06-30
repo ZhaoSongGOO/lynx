@@ -180,6 +180,12 @@ public class LynxUIOwner {
     }
   }
 
+  public void attachLynxContext(LynxContext context) {
+    if (context != null) {
+      mContext = context;
+    }
+  }
+
   public void attachNativeFacade(NativeFacade nativeFacade) {
     mNativeFacade = new WeakReference<>(nativeFacade);
   }
@@ -1009,11 +1015,11 @@ public class LynxUIOwner {
   }
 
   public void destroy(int parentTag, int childTag) {
-    TraceEvent.beginSection(TraceEventDef.UI_OWNER_DESTORY);
+    TraceEvent.beginSection(TraceEventDef.UI_OWNER_DESTORY_ITEM);
     if (mUIHolder.size() > 0) {
       LynxBaseUI child = mUIHolder.get(childTag);
       if (child == null) {
-        TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY);
+        TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY_ITEM);
         return;
       }
       mTranslateZParentHolder.remove(child);
@@ -1030,13 +1036,12 @@ public class LynxUIOwner {
       final LynxBaseUI parent =
           parentTag == -1 ? child.getParentBaseUI() : mUIHolder.get(parentTag);
       if (parent == null) {
-        TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY);
+        TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY_ITEM);
         return;
       }
       parent.removeChild(child);
     }
-    mCreateNodeAsyncTasks.clear();
-    TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY);
+    TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY_ITEM);
   }
 
   public void reuseListNode(int tag, String itemKey) {
@@ -1068,6 +1073,7 @@ public class LynxUIOwner {
   }
 
   public void destroy() {
+    TraceEvent.beginSection(TraceEventDef.UI_OWNER_DESTORY);
     for (Map.Entry<Integer, LynxBaseUI> e : mUIHolder.entrySet()) {
       if (!(e.getValue() instanceof LynxBaseUI)) {
         // In some unknown case, e.getValue() is instance of java.lang.Double.
@@ -1085,6 +1091,8 @@ public class LynxUIOwner {
     if (mGestureArenaManager != null) {
       mGestureArenaManager.onDestroy();
     }
+    mCreateNodeAsyncTasks.clear();
+    TraceEvent.endSection(TraceEventDef.UI_OWNER_DESTORY);
   }
 
   public void onTasmFinish(long operationId) {

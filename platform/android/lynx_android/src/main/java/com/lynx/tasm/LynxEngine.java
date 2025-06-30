@@ -9,6 +9,9 @@ import com.lynx.tasm.behavior.ILynxUIRenderer;
 import java.lang.ref.WeakReference;
 import java.util.Deque;
 
+/**
+ * Do not make this class public until a proxy class is added to decouple it from the Pool.
+ */
 class LynxEngine {
   enum LynxEngineState {
     UN_LOADED,
@@ -19,8 +22,6 @@ class LynxEngine {
   }
 
   private static final String TAG = "LynxEngineWrapper";
-
-  public class EnginePlatformContext {}
 
   @Nullable private LynxTemplateRender mLynxTemplateRender;
 
@@ -63,8 +64,6 @@ class LynxEngine {
     return mNativePtr;
   }
 
-  public void createEnginePlatformContext() {}
-
   public void attachCurrentTemplateRender(LynxTemplateRender templateRender) {
     mLynxTemplateRender = templateRender;
   }
@@ -97,7 +96,7 @@ class LynxEngine {
         // TODO(songshourui): async detach
         mLynxTemplateRender.getLynxContext().getUIBody().detachUIBodyView();
       }
-      mLynxTemplateRender.DetachLynxEngineWrapper();
+      mLynxTemplateRender.detachLynxEngineWrapper();
       mLynxTemplateRender = null;
     }
   }
@@ -116,6 +115,13 @@ class LynxEngine {
 
   public boolean canReused() {
     return mLynxEngineState == LynxEngineState.READY_BE_REUSED;
+  }
+
+  public boolean isRunOnCurrentTemplateRender(LynxTemplateRender templateRender) {
+    if (mLynxTemplateRender == null) {
+      return false;
+    }
+    return mLynxTemplateRender == templateRender;
   }
 
   public void registerLynxEngineReused() {

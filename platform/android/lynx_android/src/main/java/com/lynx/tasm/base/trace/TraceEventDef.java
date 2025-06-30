@@ -58,6 +58,9 @@ public class TraceEventDef {
   public static final String TEMPLATE_RENDER_SET_GLOBAL_PROPS = "TemplateRender.setGlobalProps";
   public static final String TEMPLATE_RENDER_PROCESS_RENDER = "TemplateRender.processRender";
   public static final String TEMPLATE_RENDER_ATTACH_LYNX_VIEW = "TemplateRender.attachLynxView";
+  public static final String TEMPLATE_RENDER_RELOAD_AND_INIT = "TemplateRender.reloadAndInit";
+  public static final String TEMPLATE_RENDER_FALLBACK_NEW_ENGINE =
+      "TemplateRender.fallbackNewEngine";
   public static final String CLIENT_REPORT_COMPONENT_INFO = "Client.onReportComponentInfo";
   public static final String CLIENT_ON_PAGE_START = "Client.onPageStart";
   public static final String CLIENT_ON_LOAD_SUCCESS = "Client.onLoadSuccess";
@@ -110,6 +113,7 @@ public class TraceEventDef {
   public static final String UI_OWNER_UPDATE_FLATTEN = "UIOwner.updateFlatten.";
   public static final String UI_OWNER_REBUILD_VIEW_TREE = "UIOwner.rebuildViewTree";
   public static final String UI_OWNER_REMOVE = "UIOwner.remove.";
+  public static final String UI_OWNER_DESTORY_ITEM = "UIOwner.destroy.item";
   public static final String UI_OWNER_DESTORY = "UIOwner.destroy";
   public static final String UI_OWNER_LAYOUT_FINISH = "UIOwner.layoutFinish.";
   public static final String UI_OWNER_INVOKE_UI_METHOD_FOR_SELECTOR_QUERY =

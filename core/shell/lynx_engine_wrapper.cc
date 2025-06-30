@@ -29,8 +29,10 @@ void LynxEngineWrapper::BindShell(lynx::shell::LynxShell *shell) {
       shell->runners_.GetLayoutTaskRunner());
   shell->tasm_mediator_ = this->tasm_mediator_;
   shell->layout_mediator_ = this->layout_mediator_;
-  shell->tasm_mediator_->ResetMediatorActor(shell->facade_actor_,
+  shell->tasm_mediator_->ResetMediatorActor(shell->layout_actor_,
+                                            shell->facade_actor_,
                                             shell->perf_controller_actor_);
+
   this->engine_actor_ = shell->engine_actor_;
   this->layout_actor_ = shell->layout_actor_;
 }

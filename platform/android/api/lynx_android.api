@@ -1411,9 +1411,6 @@ public enum com::lynx::tasm::behavior::event::EventTarget::EnableStatus {
   public com.lynx.tasm.behavior.event.EventTarget.EnableStatus.Undefined Undefined;
 }
 
-public class com::lynx::tasm::LynxEngine::EnginePlatformContext :  {
-}
-
 public interface com::lynx::react::bridge::mapbuffer::CompactArrayBuffer::Entry {
   public int com.lynx.react.bridge.mapbuffer.CompactArrayBuffer.Entry.getInt();
   public double com.lynx.react.bridge.mapbuffer.CompactArrayBuffer.Entry.getDouble();
@@ -5726,8 +5723,6 @@ public class com::lynx::tasm::LynxTemplateRender : com.lynx.tasm.ILynxEngine, co
   public void com.lynx.tasm.LynxTemplateRender.scrollToPosition(int containerSign, int position, float offset, int align, boolean smooth);
   public void com.lynx.tasm.LynxTemplateRender.scrollStopped(int containerSign);
   public ILynxUIRenderer com.lynx.tasm.LynxTemplateRender.lynxUIRenderer();
-  public void com.lynx.tasm.LynxTemplateRender.tryRegisterLynxEngineReused();
-  public void com.lynx.tasm.LynxTemplateRender.DetachLynxEngineWrapper();
   public void com.lynx.tasm.LynxTemplateRender.setAttachLynxPageUICallback(UIBody.UIBodyView.attachLynxPageUICallback callback);
   public void com.lynx.tasm.LynxTemplateRender.addRuntimeLifecycleListener(@NonNull RuntimeLifecycleListener listener);
   public native void com.lynx.tasm.LynxTemplateRender.nativeDetachLynxEngineWrapper(long ptr, long lifecycle);
@@ -5980,6 +5975,7 @@ public class com::lynx::tasm::behavior::utils::LynxUIMethodsHolderAutoRegister :
 public class com::lynx::tasm::behavior::LynxUIOwner :  {
   public com.lynx.tasm.behavior.LynxUIOwner.LynxUIOwner(LynxContext context, BehaviorRegistry behaviorRegistry, @Nullable UIBodyView body);
   public void com.lynx.tasm.behavior.LynxUIOwner.attachUIBodyView(@Nullable UIBodyView view);
+  public void com.lynx.tasm.behavior.LynxUIOwner.attachLynxContext(LynxContext context);
   public void com.lynx.tasm.behavior.LynxUIOwner.attachNativeFacade(NativeFacade nativeFacade);
   public void com.lynx.tasm.behavior.LynxUIOwner.updateProperties(int tag, boolean tendToFlatten, StylesDiffMap props, @Nullable Map< String, EventsListener > eventsListenerMap, @Nullable Map< Integer, GestureDetector > gestureDetectors);
   public void com.lynx.tasm.behavior.LynxUIOwner.initGestureArenaManager(LynxContext context);
@@ -8769,6 +8765,8 @@ public class com::lynx::tasm::base::trace::TraceEventDef :  {
   public final String com.lynx.tasm.base.trace.TraceEventDef.TEMPLATE_RENDER_SET_GLOBAL_PROPS TEMPLATE_RENDER_SET_GLOBAL_PROPS;
   public final String com.lynx.tasm.base.trace.TraceEventDef.TEMPLATE_RENDER_PROCESS_RENDER TEMPLATE_RENDER_PROCESS_RENDER;
   public final String com.lynx.tasm.base.trace.TraceEventDef.TEMPLATE_RENDER_ATTACH_LYNX_VIEW TEMPLATE_RENDER_ATTACH_LYNX_VIEW;
+  public final String com.lynx.tasm.base.trace.TraceEventDef.TEMPLATE_RENDER_RELOAD_AND_INIT TEMPLATE_RENDER_RELOAD_AND_INIT;
+  public final String com.lynx.tasm.base.trace.TraceEventDef.TEMPLATE_RENDER_FALLBACK_NEW_ENGINE TEMPLATE_RENDER_FALLBACK_NEW_ENGINE;
   public final String com.lynx.tasm.base.trace.TraceEventDef.CLIENT_REPORT_COMPONENT_INFO CLIENT_REPORT_COMPONENT_INFO;
   public final String com.lynx.tasm.base.trace.TraceEventDef.CLIENT_ON_PAGE_START CLIENT_ON_PAGE_START;
   public final String com.lynx.tasm.base.trace.TraceEventDef.CLIENT_ON_LOAD_SUCCESS CLIENT_ON_LOAD_SUCCESS;
@@ -8813,6 +8811,7 @@ public class com::lynx::tasm::base::trace::TraceEventDef :  {
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_UPDATE_FLATTEN UI_OWNER_UPDATE_FLATTEN;
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_REBUILD_VIEW_TREE UI_OWNER_REBUILD_VIEW_TREE;
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_REMOVE UI_OWNER_REMOVE;
+  public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_DESTORY_ITEM UI_OWNER_DESTORY_ITEM;
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_DESTORY UI_OWNER_DESTORY;
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_LAYOUT_FINISH UI_OWNER_LAYOUT_FINISH;
   public final String com.lynx.tasm.base.trace.TraceEventDef.UI_OWNER_INVOKE_UI_METHOD_FOR_SELECTOR_QUERY UI_OWNER_INVOKE_UI_METHOD_FOR_SELECTOR_QUERY;

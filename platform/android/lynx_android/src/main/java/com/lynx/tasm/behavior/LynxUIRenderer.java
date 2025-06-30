@@ -113,6 +113,9 @@ public class LynxUIRenderer implements ILynxUIRenderer {
     // Prepare owner to manage ui and shadow node
     if (!mHasInited) {
       mLynxUIOwner = new LynxUIOwner(lynxContext, behaviorRegistry, body);
+    } else {
+      mLynxUIOwner.attachUIBodyView(body);
+      mLynxUIOwner.attachLynxContext(lynxContext);
     }
     if (body == null) {
       // TODO(huangweiwu): Centralize the config within LynxContext
