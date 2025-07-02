@@ -41,7 +41,7 @@
 
 - (void)setEmbeddedMode:(EmbeddedMode)embeddedMode {
   _embeddedMode = embeddedMode;
-  if (embeddedMode != UNSET) {
+  if ((embeddedMode & UNSET) > 0) {
     [LynxComponentScopeRegistry tryRegisterBuiltInClasses];
   }
 }
