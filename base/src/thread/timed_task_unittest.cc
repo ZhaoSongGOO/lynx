@@ -127,14 +127,16 @@ TEST_F(TimedTaskTest, StopSetInterval) {
 TEST_F(TimedTaskTest, StopAllTasks) {
   int32_t expect = result_;
 
+  int32_t delay_more = DELAY * 10;
   for (int32_t i = 0; i < LOOP; ++i) {
-    thread_.GetTaskRunner()->PostTask(
-        [this]() { manager_->SetTimeout([this]() { ++result_; }, DELAY); });
+    thread_.GetTaskRunner()->PostTask([this, delay_more]() {
+      manager_->SetTimeout([this]() { ++result_; }, delay_more);
+    });
   }
 
   thread_.GetTaskRunner()->PostTask([this]() { manager_->StopAllTasks(); });
 
-  WaitResult(DELAY);
+  WaitResult(delay_more);
   ASSERT_EQ(result_, expect);
 }
 
