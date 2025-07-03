@@ -217,7 +217,6 @@ void LynxRuntime::InitExecutor(
       [delegate_ptr = delegate_.get()](const std::string& url) {
         return delegate_ptr->LoadBytecode(url);
       });
-  js_executor_->SetObserver(delegate_.get());
 
   TRACE_EVENT_END(LYNX_TRACE_CATEGORY_VITALS);
   tasm::TimingCollector::Instance()->Mark(tasm::timing::kLoadCoreEnd);
@@ -765,7 +764,6 @@ void LynxRuntime::Destroy() {
   callbacks_.clear();
   DestroyAppAndNapi(!destroy_js_app_early_);
 
-  js_executor_->SetObserver(nullptr);
   js_executor_->Destroy();
   js_executor_ = nullptr;
 }

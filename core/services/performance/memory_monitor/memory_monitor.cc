@@ -4,58 +4,13 @@
 
 #include "core/services/performance/memory_monitor/memory_monitor.h"
 
-#include <memory>
 #include <utility>
 
 #include "core/renderer/utils/lynx_env.h"
-#include "third_party/rapidjson/document.h"
 
 namespace lynx {
 namespace tasm {
 namespace performance {
-
-inline MemoryRecord BuildMemoryRecord(
-    const rapidjson::Value& obj,
-    std::unordered_map<std::string, std::string> info) {
-  MemoryRecord record;
-  // size_kb
-  const rapidjson::Value& heapsize_after_v = obj["heapsize_after"];
-  if (heapsize_after_v.IsNumber()) {
-    record.size_kb_ = heapsize_after_v.GetUint();
-  }
-  // category
-  auto category_it = info.find(kCategory);
-  if (category_it != info.end()) {
-    record.category_ = category_it->second;
-  }
-  // detail
-  record.detail_ =
-      std::make_unique<std::unordered_map<std::string, std::string>>(
-          std::move(info));
-  if (obj.IsObject()) {
-    for (rapidjson::Value::ConstMemberIterator itr = obj.MemberBegin();
-         itr != obj.MemberEnd(); ++itr) {
-      std::string key = itr->name.GetString();
-      if (key == kRawRuntimeMemoryInfo) {
-        continue;
-      }
-      std::string value;
-      if (itr->value.IsString()) {
-        value = itr->value.GetString();
-      } else if (itr->value.IsInt()) {
-        value = std::to_string(itr->value.GetInt());
-      } else if (itr->value.IsDouble()) {
-        value = std::to_string(itr->value.GetDouble());
-      } else if (itr->value.IsBool()) {
-        value = itr->value.GetBool() ? "true" : "false";
-      } else {
-        value = "Unsupported type";
-      }
-      record.detail_->emplace(key, std::move(value));
-    }
-  }
-  return record;
-}
 
 static std::atomic<bool> g_force_enable_ = false;
 
@@ -74,22 +29,17 @@ uint32_t MemoryMonitor::MemoryChangeThresholdMb() {
 uint32_t MemoryMonitor::ScriptingEngineMode() {
   uint32_t mode = 0;
   bool enable_mem_monitor = Enable();
-  if (!enable_mem_monitor) {
-    return mode;
-  }
-  // 8 bit max number is 255.
+  mode |= (enable_mem_monitor << 0);
   uint32_t mem_increment_threshold_mb = MemoryChangeThresholdMb();
-  if (mem_increment_threshold_mb > 255) {
-    mem_increment_threshold_mb = 255;
+  if (mem_increment_threshold_mb > 100) {
+    mem_increment_threshold_mb = 100;
   }
-  mode = (mem_increment_threshold_mb << 24);
+  mode |= (mem_increment_threshold_mb << 1);
   return mode;
 }
 
 MemoryMonitor::~MemoryMonitor() {
   if (Enable()) {
-    // Clear records and report 0 memory usage.
-    memory_records_.clear();
     ReportMemory();
   }
 }
@@ -127,37 +77,6 @@ void MemoryMonitor::UpdateMemoryUsage(MemoryRecord&& record) {
   ReportMemory();
 }
 
-void MemoryMonitor::UpdateScriptingEngineMemoryUsage(
-    std::unordered_map<std::string, std::string> info) {
-  if (!Enable()) {
-    return;
-  }
-  auto it = info.find(kRawRuntimeMemoryInfo);
-  if (it == info.end()) {
-    return;
-  }
-
-  rapidjson::Document doc;
-  doc.Parse(it->second);
-  info.erase(kRawRuntimeMemoryInfo);
-  if (doc.HasParseError() || !doc.IsObject()) {
-    return;
-  }
-  const rapidjson::Value& gc_info = doc["gc_info"];
-  if (!gc_info.IsArray()) {
-    return;
-  }
-  rapidjson::SizeType arraySize = gc_info.Size();
-  if (arraySize == 0) {
-    return;
-  }
-  const rapidjson::Value& lastElement = gc_info[arraySize - 1];
-  if (lastElement.IsNull()) {
-    return;
-  }
-  UpdateMemoryUsage(BuildMemoryRecord(lastElement, std::move(info)));
-}
-
 void MemoryMonitor::ReportMemory() {
   if (sender_ == nullptr) {
     return;
@@ -172,7 +91,7 @@ void MemoryMonitor::ReportMemory() {
   float sizeKb = 0.f;
   if (memory_records_.empty()) {
     entry_map->PushDoubleToMap("sizeKb", sizeKb);
-    sender_->OnPerformanceEvent(std::move(entry_map), kEventTypePlatform);
+    sender_->OnPerformanceEvent(std::move(entry_map));
     return;
   }
   auto detail = sender_->GetValueFactory()->CreateMap();

@@ -112,7 +112,6 @@ class Global;
 class JSIExceptionHandler;
 class VMInstance;
 class JSIContext;
-class JSIObserver;
 class StartupData;
 /// A function which has this type can be registered as a function
 /// callable from JavaScript using Function::createFromHostFunction().
@@ -241,7 +240,6 @@ class BASE_EXPORT Runtime {
   virtual JSRuntimeType type() = 0;
   virtual void SetGCPauseSuppressionMode(bool mode){};
   virtual bool GetGCPauseSuppressionMode() { return false; };
-  virtual void SetObserver(JSIObserver* observer){};
   int64_t getRuntimeId() const { return runtime_id_; }
   bool getGCFlag() { return gc_flag_; }
   void setRuntimeId(int64_t rt_id) { runtime_id_ = rt_id; }
@@ -1640,13 +1638,6 @@ class HostGlobal {
                     std::shared_ptr<ConsoleMessagePostMan>& post_man) = 0;
   virtual void Release() = 0;
   virtual ~HostGlobal() { LOGE("~HostGlobal;"); }
-};
-
-class JSIObserver {
- public:
-  virtual ~JSIObserver() = default;
-  virtual void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) = 0;
 };
 
 class JSIContext {

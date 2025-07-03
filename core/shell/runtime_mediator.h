@@ -58,9 +58,6 @@ class RuntimeMediator : public runtime::TemplateDelegate {
       const std::shared_ptr<LynxActor<NativeFacade>>& facade_actor,
       const std::shared_ptr<LynxActor<LynxEngine>>& engine_actor,
       const std::shared_ptr<LynxCardCacheDataManager>& card_cached_data_mgr);
-
-  void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override;
   // inherit from TemplateDelegate
   void UpdateDataByJS(runtime::UpdateDataTask task) override;
   void UpdateBatchedDataByJS(std::vector<runtime::UpdateDataTask> tasks,

@@ -10,7 +10,6 @@
 #include "core/renderer/lynx_global_pool.h"
 #include "core/renderer/utils/lynx_env.h"
 #include "core/runtime/vm/lepus/context.h"
-#include "core/services/performance/memory_monitor/memory_monitor.h"
 
 namespace lynx {
 namespace lepus {
@@ -49,10 +48,9 @@ void LynxContextPool::FillPool(int32_t count) {
 void LynxContextPool::AddContextSafely(int32_t count) {
   // build contexts without lock
   decltype(contexts_) temp_contexts;
-  uint32_t mode = tasm::performance::MemoryMonitor::ScriptingEngineMode();
   for (; count > 0; --count) {
     std::shared_ptr<Context> context =
-        Context::CreateContext(is_lepus_ng_, disable_tracing_gc_, mode);
+        Context::CreateContext(is_lepus_ng_, disable_tracing_gc_);
     if (context_bundle_) {
       context->SetSdkVersion(target_sdk_version_);
       context->Initialize();

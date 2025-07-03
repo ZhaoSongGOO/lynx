@@ -301,8 +301,8 @@ static void SetFuncsAndRegisterPrimJSCallbacks(LEPUSRuntime* rt) {
                           registered_count);
 }
 
-LEPUSRuntimeData::LEPUSRuntimeData(bool disable_tracing_gc, int runtime_mode) {
-  runtime_ = LEPUS_NewRuntimeWithMode(runtime_mode);
+LEPUSRuntimeData::LEPUSRuntimeData(bool disable_tracing_gc) {
+  runtime_ = LEPUS_NewRuntimeWithMode(0);
   if (disable_tracing_gc || tasm::LynxEnv::GetInstance().IsDisableTracingGC()) {
     LEPUS_SetRuntimeInfo(runtime_, "Lynx_LepusNG_RC");
   } else {
@@ -345,11 +345,10 @@ Context::Delegate* Context::GetDelegate() {
 }
 
 std::shared_ptr<Context> Context::CreateContext(bool use_lepusng,
-                                                bool disable_tracing_gc,
-                                                int runtime_mode) {
+                                                bool disable_tracing_gc) {
   if (use_lepusng) {
     TRACE_EVENT(LYNX_TRACE_CATEGORY, CONTEXT_CREATE_QUICK_CONTEXT);
-    return std::make_shared<QuickContext>(disable_tracing_gc, runtime_mode);
+    return std::make_shared<QuickContext>(disable_tracing_gc);
   } else {
     TRACE_EVENT(LYNX_TRACE_CATEGORY, CONTEXT_CREATE_VM_CONTEXT);
 #if !ENABLE_JUST_LEPUSNG

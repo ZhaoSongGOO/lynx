@@ -5,7 +5,6 @@
 #ifndef CORE_SERVICES_PERFORMANCE_MEMORY_MONITOR_MEMORY_MONITOR_H_
 #define CORE_SERVICES_PERFORMANCE_MEMORY_MONITOR_MEMORY_MONITOR_H_
 
-#include <string>
 #include <unordered_map>
 
 #include "core/services/performance/memory_monitor/memory_record.h"
@@ -14,10 +13,6 @@
 namespace lynx {
 namespace tasm {
 namespace performance {
-
-inline constexpr char kRuntimeId[] = "runtimeId";
-inline constexpr char kRuntimeGroupId[] = "groupId";
-inline constexpr char kRawRuntimeMemoryInfo[] = "raw_memory_info_json_str";
 
 // @class MemoryMonitor
 // @brief A class for monitoring memory usage and managing memory records.
@@ -45,12 +40,6 @@ class MemoryMonitor {
   // the record, effectively updating the memory usage information.
   void UpdateMemoryUsage(MemoryRecord&& record);
 
-  // Overwrites the memory usage and sends a PerformanceEntry.
-  // This interface will overwrite the record corresponding to the category in
-  // the record, effectively updating the memory usage information.
-  void UpdateScriptingEngineMemoryUsage(
-      std::unordered_map<std::string, std::string> info);
-
   // Checks if memory monitoring is enabled.
   // Modules can call this before collecting data to avoid unnecessary
   // collection.
@@ -68,7 +57,9 @@ class MemoryMonitor {
   /// @brief Generates a bitmask for scripting engine memory monitoring
   /// configuration This method combines memory monitoring status and memory
   /// increment threshold into a uint32_t bitmask:
-  /// - Bits 0-8      : Memory increment threshold in MB (capped at 100MB)
+  /// - Bit 0 (LSB)  : Whether memory monitoring is enabled (1=enabled,
+  /// 0=disabled)
+  /// - Bits 1-8      : Memory increment threshold in MB (capped at 100MB)
   /// @return uint32_t Combined configuration bitmask
   static uint32_t ScriptingEngineMode();
 

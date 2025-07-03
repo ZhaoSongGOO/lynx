@@ -23,8 +23,6 @@ class ContextDelegateTest : public lepus::Context::Delegate {
   virtual void OnBTSConsoleEvent(const std::string& func_name,
                                  const std::string& args){};
   virtual void ReportGCTimingEvent(const char* start, const char* end){};
-  virtual void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override{};
   virtual fml::RefPtr<fml::TaskRunner> GetLepusTimedTaskRunner() {
     return nullptr;
   };

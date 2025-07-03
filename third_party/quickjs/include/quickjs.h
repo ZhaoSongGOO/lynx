@@ -1005,18 +1005,10 @@ char *LEPUS_GetGCTimingInfo(LEPUSContext *ctx, bool is_start);
 void LEPUS_PushHandle(LEPUSContext *ctx, void *ptr, int type);
 void LEPUS_ResetHandle(LEPUSContext *ctx, void *ptr, int type);
 
-#ifdef ENABLE_CHECK_TOOLS
-void CheckObjectCtx(LEPUSContext *ctx, LEPUSValue obj);
-void CheckObjectRt(LEPUSRuntime *rt, LEPUSValue obj);
-#endif
-
 static inline LEPUSValue LEPUS_DupValue(LEPUSContext *ctx, LEPUSValueConst v) {
   if (LEPUS_VALUE_HAS_REF_COUNT(v)) {
     LEPUSRefCountHeader *p = (LEPUSRefCountHeader *)LEPUS_VALUE_GET_PTR(v);
     p->ref_count++;
-#ifdef ENABLE_CHECK_TOOLS
-    CheckObjectCtx(ctx, v);
-#endif
   }
   return (LEPUSValue)v;
 }
@@ -1037,9 +1029,6 @@ static inline LEPUSValue LEPUS_DupValueRT(LEPUSRuntime *rt, LEPUSValueConst v) {
   if (LEPUS_VALUE_HAS_REF_COUNT(v)) {
     LEPUSRefCountHeader *p = (LEPUSRefCountHeader *)LEPUS_VALUE_GET_PTR(v);
     p->ref_count++;
-#ifdef ENABLE_CHECK_TOOLS
-    CheckObjectRt(rt, v);
-#endif
   }
   return (LEPUSValue)v;
 }
@@ -1410,8 +1399,8 @@ static inline LEPUSValue LEPUS_NewCFunctionMagic(LEPUSContext *ctx,
                                                  const char *name, int length,
                                                  LEPUSCFunctionEnum cproto,
                                                  int magic) {
-  LEPUSCFunctionType ft = {.generic_magic = func};
-  return LEPUS_NewCFunction2(ctx, ft.generic, name, length, cproto, magic);
+  return LEPUS_NewCFunction2(ctx, (LEPUSCFunction *)func, name, length, cproto,
+                             magic);
 }
 
 /* C property definition */
@@ -1619,9 +1608,6 @@ void InitLynxTraceEnv(void *(*)(const char *), void (*)(void *));
 void SetObjectCtxCheckStatus(LEPUSContext *ctx, bool enable);
 
 void UpdateOuterObjSize(LEPUSRuntime *rt, int size);
-
-void LEPUS_SetGCObserver(LEPUSRuntime *rt, void *opaque);
-void *LEPUS_GetGCObserver(LEPUSRuntime *rt);
 // <Primjs end>
 
 #undef lepus_unlikely

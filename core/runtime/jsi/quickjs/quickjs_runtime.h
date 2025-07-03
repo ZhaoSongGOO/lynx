@@ -7,7 +7,6 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <unordered_map>
 
 #include "base/include/base_export.h"
 #include "base/include/log/logging.h"
@@ -25,7 +24,7 @@
 
 namespace lynx {
 namespace piper {
-class QuickjsRuntime : public Runtime, public JSIObserver {
+class QuickjsRuntime : public Runtime {
  public:
   QuickjsRuntime();
   ~QuickjsRuntime() override;
@@ -65,11 +64,6 @@ class QuickjsRuntime : public Runtime, public JSIObserver {
   std::string description() override { return description_; };
 
   bool isInspectable() override { return false; };
-
-  void SetObserver(JSIObserver *observer) override { observer_ = observer; }
-
-  void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override;
 
   LEPUSContext *getJSContext() const { return context_->getContext(); };
   LEPUSRuntime *getJSRuntime() const {
@@ -230,7 +224,6 @@ class QuickjsRuntime : public Runtime, public JSIObserver {
   std::shared_ptr<QuickjsContextWrapper> context_;
   std::string description_;
   std::unique_ptr<QuickjsInspectorManager> inspector_manager_;
-  JSIObserver *observer_ = nullptr;
 };
 
 }  // namespace piper

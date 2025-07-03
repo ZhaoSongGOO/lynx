@@ -50,8 +50,6 @@ class MockTasmDelegate : public TemplateAssembler::Delegate,
 
   void ReportElementMemoryInfo(float mem_size_byte,
                                int element_count) override{};
-  void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override{};
 
   // synchronous
   virtual std::string TranslateResourceForTheme(

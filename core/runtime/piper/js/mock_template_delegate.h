@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -54,8 +53,6 @@ class MockTemplateDelegate : public runtime::TemplateDelegate {
                const piper::ApiCallBack& callback) override {}
 
   void OnRuntimeReady() override {}
-  void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override {}
   void OnErrorOccurred(base::LynxError error) override {}
   void OnModuleMethodInvoked(const std::string& module,
                              const std::string& method, int32_t code) override {

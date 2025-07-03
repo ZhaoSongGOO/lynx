@@ -1,6 +1,5 @@
 #ifndef TRACE_GC_H
 #define TRACE_GC_H
-#include <string>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -79,7 +78,8 @@ class HandleScope {
 
 class NAPIHandleScope {
  public:
-  NAPIHandleScope(napi_env env, LEPUSContext *ctx, napi_func *func = nullptr);
+  explicit NAPIHandleScope(napi_env env, LEPUSContext *ctx,
+                           napi_func *func = nullptr);
   explicit NAPIHandleScope(LEPUSContext *ctx)
       : env_(nullptr),
         ctx_(ctx),
@@ -87,7 +87,7 @@ class NAPIHandleScope {
         reset_napi_env(nullptr) {
     is_gc = ctx_ == nullptr ? false : LEPUS_IsGCMode(ctx_);
     if (is_gc) {
-      prev_ = reinterpret_cast<NAPIHandleScope *>(GetNapiScope(ctx_));
+      prev_ = (NAPIHandleScope *)GetNapiScope(ctx_);
       SetNapiScope(ctx_, this);
     }
   }
@@ -130,10 +130,5 @@ class NAPIHandleScope {
   napi_func *reset_napi_env;
 };
 
-class GCObserver {
- public:
-  virtual ~GCObserver() = default;
-  virtual void OnGC(std::string mem_info) = 0;
-};
 
 #endif /* TRACE_GC_H */

@@ -33,18 +33,6 @@ void RuntimeMediator::AttachToLynxShell(
   runtime_standalone_mode_ = false;
 }
 
-void RuntimeMediator::OnRuntimeGC(
-    std::unordered_map<std::string, std::string> mem_info) {
-  if (!perf_controller_actor_) {
-    return;
-  }
-  perf_controller_actor_->ActAsync(
-      [memory_info = std::move(mem_info)](auto& performance) mutable {
-        performance->GetMemoryMonitor().UpdateScriptingEngineMemoryUsage(
-            std::move(memory_info));
-      });
-}
-
 void RuntimeMediator::UpdateDataByJS(runtime::UpdateDataTask task) {
   if (runtime_standalone_mode_) {
     REPORT_JSI_NATIVE_EXCEPTION(

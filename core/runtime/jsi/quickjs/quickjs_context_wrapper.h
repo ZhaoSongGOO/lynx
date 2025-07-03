@@ -20,7 +20,7 @@ using RegisterWasmFuncType = void (*)(void*, void*);
 class BASE_EXPORT_FOR_DEVTOOL QuickjsContextWrapper : public piper::JSIContext {
  public:
   QuickjsContextWrapper(std::shared_ptr<VMInstance> vm);
-  ~QuickjsContextWrapper() override;
+  ~QuickjsContextWrapper();
 
   LEPUSContext* getContext() const;
   LEPUSRuntime* getRuntime() const;

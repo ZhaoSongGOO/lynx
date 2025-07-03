@@ -39,7 +39,6 @@ unittest_set("jsi_unittests_testset") {
     "../../../base/src:base_log_headers",
     "../../../third_party/quickjs",
     "../../base",
-    "../../services/performance",
     "quickjs:quickjs",
   ]
   if (is_mac || is_linux) {

@@ -90,9 +90,8 @@ bool TemplateEntry::ConstructContext(TemplateAssembler* assembler,
 
   // 3. construct a context at runtime
   if (!vm_context_) {
-    uint32_t mode = tasm::performance::MemoryMonitor::ScriptingEngineMode();
-    vm_context_ = lepus::Context::CreateContext(is_lepusng_binary,
-                                                disable_tracing_gc, mode);
+    vm_context_ =
+        lepus::Context::CreateContext(is_lepusng_binary, disable_tracing_gc);
   }
 
   if (enable_runtime_leak_check) {

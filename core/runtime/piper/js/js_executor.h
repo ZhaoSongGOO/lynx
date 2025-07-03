@@ -52,8 +52,6 @@ class BASE_EXPORT_FOR_DEVTOOL JSExecutor {
       bool ensure_console, int64_t rt_id, bool enable_user_bytecode,
       const std::string& bytecode_source_url, BytecodeGetter bytecode_getter);
 
-  void SetObserver(JSIObserver* observer);
-
   void invokeCallback(std::shared_ptr<piper::ModuleCallback> callback,
                       piper::ModuleCallbackFunctionHolder* holder);
 

@@ -69,13 +69,6 @@ void JSExecutor::loadPreJSBundle(
       enable_user_bytecode, bytecode_source_url, std::move(bytecode_getter));
 }
 
-void JSExecutor::SetObserver(JSIObserver* observer) {
-  if (!js_runtime_) {
-    return;
-  }
-  js_runtime_->SetObserver(observer);
-}
-
 void JSExecutor::invokeCallback(std::shared_ptr<piper::ModuleCallback> callback,
                                 piper::ModuleCallbackFunctionHolder* holder) {
   Scope scope(*js_runtime_);

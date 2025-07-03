@@ -215,8 +215,6 @@ class TemplateAssembler final : public TemplateEntryHolder,
         const std::shared_ptr<PipelineOptions>& pipeline_options) = 0;
     virtual void OnComponentDecoded(tasm::TasmRuntimeBundle bundle) = 0;
     virtual void OnCardConfigDataChanged(const lepus::Value& data) = 0;
-    virtual void OnRuntimeGC(
-        std::unordered_map<std::string, std::string> mem_info) = 0;
 
     virtual fml::RefPtr<fml::TaskRunner> GetLepusTimedTaskRunner() = 0;
 
@@ -305,9 +303,6 @@ class TemplateAssembler final : public TemplateEntryHolder,
   void ReportError(base::LynxError error) override;
 
   void ReportGCTimingEvent(const char* start, const char* end) override;
-
-  void OnRuntimeGC(
-      std::unordered_map<std::string, std::string> mem_info) override;
 
   fml::RefPtr<fml::TaskRunner> GetLepusTimedTaskRunner() override;
 

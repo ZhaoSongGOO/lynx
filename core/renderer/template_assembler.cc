@@ -1516,11 +1516,6 @@ void TemplateAssembler::ReportGCTimingEvent(const char* start,
   });
 }
 
-void TemplateAssembler::OnRuntimeGC(
-    std::unordered_map<std::string, std::string> mem_info) {
-  delegate_.OnRuntimeGC(std::move(mem_info));
-}
-
 fml::RefPtr<fml::TaskRunner> TemplateAssembler::GetLepusTimedTaskRunner() {
   return delegate_.GetLepusTimedTaskRunner();
 }

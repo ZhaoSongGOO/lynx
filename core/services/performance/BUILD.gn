@@ -13,17 +13,11 @@ performance_shared_sources = [
   "performance_controller.cc",
   "performance_controller.h",
   "performance_event_sender.h",
+  "performance_mediator.cc",
+  "performance_mediator.h",
 ]
 
-if (!is_encoder_ut) {
-  performance_shared_sources += [
-    "performance_mediator.cc",
-    "performance_mediator.h",
-  ]
-}
-
-if (!is_oliver_ssr && !is_oliver_node_lynx && !enable_unittests &&
-    !is_encoder_ut) {
+if (!is_oliver_ssr && !is_oliver_node_lynx && !enable_unittests) {
   if (is_apple) {
     performance_shared_sources += [
       "darwin/performance_controller_darwin.h",
@@ -44,8 +38,5 @@ if (!is_oliver_ssr && !is_oliver_node_lynx && !enable_unittests &&
 
 lynx_core_source_set("performance") {
   sources = performance_shared_sources
-  deps = [
-    "../../../base/src:base_log_headers",
-    "../../../third_party/rapidjson",
-  ]
+  deps = [ "../../../base/src:base_log_headers" ]
 }

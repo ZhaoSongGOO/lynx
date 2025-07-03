@@ -26,12 +26,6 @@ extern "C" {
 #include "quickjs/include/persistent-handle.h"
 #endif
 
-#ifdef OS_IOS
-#include "gc/trace-gc.h"
-#else
-#include "quickjs/include/trace-gc.h"
-#endif
-
 namespace lynx {
 namespace lepus {
 
@@ -45,13 +39,11 @@ struct RenderBindingFunction {
 };
 
 // use quickjs enginer as lepus context
-class QuickContext : private LEPUSRuntimeData,
-                     public Context,
-                     public GCObserver {
+class QuickContext : private LEPUSRuntimeData, public Context {
  public:
   static QuickContext* Cast(Context* context);
-  QuickContext(bool disable_tracing_gc = false, int runtime_mode = 0);
-  virtual ~QuickContext() override;
+  QuickContext(bool disable_tracing_gc = false);
+  virtual ~QuickContext();
   virtual void Initialize() override;
   virtual bool Execute(Value* ret = nullptr) override;
 
@@ -88,19 +80,6 @@ class QuickContext : private LEPUSRuntimeData,
                               const RenderBindingFunction* funcs, size_t size);
 
   LEPUSValue NewBindingFunction(RenderBindingFunc func);
-
-  /**
-   * @brief Called when the garbage collection (GC) operation is completed to
-   * handle the post-GC memory information.
-   *
-   * This method is a concrete implementation of the `GCObserver` interface. It
-   * will receive a string containing memory-related information after the
-   * garbage collection operation ends.
-   *
-   * @param mem_info A string containing post-GC memory information. Its format
-   * could be JSON or a specific custom format.
-   */
-  void OnGC(std::string mem_info) override;
 
   void RegisterGlobalProperty(const char* name, LEPUSValue val);
 

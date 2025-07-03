@@ -41,7 +41,7 @@ class ContextBundle;
 
 class LEPUSRuntimeData {
  public:
-  LEPUSRuntimeData(bool disable_tracing_gc, int runtime_mode);
+  LEPUSRuntimeData(bool disable_tracing_gc);
   ~LEPUSRuntimeData();
 
   LEPUSRuntime* runtime_;
@@ -67,8 +67,6 @@ class Context {
     virtual void OnBTSConsoleEvent(const std::string& func_name,
                                    const std::string& args) = 0;
     virtual void ReportGCTimingEvent(const char* start, const char* end) = 0;
-    virtual void OnRuntimeGC(
-        std::unordered_map<std::string, std::string> mem_info) = 0;
 
     virtual fml::RefPtr<fml::TaskRunner> GetLepusTimedTaskRunner() = 0;
   };
@@ -170,9 +168,8 @@ class Context {
   base::StringTable* string_table() { return &string_table_; }
   void set_name(const std::string& name) { name_ = name; }
 
-  static std::shared_ptr<Context> CreateContext(bool use_lepusng = false,
-                                                bool disable_tracing_gc = false,
-                                                int runtime_mode = 0);
+  static std::shared_ptr<Context> CreateContext(
+      bool use_lepusng = false, bool disable_tracing_gc = false);
 
   // check context type
   bool IsVMContext() const { return type_ == VMContextType; }
