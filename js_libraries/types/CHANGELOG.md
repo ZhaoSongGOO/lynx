@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 3.4.1
+
+- Add the following properties: `custom-context-menu`, `custom-text-selection`, `text-selection`.
+- Add the following methods: `setTextSelection`, `getTextBoundingRect`, `getSelectedText`.
+- Add `bindselectionchange` event.
+- Add `addFont` method.
+
 ## 3.4.0
 
 ### Major Changes

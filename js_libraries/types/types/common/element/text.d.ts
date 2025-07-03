@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import { BaseEvent, TextLayoutEventDetail } from '../events';
+import { BaseEvent, Callback, BaseMethod, TextLayoutEventDetail, TextSelectionChangeEventDetail } from '../events';
 import { StandardProps } from '../props';
 
 /**
@@ -47,13 +47,6 @@ export interface TextProps extends StandardProps {
   'tail-color-convert'?: boolean;
 
   /**
-   * Enable long press to select text
-   * @defaultValue false
-   * @since 2.5
-   */
-  'text-selection'?: boolean;
-
-  /**
    * Set single-line plain text to be centered and aligned within the line. Inline text settings are not supported. Recommended only when the default font doesn't meet center alignment needs, as it increases text measurement time.
    * @defaultValue normal
    * @iOS
@@ -88,10 +81,167 @@ export interface TextProps extends StandardProps {
   'text-fake-bold'?: boolean;
 
   /**
+   * Sets whether to enable text selection.
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @since 2.18
+   */
+  'text-selection'?: boolean;
+
+  /**
+   * Used to set whether to turn on the custom pop-up context menu after selection and copying. It takes effect after enabling text-selection.
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @since 2.18
+   */
+  'custom-context-menu'?: boolean;
+
+  /**
+   * Used to set whether to enable the custom text selection function. When it is enabled, the element will no longer handle the gesture logic related to selection and copying. It takes effect after enabling text-selection.
+   * @defaultValue false
+   * @Android
+   * @iOS
+   * @since 2.18
+   */
+  'custom-text-selection'?: boolean;
+
+  /**
    * Text layout event
    * @since 2.7
    */
   bindlayout?: (e: LayoutEvent) => void;
+
+  /**
+   * Text selection change event
+   * @since 2.18
+   */
+  bindselectionchange?: (e: SelectionChangeEvent) => void;
 }
 
 export type LayoutEvent = BaseEvent<'layout', TextLayoutEventDetail>;
+
+export type SelectionChangeEvent = BaseEvent<
+  'selectionchange',
+  TextSelectionChangeEventDetail
+>;
+
+interface Rect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  width: number;
+  height: number;
+}
+
+interface Handle {
+  /**
+   * Center X of handle
+   */
+  x: number;
+  /**
+   * Center Y of handle
+   */
+  y: number;
+  /**
+   * Touch radius of the handle
+   */
+  radius: number;
+}
+
+/**
+ * Sets the text selection.
+ * @Android
+ * @iOS
+ * @since 2.18
+ */
+interface SetTextSelectionMethod extends BaseMethod {
+  method: 'setTextSelection';
+  params: {
+    /**
+     *  X-coordinate of the selection start relative to the element
+     */
+    startX: number;
+    /**
+     *  Y-coordinate of the selection start relative to the element
+     */
+    startY: number;
+    /**
+     *  X-coordinate of the selection end relative to the element
+     */
+    endX: number;
+    /**
+     *  Y-coordinate of the selection end relative to the element
+     */
+    endY: number;
+    /**
+     * Whether to show the start handle, default is true
+     */
+    showStartHandle?: boolean;
+    /**
+     * Whether to show the end handle, default is true
+     */
+    showEndHandle?: boolean;
+  };
+  success?: Callback<{
+    /**
+     * Bounding rectangle of the selected text
+     */
+    boundingRect: Rect;
+    /**
+     * Rectangles of the selected text
+     */
+    boxes: Rect[];
+    /**
+     * Handles of the selected text
+     */
+    handles: Handle[]
+  }>;
+}
+
+/**
+ * Gets the bounding rectangle of the text.
+ * @Android
+ * @iOS
+ * @since 2.18
+ */
+interface GetTextBoundingRectMethod extends BaseMethod {
+  method: 'getTextBoundingRect';
+  params: {
+    /**
+     * Start index of the text
+     */
+    start: number;
+    /**
+     * End index of the text
+     */
+    end: number;
+  };
+  success?: Callback<{
+    /**
+     * Bounding rectangle of the text
+     */
+    boundingRect: Rect;
+    /**
+     * Rectangles of the text
+     */
+    boxes: Rect[];
+  }>;
+}
+
+/**
+ * Gets the selected text.
+ * @Android
+ * @iOS
+ * @since 2.18
+ */
+interface GetSelectedTextMethod extends BaseMethod {
+  method: 'getSelectedText';
+  success?: Callback<{
+    selectedText: string;
+  }>;
+}
+
+export type TextUIMethods = SetTextSelectionMethod | GetTextBoundingRectMethod | GetSelectedTextMethod;

@@ -217,6 +217,12 @@ export interface TextLayoutEventDetail {
   };
 }
 
+export interface TextSelectionChangeEventDetail {
+  start: number;
+  end: number;
+  direction: 'forward' | 'backward';
+}
+
 export interface AccessibilityActionDetailEvent<T> extends BaseEventOrig<{}, T> {
   detail: {
     /**

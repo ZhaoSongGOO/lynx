@@ -70,6 +70,11 @@ export interface ResourcePrefetchResult {
   }[];
 }
 
+export interface FontFace {
+  'font-family': string;
+  'src': string;
+}
+
 export type GetElementByIdFunc = (id: string) => AnimationElement;
 
 /**
@@ -149,4 +154,10 @@ export interface Lynx extends CommonLynx {
    * @since 1.0
    */
   onError?: (error: Error) => void;
+
+  /**
+   * @description Dynamic add font
+   * @since 2.12
+   */
+  addFont(fontFace: FontFace, callback?: () => void): void;
 }
