@@ -330,6 +330,10 @@ public abstract class LynxObserverManager {
   }
 
   private void getLeftAndTopOfBoundsInScreen(View view, RectF bounds) {
+    if (view == null) {
+      LLog.e(TAG, "LynxObserverManager getLeftAndTopOfBoundsInScreen failed since view is null");
+      return;
+    }
     view.getLocationOnScreen(mLocationOnScreen);
     bounds.offset(mLocationOnScreen[0], mLocationOnScreen[1]);
   }
