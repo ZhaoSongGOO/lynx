@@ -7,9 +7,10 @@
 
 import os
 from jinja2 import Environment, FileSystemLoader, Template
-from api_utils import camel_to_kebab_regex, remove_and_create_dir
+from api_utils import camel_to_kebab_regex, remove_and_create_dir, api_format
 from metadata_def import BaseObject, API
 from parser.doxygen.doxygen_parser import DoxygenParser
+from parser.ts_morph.harmony_parser import HarmonyParser
 
 DOCS_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -42,7 +43,8 @@ def store_object_in_api_desc_dict(
     for member in object.children:
         if not member.has_apidoc:
             continue
-        api = api_desc_dict.get(member.brief_desc, None)
+        key = f"{object.brief_desc}-{member.brief_desc}"
+        api = api_desc_dict.get(key, None)
         if api is None:
             api = API(
                 name=member.name,
@@ -51,13 +53,16 @@ def store_object_in_api_desc_dict(
                 brief_desc=member.brief_desc,
                 android_member=None,
                 ios_member=None,
+                harmony_member=None,
             )
-            api_desc_dict[member.brief_desc] = api
+            api_desc_dict[key] = api
 
         if platform == "android":
             api.android_member = member
         elif platform == "ios":
             api.ios_member = member
+        elif platform == "harmony":
+            api.harmony_member = member
 
 
 def get_api_data_store_by_desc(platform_object_dict: dict) -> dict:
@@ -75,7 +80,8 @@ def generate_object_list(platform: str) -> list[BaseObject]:
     parser = None
     if platform == "ios" or platform == "android":
         parser = DoxygenParser(platform)
-
+    elif platform == "harmony":
+        parser = HarmonyParser()
     if parser is None:
         print(f"generate object list failed: unknown {platform}")
         return []
@@ -105,6 +111,8 @@ def generate_docs_from_api_dict(api_desc_dict: dict) -> bool:
 
     remove_and_create_dir(API_GEN_PATH)
     for api in api_desc_dict.values():
+        api_format(api)
+
         template = _native_api_default_template
         # Check if there is a custom template for the API.
         api_custom_template_path = os.path.join(
@@ -139,4 +147,4 @@ def generate_website_api_doc(platform_list: list[str]) -> bool:
 
 
 if __name__ == "__main__":
-    result = generate_website_api_doc(["android", "ios"])
+    result = generate_website_api_doc(["android", "ios", "harmony"])

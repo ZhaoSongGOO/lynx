@@ -95,6 +95,7 @@ def parse(compounddef) -> BaseObject:
             definition="",
             has_apidoc=False,
             language=compounddef.get_language(),
+            since="",
             children=[],
         )
         if compounddef_parse_func(object, compounddef):

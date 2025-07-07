@@ -10,11 +10,14 @@ from env_setup import *
 from api_utils import is_doxygen_installed
 from parser.doxygen.doxygen_parser import DoxygenParser
 from parser.doxygen.doxygen_config import DoxygenConfig
+from parser.ts_morph.harmony_parser import HarmonyParser
 
 
 def update_api_metadata(api_path, platform):
     if platform in ["ios", "android"]:
         parser = DoxygenParser(platform)
+    elif platform == "harmony":
+        parser = HarmonyParser()
     else:
         print(f"unsupported platform: {platform}")
         return False

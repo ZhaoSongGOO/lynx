@@ -32,6 +32,10 @@ def parse_mixed_content(content_list):
             tag_obj = item.value
             if isinstance(tag_obj, doxcompound.docListType):
                 continue
+            if isinstance(tag_obj, doxcompound.refTextType):
+                parts.append(tag_obj.get_valueOf_())
+                continue
+
             inner_text = parse_mixed_content(tag_obj.content_)
 
             if tag_name == "ulink":
@@ -91,8 +95,8 @@ def func_prototype_parse(object: BaseObject, memberdef) -> str:
         prefix = "+" if memberdef.get_static() == "yes" else "-"
         return_type_obj = memberdef.get_type()
         return_type = ""
-        if return_type_obj and hasattr(return_type_obj, "valueOf_"):
-            return_type = return_type_obj.valueOf_
+        if return_type_obj and hasattr(return_type_obj, "content_"):
+            return_type = parse_mixed_content(return_type_obj.content_)
 
         method_name_parts = memberdef.get_name().split(":")
 
@@ -101,8 +105,8 @@ def func_prototype_parse(object: BaseObject, memberdef) -> str:
         for i, param in enumerate(params):
             param_type_obj = param.get_type()
             param_type = ""
-            if param_type_obj and hasattr(param_type_obj, "valueOf_"):
-                param_type = param_type_obj.valueOf_
+            if param_type_obj and hasattr(param_type_obj, "content_"):
+                param_type = parse_mixed_content(param_type_obj.content_)
 
             param_name = param.get_declname() if param.get_declname() else ""
             param_str = f"({param_type.strip()}){param_name}"
@@ -111,11 +115,11 @@ def func_prototype_parse(object: BaseObject, memberdef) -> str:
         prototype = f"{prefix} ({return_type.strip()})"
         for i, part in enumerate(method_name_parts):
             if part:
-                prototype += f" {part}"
+                prototype += f"{part}"
                 if i < len(param_strings):
-                    prototype += f":{param_strings[i]}"
+                    prototype += f":{param_strings[i]} "
 
-        prototype += ";"
+        prototype = f"{prototype.strip()};"
         return prototype
     else:
         return f"public {memberdef.get_definition()}{memberdef.get_argsstring()};"

@@ -41,6 +41,7 @@ class BaseMember:
     info: list[str] = field(default_factory=list)
     caution: list[str] = field(default_factory=list)
     warning: list[str] = field(default_factory=list)
+    since: str = ""
 
     def get_member_dump_str(self) -> str:
         spaces = f'{"  " if self.type != BaseMemberType.EnumType else ""}'
@@ -68,6 +69,7 @@ class BaseObject:
     definition: str
     has_apidoc: bool
     language: str
+    since: str
     children: list[BaseMember]
 
     def get_api_str(self) -> str:
@@ -91,3 +93,4 @@ class API:
     brief_desc: str
     android_member: BaseMember
     ios_member: BaseMember
+    harmony_member: BaseMember
