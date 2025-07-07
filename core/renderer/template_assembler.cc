@@ -3204,6 +3204,14 @@ void TemplateAssembler::RenderPageWithSSRData(
 
 Themed& TemplateAssembler::Themed() { return page_proxy_.themed(); }
 
+lepus::Value TemplateAssembler::CallLepusMethod(
+    const lepus::Value& closure, const std::vector<lepus::Value>& args) {
+  lepus::Value value =
+      GetLepusContext(DEFAULT_ENTRY_NAME)->CallClosureArgs(closure, args);
+
+  return value;
+}
+
 void TemplateAssembler::CallLepusMethod(const std::string& method_name,
                                         lepus::Value args,
                                         const piper::ApiCallBack& callback,

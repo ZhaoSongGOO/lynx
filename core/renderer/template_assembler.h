@@ -709,6 +709,10 @@ class TemplateAssembler final : public TemplateEntryHolder,
                        const piper::ApiCallBack& callback,
                        uint64_t trace_flow_id);
 
+  // currently, this method is provided for use by list
+  lepus::Value CallLepusMethod(const lepus::Value& closure,
+                               const std::vector<lepus::Value>& args);
+
   void PreloadLazyBundles(const std::vector<std::string>& urls);
 
   void SetWhiteBoard(const std::shared_ptr<WhiteBoard>& white_board);

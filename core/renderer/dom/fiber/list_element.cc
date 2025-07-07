@@ -164,13 +164,12 @@ int32_t ListElement::ComponentAtIndex(uint32_t index, int64_t operationId,
     return ssr_helper_->ComponentAtIndexInSSR(index, operationId);
   }
 
-  lepus::Value value =
-      tasm_->GetLepusContext(DEFAULT_ENTRY_NAME)
-          ->CallClosure(component_at_index_,
-                        lepus::Value(fml::RefPtr<ListElement>(this)),
-                        lepus::Value(impl_id()), lepus::Value(index),
-                        lepus::Value(operationId),
-                        lepus::Value(enable_reuse_notification));
+  std::vector<lepus::Value> args = {
+      lepus::Value(fml::RefPtr<ListElement>(this)), lepus::Value(impl_id()),
+      lepus::Value(index), lepus::Value(operationId),
+      lepus::Value(enable_reuse_notification)};
+
+  lepus::Value value = tasm_->CallLepusMethod(component_at_index_, args);
 
   return static_cast<int32_t>(value.Number());
 }
@@ -196,12 +195,15 @@ void ListElement::ComponentAtIndexes(
   bool async_resolve = NeedAsyncResolveListItem();
   element_manager()->SetCSSFragmentParsingOnTASMWorkerMTSRender(async_resolve);
 
-  tasm_->GetLepusContext(tasm::DEFAULT_ENTRY_NAME)
-      ->CallClosure(
-          component_at_indexes_, lepus::Value(fml::RefPtr<ListElement>(this)),
-          lepus::Value(impl_id()), lepus::Value(std::move(index_array)),
-          lepus::Value(std::move(operation_id_array)),
-          lepus::Value(enable_reuse_notification), lepus::Value(async_resolve));
+  std::vector<lepus::Value> args = {
+      lepus::Value(fml::RefPtr<ListElement>(this)),
+      lepus::Value(impl_id()),
+      lepus::Value(std::move(index_array)),
+      lepus::Value(std::move(operation_id_array)),
+      lepus::Value(enable_reuse_notification),
+      lepus::Value(async_resolve)};
+
+  tasm_->CallLepusMethod(component_at_indexes_, args);
 
   element_manager()->SetCSSFragmentParsingOnTASMWorkerMTSRender(false);
 }
@@ -215,10 +217,11 @@ void ListElement::EnqueueComponent(int32_t sign) {
     return;
   }
 
-  tasm_->GetLepusContext(tasm::DEFAULT_ENTRY_NAME)
-      ->CallClosure(enqueue_component_,
-                    lepus::Value(fml::RefPtr<ListElement>(this)),
-                    lepus::Value(impl_id()), lepus::Value(sign));
+  std::vector<lepus::Value> args = {
+      lepus::Value(fml::RefPtr<ListElement>(this)), lepus::Value(impl_id()),
+      lepus::Value(sign)};
+
+  tasm_->CallLepusMethod(enqueue_component_, args);
 }
 
 void ListElement::TickElement(fml::TimePoint& time) {
