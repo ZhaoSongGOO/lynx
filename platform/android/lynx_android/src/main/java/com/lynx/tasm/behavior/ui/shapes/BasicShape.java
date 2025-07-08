@@ -416,7 +416,7 @@ public class BasicShape {
 
         // bottom-left corner
         rx = radius[6];
-        rx = radius[7];
+        ry = radius[7];
         cx = insetRect.left + rx;
         cy = insetRect.bottom - ry;
         addLameCurveToPath(mPath, rx, ry, cx, cy, ex, ey, 2);
