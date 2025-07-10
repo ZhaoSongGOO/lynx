@@ -181,13 +181,12 @@ public abstract class UIGroup<T extends ViewGroup>
       subDrawInfo.setImageManager(image.getLynxImageManagerForViewInfo());
       subDrawInfo.setDrawPosition(ui.getLeft(), ui.getTop());
     }
-    // TODO(songshourui.null): we need TextLayout if we want to support font family when reuse
-    // LynxEngine.
-    //    if (ui instanceof FlattenUIText) {
-    //      FlattenUIText text = (FlattenUIText) ui;
-    //      subDrawInfo.setTextLayout(text.getTextLayout());
-    //      subDrawInfo.setDrawPosition(text.getDrawPositionLeft(), text.getDrawPositionTop());
-    //    }
+    // We need TextLayout, since we need to support font family, inline image when reuse LynxEngine.
+    if (ui instanceof FlattenUIText) {
+      FlattenUIText text = (FlattenUIText) ui;
+      subDrawInfo.setTextLayout(text.getTextLayout());
+      subDrawInfo.setDrawPosition(text.getDrawPositionLeft(), text.getDrawPositionTop());
+    }
   }
 
   protected View getRealParentView() {

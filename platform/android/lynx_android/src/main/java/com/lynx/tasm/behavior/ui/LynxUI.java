@@ -237,6 +237,10 @@ public abstract class LynxUI<T extends View> extends LynxBaseUI implements IProc
     return mView;
   }
 
+  public ViewInfo getViewInfo() {
+    return mViewInfo;
+  }
+
   @Override
   protected void detachWithViewInfo(ViewInfo parentViewInfo) {
     mContext.getLynxView().registerViewAccordingToNodeIndex(mNodeIndex, mView);

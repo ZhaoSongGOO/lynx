@@ -5816,6 +5816,7 @@ public class abstract com::lynx::tasm::behavior::ui::LynxUI : com.lynx.tasm.beha
   public void com.lynx.tasm.behavior.ui.LynxUI< T extends View >.onDetach();
   public void com.lynx.tasm.behavior.ui.LynxUI< T extends View >.onAttach();
   public T com.lynx.tasm.behavior.ui.LynxUI< T extends View >.getView();
+  public ViewInfo com.lynx.tasm.behavior.ui.LynxUI< T extends View >.getViewInfo();
   public void com.lynx.tasm.behavior.ui.LynxUI< T extends View >.processViewInfo();
   public void com.lynx.tasm.behavior.ui.LynxUI< T extends View >.dispatchProcessViewInfo();
   public void com.lynx.tasm.behavior.ui.LynxUI< T extends View >.processChildViewInfo(IProcessViewInfoHook child);
