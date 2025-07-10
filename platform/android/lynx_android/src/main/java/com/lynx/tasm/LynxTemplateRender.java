@@ -3609,6 +3609,28 @@ public class LynxTemplateRender implements ILynxEngine, ILynxErrorReceiver {
     }
   }
 
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public LynxViewBuilder getLynxViewBuilder() {
+    LynxViewBuilder builder =
+        new LynxViewBuilder().setLynxViewGroup(mLynxViewBuilder.lynxViewGroup);
+    if (builder.lynxViewGroup != null) {
+      return builder;
+    }
+    builder.setCustomBehaviorRegistry(mLynxViewBuilder.getBehaviorRegistry())
+        .setUIRendererCreator(mLynxViewBuilder.getUIRendererCreator())
+        .setFontLoader(mLynxViewBuilder.fontLoader)
+        .setImageFetcher(mLynxViewBuilder.imageFetcher)
+        .setFontScale(mLynxViewBuilder.getFontScale())
+        .setEnablePreUpdateData(true)
+        .setDynamicComponentFetcher(mLynxViewBuilder.fetcher)
+        .setEnableGenericResourceFetcher(
+            mLynxViewBuilder.getLynxRuntimeOptions().isEnableGenericResourceFetcher())
+        .mergeLynxRuntimeOptions(mLynxViewBuilder.getLynxRuntimeOptions())
+        .setScreenSize(mLynxViewBuilder.getScreenWidth(), mLynxViewBuilder.getScreenHeight())
+        .setThreadStrategyForRendering(mLynxViewBuilder.getThreadStrategy());
+    return builder;
+  }
+
   void detachLynxEngineWrapper() {
     if (!mEnableReuseEngine) {
       return;

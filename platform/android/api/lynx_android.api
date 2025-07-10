@@ -4717,7 +4717,11 @@ public class com::lynx::tasm::behavior::ui::frame::LynxFrameView : com.lynx.tasm
   public com.lynx.tasm.behavior.ui.frame.LynxFrameView.LynxFrameView(Context context);
   public com.lynx.tasm.behavior.ui.frame.LynxFrameView.LynxFrameView(Context context, AttributeSet attrs);
   public void com.lynx.tasm.behavior.ui.frame.LynxFrameView.updateViewport(int widthMeasureSpec, int heightMeasureSpec);
+  public void com.lynx.tasm.behavior.ui.frame.LynxFrameView.updateMetaData(LynxUpdateMeta meta);
+  public void com.lynx.tasm.behavior.ui.frame.LynxFrameView.setUrl(String url);
   public void com.lynx.tasm.behavior.ui.frame.LynxFrameView.runOnTasmThread(Runnable runnable);
+  public void com.lynx.tasm.behavior.ui.frame.LynxFrameView.setAttachLynxPageUICallback(attachLynxPageUICallback callback);
+  public LynxViewBuilder com.lynx.tasm.behavior.ui.frame.LynxFrameView.getLynxViewBuilder();
 }
 
 public interface com::lynx::tasm::behavior::LynxGeneratorName {
@@ -5808,6 +5812,7 @@ public class com::lynx::tasm::LynxTemplateRender : com.lynx.tasm.ILynxEngine, co
   public void com.lynx.tasm.LynxTemplateRender.scrollToPosition(int containerSign, int position, float offset, int align, boolean smooth);
   public void com.lynx.tasm.LynxTemplateRender.scrollStopped(int containerSign);
   public ILynxUIRenderer com.lynx.tasm.LynxTemplateRender.lynxUIRenderer();
+  public LynxViewBuilder com.lynx.tasm.LynxTemplateRender.getLynxViewBuilder();
   public void com.lynx.tasm.LynxTemplateRender.setAttachLynxPageUICallback(UIBodyView.attachLynxPageUICallback callback);
   public void com.lynx.tasm.LynxTemplateRender.addRuntimeLifecycleListener(@NonNull RuntimeLifecycleListener listener);
   public native void com.lynx.tasm.LynxTemplateRender.nativeDetachLynxEngineWrapper(long ptr, long lifecycle);
@@ -6324,6 +6329,7 @@ public class com::lynx::tasm::LynxView : com.lynx.tasm.behavior.ui.UIBody.UIBody
   public void com.lynx.tasm.LynxView.setEnableUserCodeCache(boolean enableUserCodeCache, String url);
   public void com.lynx.tasm.LynxView.setAttachLynxPageUICallback(attachLynxPageUICallback callback);
   public void com.lynx.tasm.LynxView.addRuntimeLifecycleListener(@NonNull RuntimeLifecycleListener listener);
+  public LynxViewBuilder com.lynx.tasm.LynxView.getLynxViewBuilder();
   public static LynxViewBuilder com.lynx.tasm.LynxView.builder();
   public static LynxViewBuilder com.lynx.tasm.LynxView.builder(Context context);
 }
@@ -9130,6 +9136,7 @@ public class com::lynx::tasm::behavior::ui::UIBody::UIBodyView : FrameLayout, co
   public ILynxUIRenderer com.lynx.tasm.behavior.ui.UIBody.UIBodyView.getLynxUIRendererInternal();
   public void com.lynx.tasm.behavior.ui.UIBody.UIBodyView.setLynxUIRendererInternal(ILynxUIRenderer uiRenderer);
   public void com.lynx.tasm.behavior.ui.UIBody.UIBodyView.innerSetMeasuredDimension(int w, int h);
+  public LynxViewBuilder com.lynx.tasm.behavior.ui.UIBody.UIBodyView.getLynxViewBuilder();
 }
 
 public class com::lynx::tasm::behavior::ui::scroll::UIBounceView : com::lynx::tasm::behavior::ui::view::UISimpleView< AndroidView > {
@@ -9177,8 +9184,11 @@ public class com::lynx::tasm::behavior::ui::frame::UIFrame : com::lynx::tasm::be
   public com.lynx.tasm.behavior.ui.frame.UIFrame.UIFrame(LynxContext context);
   public com.lynx.tasm.behavior.ui.frame.UIFrame.UIFrame(LynxContext context, Object params);
   public void com.lynx.tasm.behavior.ui.frame.UIFrame.updateExtraData(Object data);
+  public void com.lynx.tasm.behavior.ui.frame.UIFrame.onNodeReady();
   public void com.lynx.tasm.behavior.ui.frame.UIFrame.onNodeRemoved();
   public void com.lynx.tasm.behavior.ui.frame.UIFrame.updateLayout(int left, int top, int width, int height, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom, int marginLeft, int marginTop, int marginRight, int marginBottom, int borderLeftWidth, int borderTopWidth, int borderRightWidth, int borderBottomWidth, Rect bound);
+  public void com.lynx.tasm.behavior.ui.frame.UIFrame.setData(ReadableMap value);
+  public void com.lynx.tasm.behavior.ui.frame.UIFrame.setSrc(String value);
 }
 
 public class abstract com::lynx::tasm::behavior::ui::UIGroup : com.lynx.tasm.behavior.ui.LynxUI< T >, com.lynx.tasm.behavior.ui.UIParent, com.lynx.tasm.behavior.ui.IDrawChildHook {

@@ -83,8 +83,8 @@ public class LynxViewBuilder
    */
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public ILynxUIRenderer createLynxUIRenderer() {
-    ILynxUIRenderer uiRenderer = uiRendererCreator.createLynxUIRender();
-    threadStrategy = uiRenderer.getSupportedThreadStrategy(threadStrategy);
+    ILynxUIRenderer uiRenderer = getUIRendererCreator().createLynxUIRender();
+    setThreadStrategyForRendering(uiRenderer.getSupportedThreadStrategy(getThreadStrategy()));
     return uiRenderer;
   }
 
@@ -283,6 +283,14 @@ public class LynxViewBuilder
       return lynxViewGroup.getLynxRuntimeOptions();
     }
     return this.lynxRuntimeOptions;
+  }
+
+  LynxViewBuilder mergeLynxRuntimeOptions(LynxBackgroundRuntimeOptions other) {
+    LynxBackgroundRuntimeOptions options = getLynxRuntimeOptions();
+    if (options != null) {
+      options.merge(other);
+    }
+    return this;
   }
 
   @Override

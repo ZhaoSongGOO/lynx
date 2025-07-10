@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import com.lynx.tasm.LynxBooleanOption;
+import com.lynx.tasm.LynxViewBuilder;
 import com.lynx.tasm.PageConfig;
 import com.lynx.tasm.base.LLog;
 import com.lynx.tasm.base.OnceTask;
@@ -559,6 +560,15 @@ public class UIBody extends UIGroup<UIBodyView> {
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     public void innerSetMeasuredDimension(int w, int h) {
       setMeasuredDimension(w, h);
+    }
+
+    /**
+     * @brief to build frame view
+     * @return LynxViewBuilder for FrameView
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public LynxViewBuilder getLynxViewBuilder() {
+      return null;
     }
   }
 }

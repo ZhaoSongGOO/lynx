@@ -1805,4 +1805,9 @@ public class LynxView extends UIBodyView {
       mLynxTemplateRender.addRuntimeLifecycleListener(listener);
     }
   }
+
+  @Override
+  public LynxViewBuilder getLynxViewBuilder() {
+    return null != mLynxTemplateRender ? mLynxTemplateRender.getLynxViewBuilder() : null;
+  }
 }

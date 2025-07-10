@@ -175,6 +175,9 @@ public class LynxBackgroundRuntimeOptions {
     // Merge these Fetchers only if they are unset:
     // This part of configurations are shared between runtime and platform-level of LynxView.
     // We need to keep the configurations on LynxViewBuilder if Fetchers are set.
+    if (this.enableGenericResourceFetcher == LynxBooleanOption.UNSET) {
+      this.enableGenericResourceFetcher = other.enableGenericResourceFetcher;
+    }
     this.genericResourceFetcher = this.genericResourceFetcher != null
         ? this.genericResourceFetcher
         : other.genericResourceFetcher;
