@@ -68,5 +68,14 @@ PipelineContext* PipelineContextManager::GetPipelineContextByVersion(
   LOGE("pipeline context not found by version: " << version.ToString())
   return nullptr;
 }
+
+void PipelineContextManager::RemovePipelineContextByVersion(
+    const PipelineVersion& version) {
+  if (auto it = pipeline_contexts_.find(version);
+      it != pipeline_contexts_.end()) {
+    it->second->GetOptions()->version = nullptr;
+    pipeline_contexts_.erase(it);
+  }
+}
 }  // namespace tasm
 }  // namespace lynx

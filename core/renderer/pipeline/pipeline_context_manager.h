@@ -28,6 +28,7 @@ class PipelineContextManager {
   }
   PipelineContext* GetPipelineContextByVersion(
       const PipelineVersion& version) const;
+  void RemovePipelineContextByVersion(const PipelineVersion& version);
 
   void ResetCurrentPipelineContext() { current_pipeline_context_ = nullptr; }
 

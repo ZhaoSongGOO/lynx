@@ -14,6 +14,7 @@
 #include "core/renderer/dom/vdom/radon/radon_node.h"
 #include "core/renderer/dom/vdom/radon/radon_page.h"
 #include "core/renderer/page_proxy.h"
+#include "core/renderer/pipeline/pipeline_scope.h"
 #include "core/renderer/tasm/config.h"
 #include "core/renderer/template_assembler.h"
 #include "core/renderer/trace/renderer_trace_event_def.h"
@@ -1360,7 +1361,8 @@ EventResult TouchEventHandler::FireElementWorklet(
     EventHandler *handler, const lepus::Value &value, int element_id) const {
   std::shared_ptr<PipelineOptions> current_option =
       std::make_shared<PipelineOptions>();
-  tasm->CreateAndUpdateCurrentPipelineContext(current_option);
+  tasm::PipelineScope pipeline_scope(tasm, current_option);
+
   EventResult result = EventResult::kDefault;
   if (tasm && tasm->EnableFiberArch()) {
     // trigger worklet in fiber
@@ -1395,7 +1397,6 @@ EventResult TouchEventHandler::FireElementWorklet(
         kPrefix + GetEventType(context.event_type),
         tasm::replay::ReplayController::ConvertEventInfo(value));
   }
-  tasm->RunPixelPipeline();
   return result;
 }
 

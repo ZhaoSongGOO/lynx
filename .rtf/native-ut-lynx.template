@@ -288,7 +288,7 @@ targets({
     },
     "pipeline_test_exec": {
         "cwd": ".",
-        "owners":["ZhaoSongGOO"],
+        "owners":["yangguangzhao.solace", "nihao.royal"],
         "coverage": True,
         "enable_parallel":True,
     },

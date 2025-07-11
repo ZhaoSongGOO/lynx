@@ -12,6 +12,8 @@ lynx_core_source_set("pipeline") {
     "pipeline_context_manager.cc",
     "pipeline_context_manager.h",
     "pipeline_layout_data.h",
+    "pipeline_scope.cc",
+    "pipeline_scope.h",
     "pipeline_version.h",
   ]
 
@@ -26,14 +28,19 @@ unittest_set("pipeline_test_testset") {
     "pipeline_context_manager_unittest.h",
     "pipeline_context_unittest.cc",
     "pipeline_context_unittest.h",
+    "pipeline_scope_unittest.cc",
+    "pipeline_scope_unittest.h",
     "pipeline_version_unittest.cc",
     "pipeline_version_unittest.h",
   ]
 
   deps = [
     ":pipeline",
+    "../:tasm",
     "../../../base/src:base_log",
     "../../public",
+    "../../shell/testing:mock_tasm_delegate_testset",
+    "../dom:dom",
   ]
 }
 
