@@ -160,6 +160,9 @@ class FiberElement : public Element,
   // to resolve the styles again to reset those properties which are removed.
   static constexpr uint32_t kDirtyStyleObjects = 0x01 << 13;
 
+  // Flag used for cloned element, need to re-apply animation styles.
+  static constexpr uint32_t kDirtyCloned = 0x01 << 14;
+
   // TODO(zhouzhitao): kSyncResolving and kResolving status will be merged later
   // with the removal of parallel_flush_ flag
   enum class AsyncResolveStatus : uint8_t {
