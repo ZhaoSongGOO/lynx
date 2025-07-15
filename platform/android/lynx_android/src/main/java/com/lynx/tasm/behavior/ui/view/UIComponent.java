@@ -19,7 +19,11 @@ public class UIComponent extends UIView {
   private NodeReadyListener mNodeReadyListener;
 
   public UIComponent(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIComponent(LynxContext context, Object params) {
+    super(context, params);
     if (context.getDefaultOverflowVisible()) {
       mOverflow = OVERFLOW_XY;
     }

@@ -14,7 +14,11 @@ import com.lynx.tasm.behavior.ui.LynxUI;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public final class UIFrame extends LynxUI<LynxFrameView> {
   public UIFrame(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIFrame(LynxContext context, Object params) {
+    super(context, params);
   }
 
   @Override

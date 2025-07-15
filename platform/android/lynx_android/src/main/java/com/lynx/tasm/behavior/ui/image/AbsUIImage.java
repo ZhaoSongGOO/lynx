@@ -24,6 +24,10 @@ public abstract class AbsUIImage<T extends View> extends LynxUI<T> {
     super(context);
   }
 
+  public AbsUIImage(LynxContext context, Object params) {
+    super(context, params);
+  }
+
   @LynxProp(name = PropsConstants.SRC) public abstract void setSource(String sources);
 
   @LynxProp(name = PropsConstants.PLACEHOLDER)

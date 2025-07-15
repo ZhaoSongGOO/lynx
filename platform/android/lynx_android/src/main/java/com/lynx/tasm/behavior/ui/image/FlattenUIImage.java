@@ -22,7 +22,11 @@ public class FlattenUIImage extends LynxFlattenUI {
   LynxImageManager mLynxImageManager;
 
   public FlattenUIImage(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public FlattenUIImage(LynxContext context, Object params) {
+    super(context, params);
     mLynxImageManager = new LynxImageManager(getLynxContext());
     mLynxImageManager.setLynxBaseUI(this);
   }

@@ -42,11 +42,15 @@ public class FlattenUIText extends LynxFlattenUI implements IUIText {
 
   @Deprecated
   public FlattenUIText(Context context) {
-    super((LynxContext) context);
+    this((LynxContext) context);
   }
 
   public FlattenUIText(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public FlattenUIText(LynxContext context, Object params) {
+    super(context, params);
     mAccessibilityElementStatus = ACCESSIBILITY_ELEMENT_TRUE;
     if (mContext.isTextOverflowEnabled() && !mContext.isLayoutInElementModeOn()) {
       mOverflow = OVERFLOW_XY;

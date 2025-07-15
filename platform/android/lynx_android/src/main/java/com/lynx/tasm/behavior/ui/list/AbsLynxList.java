@@ -38,7 +38,11 @@ public abstract class AbsLynxList<T extends ViewGroup> extends UISimpleView<T> {
   private LynxBaseUI mCurrentChild;
 
   public AbsLynxList(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public AbsLynxList(LynxContext context, Object params) {
+    super(context, params);
     mListNodeInfoFetcher = context.getListNodeInfoFetcher();
     mCurrentChild = null;
   }

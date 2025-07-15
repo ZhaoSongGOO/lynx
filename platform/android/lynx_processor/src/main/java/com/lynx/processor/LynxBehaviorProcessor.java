@@ -37,6 +37,8 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Types;
 
@@ -215,6 +217,33 @@ public class LynxBehaviorProcessor extends AbstractProcessor {
     }
   }
 
+  private boolean checkHasContextAndObjectConstructors(TypeElement classElement) {
+    boolean hasParamConstructor = false;
+
+    ClassName lynxContextCln = ClassName.get("com.lynx.tasm.behavior", "LynxContext");
+    ClassName objectCln = ClassName.get("java.lang", "Object");
+
+    for (Element enclosed : classElement.getEnclosedElements()) {
+      if (enclosed.getKind() != ElementKind.CONSTRUCTOR) {
+        continue;
+      }
+
+      ExecutableElement constructor = (ExecutableElement) enclosed;
+
+      if (constructor.getParameters().size() != 2) {
+        continue;
+      }
+
+      if (constructor.getParameters().get(0).asType().toString().equals(lynxContextCln.toString())
+          && constructor.getParameters().get(1).asType().toString().equals(objectCln.toString())) {
+        hasParamConstructor = true;
+        break;
+      }
+    }
+
+    return hasParamConstructor;
+  }
+
   private void generateClassAndMethod(MethodSpec.Builder builder, ClassInfo classInfo) {
     boolean createAsync = classInfo.isCreateAsync;
 
@@ -223,12 +252,24 @@ public class LynxBehaviorProcessor extends AbstractProcessor {
       ClassName lynxUICln = ClassName.get("com.lynx.tasm.behavior.ui", "LynxUI");
       ClassName lynxShadowCln = ClassName.get("com.lynx.tasm.behavior.shadow", "ShadowNode");
 
-      builder.addCode(
-          "result.add(new Behavior($S, false, " + (createAsync ? "true" : "false") + ") {\n", tag);
-      builder.addCode("@Override\n");
-      builder.addCode("public $T createUI($T context) {\n", lynxUICln, lynxContextCln);
-      builder.addCode("return new $T(context);\n", classInfo.mClassName);
-      builder.addCode(" }\n");
+      if (checkHasContextAndObjectConstructors(classInfo.mElement)) {
+        builder.addCode(
+            "result.add(new Behavior($S, false, " + (createAsync ? "true" : "false") + ") {\n",
+            tag);
+        builder.addCode("@Override\n");
+        builder.addCode("public $T createUIWithParams($T context, Object params) {\n", lynxUICln,
+            lynxContextCln);
+        builder.addCode("return new $T(context, params);\n", classInfo.mClassName);
+        builder.addCode(" }\n");
+      } else {
+        builder.addCode(
+            "result.add(new Behavior($S, false, " + (createAsync ? "true" : "false") + ") {\n",
+            tag);
+        builder.addCode("@Override\n");
+        builder.addCode("public $T createUI($T context) {\n", lynxUICln, lynxContextCln);
+        builder.addCode("return new $T(context);\n", classInfo.mClassName);
+        builder.addCode(" }\n");
+      }
 
       if (mShadowNodeClasses.get(tag) != null) {
         builder.addCode("@Override\n");
@@ -278,12 +319,12 @@ public class LynxBehaviorProcessor extends AbstractProcessor {
 
   private static class ClassInfo {
     public final ClassName mClassName;
-    public final Element mElement;
+    public final TypeElement mElement;
     public final List<String> tagName;
     public boolean isCreateAsync;
     public String shadowNodeTag;
 
-    public ClassInfo(ClassName mClassName, Element mElement) {
+    public ClassInfo(ClassName mClassName, TypeElement mElement) {
       this.mClassName = mClassName;
       this.mElement = mElement;
       this.tagName = new ArrayList<>();

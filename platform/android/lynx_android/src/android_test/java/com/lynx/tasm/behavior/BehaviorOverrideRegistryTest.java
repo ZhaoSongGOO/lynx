@@ -45,12 +45,12 @@ public class BehaviorOverrideRegistryTest {
         List<Behavior> list = new ArrayList<>();
         list.add(new Behavior("image", true, true) {
           @Override
-          public LynxUI createUI(LynxContext context) {
+          public LynxUI createUIWithParams(LynxContext context, Object params) {
             return null;
           }
 
           @Override
-          public LynxFlattenUI createFlattenUI(final LynxContext context) {
+          public LynxFlattenUI createFlattenUIWithParams(final LynxContext context, Object params) {
             return null;
           }
 

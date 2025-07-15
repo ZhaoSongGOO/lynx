@@ -115,7 +115,11 @@ public class UIScrollView extends AbsLynxUIScroll<AndroidScrollView>
   private HashMap<String, Integer> mPropMap = new HashMap<>();
 
   public UIScrollView(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIScrollView(LynxContext context, Object params) {
+    super(context, params);
   }
 
   @Override

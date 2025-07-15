@@ -765,8 +765,8 @@ public class LynxRecorderActionManager {
         } else {
           builder.addBehavior(new Behavior(name, (type & IS_FLATTEN_NODE) != 0) {
             @Override
-            public LynxUI createUI(LynxContext context) {
-              return new UIView(context);
+            public LynxUI createUIWithParams(LynxContext context, Object params) {
+              return new UIView(context, params);
             }
           });
         }

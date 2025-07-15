@@ -20,7 +20,11 @@ public class UIBounceView extends UISimpleView<AndroidView> {
   public int mDirection = RIGHT;
 
   public UIBounceView(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIBounceView(LynxContext context, Object params) {
+    super(context, params);
   }
 
   public AndroidView createView(Context context) {

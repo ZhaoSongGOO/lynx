@@ -32,7 +32,11 @@ public class UIView
   }
 
   public UIView(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIView(LynxContext context, Object params) {
+    super(context, params);
     if (context.getDefaultOverflowVisible()) {
       mOverflow = OVERFLOW_XY;
     }

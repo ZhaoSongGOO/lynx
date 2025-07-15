@@ -29,13 +29,13 @@ public class BuiltInUIRegistry {
       // image
       mBehaviorsMap.put(IMAGE_TAG, new Behavior(IMAGE_TAG, true, true) {
         @Override
-        public LynxUI createUI(LynxContext context) {
-          return new UIImage(context);
+        public LynxUI createUIWithParams(LynxContext context, Object params) {
+          return new UIImage(context, params);
         }
 
         @Override
-        public LynxFlattenUI createFlattenUI(LynxContext context) {
-          return new FlattenUIImage(context);
+        public LynxFlattenUI createFlattenUIWithParams(LynxContext context, Object params) {
+          return new FlattenUIImage(context, params);
         }
 
         @Override

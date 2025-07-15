@@ -138,7 +138,11 @@ public class UIList extends AbsLynxList<RecyclerView> implements GestureArenaMem
   private boolean mEnableOverflow = false;
 
   public UIList(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIList(LynxContext context, Object params) {
+    super(context, params);
     if (DEBUG) {
       LLog.i(TAG, "UIList init");
     }

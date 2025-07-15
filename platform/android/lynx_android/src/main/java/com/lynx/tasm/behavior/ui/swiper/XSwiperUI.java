@@ -109,7 +109,7 @@ public class XSwiperUI extends UISimpleView<SwiperView> {
   }
 
   public XSwiperUI(LynxContext context) {
-    super(context);
+    this(context, null);
   }
 
   public XSwiperUI(LynxContext context, Object param) {

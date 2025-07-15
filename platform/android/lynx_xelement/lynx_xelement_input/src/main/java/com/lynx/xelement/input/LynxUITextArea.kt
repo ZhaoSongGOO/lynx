@@ -18,7 +18,7 @@ import com.lynx.tasm.behavior.LynxProp
 import com.lynx.tasm.behavior.StylesDiffMap
 import com.lynx.tasm.event.LynxDetailEvent
 
-open class LynxUITextArea(context: LynxContext) : LynxUIBaseInput(context) {
+open class LynxUITextArea(context: LynxContext, params: Any?) : LynxUIBaseInput(context, params) {
 
     private var mPreHeight:Int = -1
 
@@ -32,7 +32,9 @@ open class LynxUITextArea(context: LynxContext) : LynxUIBaseInput(context) {
         } else {
             null;
         }
-    };
+    }
+  
+    constructor(context: LynxContext) : this(context, null)
 
     override fun createView(context: Context?): LynxEditTextView {
         val editText = super.createView(context)

@@ -41,11 +41,14 @@ public class UIText
 
   @Deprecated
   public UIText(Context context) {
-    super((LynxContext) context);
+    this((LynxContext) context);
   }
 
   public UIText(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+  public UIText(LynxContext context, Object params) {
+    super(context, params);
     mAccessibilityElementStatus = ACCESSIBILITY_ELEMENT_TRUE;
     if (mContext.isTextOverflowEnabled() && !mContext.isLayoutInElementModeOn()) {
       mOverflow = OVERFLOW_XY;

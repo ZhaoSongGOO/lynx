@@ -50,7 +50,10 @@ import com.lynx.tasm.utils.UnitUtils
 import kotlin.math.max
 
 
-open class LynxUIBaseInput(context: LynxContext) : LynxUI<LynxEditTextView>(context) {
+open class LynxUIBaseInput(context: LynxContext, params: Any?) : LynxUI<LynxEditTextView>(context, params) {
+  
+  constructor(context:LynxContext) : this(context, null)
+  
     companion object {
         const val UNDEFINED_INT: Int = Int.MIN_VALUE
         const val UNDEFINED_FLOAT: Float = Float.MIN_VALUE

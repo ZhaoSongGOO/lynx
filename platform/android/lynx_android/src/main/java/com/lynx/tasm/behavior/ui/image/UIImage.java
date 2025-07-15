@@ -22,7 +22,11 @@ public class UIImage extends UIView {
   LynxImageManager mLynxImageManager;
 
   public UIImage(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIImage(LynxContext context, Object params) {
+    super(context, params);
     mLynxImageManager = new LynxImageManager(getLynxContext());
     mLynxImageManager.setLynxBaseUI(this);
     mView.setWillNotDraw(false);

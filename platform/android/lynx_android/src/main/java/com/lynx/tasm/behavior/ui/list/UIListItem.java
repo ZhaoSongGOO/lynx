@@ -9,6 +9,10 @@ import com.lynx.tasm.behavior.ui.view.UIComponent;
 // TODO(hujing.1): separate UIListItem with UIComponent
 public class UIListItem extends UIComponent {
   public UIListItem(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIListItem(LynxContext context, Object params) {
+    super(context, params);
   }
 }

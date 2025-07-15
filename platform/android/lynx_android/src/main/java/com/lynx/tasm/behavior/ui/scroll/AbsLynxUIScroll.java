@@ -20,7 +20,11 @@ public abstract class AbsLynxUIScroll<T extends ViewGroup> extends UISimpleView<
   public static final int SCROLL_RIGHT = 3;
 
   public AbsLynxUIScroll(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public AbsLynxUIScroll(LynxContext context, Object params) {
+    super(context, params);
   }
 
   @LynxProp(name = "scroll-y")

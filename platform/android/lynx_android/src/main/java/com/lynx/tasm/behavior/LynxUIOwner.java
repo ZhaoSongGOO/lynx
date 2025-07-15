@@ -1599,7 +1599,7 @@ public class LynxUIOwner {
   public LynxBaseUI createUI(String tag, boolean flatten) {
     LynxBaseUI ui = null;
     if (mContext.isUseNewSwiper()) {
-      ui = createSwiperIfNeeded(tag, ui);
+      ui = createSwiperIfNeeded(tag, ui, null);
     }
     if (ui == null) {
       Behavior behavior = mBehaviorRegistry.get(tag);
@@ -1609,12 +1609,10 @@ public class LynxUIOwner {
         flatten = false;
       }
       if (flatten && behavior.supportUIFlatten()) {
-        ui = behavior.createFlattenUI(mContext);
-      } else {
-        ui = behavior.createUI(mContext);
+        ui = behavior.createFlattenUIWithParams(mContext, null);
       }
       if (ui == null) {
-        ui = behavior.createUI(mContext);
+        ui = behavior.createUIWithParams(mContext, null);
       }
     }
     return ui;
@@ -1697,9 +1695,9 @@ public class LynxUIOwner {
     return mIsContextFree;
   }
 
-  private LynxBaseUI createSwiperIfNeeded(String tagName, LynxBaseUI origin) {
+  private LynxBaseUI createSwiperIfNeeded(String tagName, LynxBaseUI origin, Object params) {
     if ("swiper".equals(tagName) || "x-swiper".equals(tagName)) {
-      return new XSwiperUI(mContext);
+      return new XSwiperUI(mContext, params);
     }
     return origin;
   }

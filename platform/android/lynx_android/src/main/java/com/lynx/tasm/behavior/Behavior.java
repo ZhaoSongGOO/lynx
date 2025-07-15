@@ -43,6 +43,14 @@ public class Behavior {
     return mCreateAsync;
   }
 
+  public LynxUI createUIWithParams(LynxContext context, Object params) {
+    return createUI(context);
+  }
+
+  public LynxFlattenUI createFlattenUIWithParams(LynxContext context, Object params) {
+    return createFlattenUI(context);
+  }
+
   public LynxUI createUI(LynxContext context) {
     // It means this is a virtual node without real ui if subclass do not override this method
     throw new RuntimeException(mName + " is a virtual node, do not have real ui!");

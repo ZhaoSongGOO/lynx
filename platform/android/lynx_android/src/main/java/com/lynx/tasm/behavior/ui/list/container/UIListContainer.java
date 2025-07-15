@@ -143,7 +143,11 @@ public class UIListContainer extends UISimpleView<ListContainerView>
       };
 
   public UIListContainer(LynxContext context) {
-    super(context);
+    this(context, null);
+  }
+
+  public UIListContainer(LynxContext context, Object params) {
+    super(context, params);
   }
 
   @Override

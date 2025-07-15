@@ -26,24 +26,24 @@ public class BuiltInBehavior implements BehaviorBundle {
     List<Behavior> bc = new ArrayList<>();
     bc.add(new Behavior("view", true, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIView(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIView(context, params);
       }
 
       @Override
-      public LynxFlattenUI createFlattenUI(final LynxContext context) {
-        return new LynxFlattenUI(context);
+      public LynxFlattenUI createFlattenUIWithParams(final LynxContext context, Object params) {
+        return new LynxFlattenUI(context, params);
       }
     });
     bc.add(new Behavior("text", true, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIText(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIText(context, params);
       }
 
       @Override
-      public LynxFlattenUI createFlattenUI(final LynxContext context) {
-        return new FlattenUIText(context);
+      public LynxFlattenUI createFlattenUIWithParams(final LynxContext context, Object params) {
+        return new FlattenUIText(context, params);
       }
 
       @Override
@@ -72,49 +72,49 @@ public class BuiltInBehavior implements BehaviorBundle {
     });
     bc.add(new Behavior("scroll-view", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIScrollView(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIScrollView(context, params);
       }
     });
     bc.add(new Behavior("bounce-view", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIBounceView(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIBounceView(context, params);
       }
     });
     bc.add(new Behavior("component", true, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIComponent(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIComponent(context, params);
       }
 
       @Override
-      public LynxFlattenUI createFlattenUI(final LynxContext context) {
-        return new LynxFlattenUI(context);
+      public LynxFlattenUI createFlattenUIWithParams(final LynxContext context, Object params) {
+        return new LynxFlattenUI(context, params);
       }
     });
     bc.add(new Behavior("list", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIList(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIList(context, params);
       }
     });
     bc.add(new Behavior("list-item", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIListItem(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIListItem(context, params);
       }
     });
     bc.add(new Behavior("list-container", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIListContainer(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIListContainer(context, params);
       }
     });
     bc.add(new Behavior("frame", false, true) {
       @Override
-      public LynxUI createUI(LynxContext context) {
-        return new UIFrame(context);
+      public LynxUI createUIWithParams(LynxContext context, Object params) {
+        return new UIFrame(context, params);
       }
     });
     return bc;

@@ -14,7 +14,10 @@ import com.lynx.tasm.behavior.LynxContext
 import com.lynx.tasm.behavior.LynxGeneratorName
 import com.lynx.tasm.behavior.StylesDiffMap
 
-open class LynxUIInput(context: LynxContext) : LynxUIBaseInput(context) {
+open class LynxUIInput(context: LynxContext, params:Any?) : LynxUIBaseInput(context, params) {
+  
+  constructor(context: LynxContext) : this(context, null)
+  
     override fun createView(context: Context?): LynxEditTextView{
         val editText = super.createView(context)
         editText.setLines(1)
